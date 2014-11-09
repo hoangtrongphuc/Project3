@@ -1,0 +1,57 @@
+/* CSS Document */
+
+*{
+	margin:0px;
+	padding:0px;
+	text-decoration:none;
+	list-style-type:none;
+}
+body{
+	text-decoration:none;
+	list-style-type:none;
+	font-family:"Comic Sans MS", cursive
+	}
+#content{
+	width:290px;
+	height:400px;
+	background:white;
+	border: solid 3px #f0ad4e;
+	padding:30px;
+}
+#name{
+	width:100px;
+	height:30px;
+	float:left;
+	font-size:18px;
+	font-weight:bold;
+	
+	}
+#info{
+	width:220px;
+	height:240px;
+	float:left;
+}
+#rank,#rick{
+	width:220px;
+	height:40px;
+	float:left;
+	padding:5px;
+	
+	}
+#rank-point{
+	width:150px;
+	height:30px;
+	float:left;
+	
+	}
+#rank-trophy{
+	width:60px;
+	height:30px;
+	float:left;
+	}
+#avt{
+	width:140px;
+	height:148px;
+	padding:1px;
+	overflow:hidden;
+	}
