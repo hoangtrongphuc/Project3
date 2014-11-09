@@ -1,0 +1,19 @@
+/* CSS Document */
+
+*{
+	margin:0px;
+	padding:0px;
+	text-decoration:none;
+	list-style-type:none;
+}
+body{
+	text-decoration:none;
+	list-style-type:none;
+	font-family:"Comic Sans MS", cursive
+	}
+#content{
+	width:440px;
+	height:440px;
+	background:white;
+	padding:30px;
+}

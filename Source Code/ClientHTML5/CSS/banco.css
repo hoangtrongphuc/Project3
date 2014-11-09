@@ -1,0 +1,169 @@
+@charset "utf-8";
+/* CSS Document */
+*{
+	padding:0px;
+	margin:0px;
+	text-decoration:none;
+	list-style-type:none;
+	font-family:"Comic Sans MS", cursive;
+	font-size: 14px;
+}
+#background{
+	position:relative;
+	margin:5px auto;
+	z-index:1;
+	width:1100px;
+	height:628px;
+	background:#0F3;
+}
+
+#menu{
+	position:absolute;
+	top:0px;
+	right:0px;
+	width:350px;
+	height:628px;
+	z-index:2;
+	margin:20px 20px;
+	border-radius: 2%;
+	border: solid 1px #CCC;
+	box-shadow: 2px #CCC;
+}
+#room-name{
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:280px;
+	height:30px;
+	border-radius: -2%;
+	padding: 10px;
+	border: solid 2px #CCC;
+	margin: 5px;
+	font-size: 20px;
+	font-weight: bolder;
+}
+#tat{
+	position:absolute;
+	top:0px;
+	right:0px;
+	width:20px;
+	height:20px;
+	padding: 5px;
+	margin: 5px;
+	background:#F03;
+	border: solid 1px #CCC;
+	border-radius: 2%;
+	text-align: center;
+	font-weight: bolder;
+	color:white;
+}
+#player1{
+	position:absolute;
+	top:60px;
+	left:5px;
+	width:200px;
+	height:200px;
+	margin:20px 20px;
+	border: solid 1px #CCC;
+}
+#player2{
+	position:absolute;
+	bottom:60px;
+	right:5px;
+	width:200px;
+	height:200px;
+	border: solid 1px #CCC;
+	margin:20px 20px;
+}
+#button{
+	position:absolute;
+	bottom:0px;
+	right:5px;
+	width:290px;
+	height:20px;
+	background:#FFF;
+	margin:5px 10px;
+	padding: 15px;
+	}
+#dilai,#bocuoc,#xinhoa{
+	margin: 0px 10px;
+	float:left;
+	background:#0F3;
+	}
+
+
+#name1,#name2{
+	padding: 10px;
+	width:130px;
+	margin:10px 10px;
+	height:20px;
+	float:left;
+	overflow:hidden;
+	border: solid 2px #CCC;
+}
+#avt1,#avt2{
+	background-image:url(../images/UserFrame.png);
+	background-size:cover;
+	width:74px;
+	margin:5px 10px;
+	height:86px;
+	float:left;
+	padding-top:22px;
+	padding-left:12px;
+	}
+#info1,#info2{
+	border: outset 1px #CCC;
+	width:73px;
+	margin:5px 0px;
+	height:100px;
+	padding: 5px;
+
+	float:left;
+	}
+#time1{
+	text-align: center;
+	width:100px;
+	height:60px;
+	position:absolute;
+	top:220px;
+	right:10px;
+	}
+#time2{
+	text-align: center;
+	width:100px;
+	height:60px;
+	position:absolute;
+	bottom:80px;
+	left:10px;
+	}
+#turn1{
+	
+	width:100px;
+	height:60px;
+	position:absolute;
+	top:80px;
+	right:10px;
+
+}
+#turn2{
+	
+	width:100px;
+	height:60px;
+	position:absolute;
+	bottom:220px;
+	left:10px;
+	}
+#vesus{
+	position:absolute;
+	bottom:290px;
+	left:150px;
+	width:50px;
+	height:50px;
+	margin:0px auto;
+	}
+#dilai:hover{
+	background-image:url(../images/dilai-hover.png)
+}
+#dilai:push{
+	background-image:url(../images/dilai-push.png)
+	}
