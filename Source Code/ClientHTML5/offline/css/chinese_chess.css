@@ -15,7 +15,13 @@
 }
 
 #controlDiv{
-    
+
+}
+
+body{
+    background-image: url("../imgs/background.jpg");
+    background-size: 100% 100%;
+    background-attachment: fixed;
 }
 
 .pieceCanvas{
@@ -33,9 +39,36 @@
 #infoCanvas{
     position: absolute;
     left: 0;
-    background-color: white;
-    opacity: 0.7;
+    background-color: #ffffffff;
     display: none;
-    //visibility: hidden;
     z-index: 10;
+}
+
+#animateCanvas{
+    position: absolute;
+    left: 0;
+    background-color: #ffffffff;
+    display: none;
+    z-index: 11;
+}
+
+button{
+    border-radius: 10px;
+    color : white;
+    border-width: 1px;
+    border-color: white;
+    //font-size: 15px;
+    padding: 5px;
+    margin: 5px;
+    font-weight: bold;
+}
+
+.button_easy{
+    background-color: green;
+    width: 30%;
+}
+
+.button_newgame{
+    background-color: red;
+    width: 30%;
 }
