@@ -3,6 +3,7 @@
 function SessionManagement()
 {
 	var sessions = [];
+	var token = []
 }
 
 SessionManagement.prototype.indexOf = function(sessionId) {
@@ -13,6 +14,21 @@ SessionManagement.prototype.indexOf = function(sessionId) {
     return null;
 }
 
+SessionManagement.prototype.checkStatus = function(tokenKey) {
+	    for(var i in token) {
+        if(token[i] == tokenKey)
+            return true;
+    }
+    return false;
+}
+
+SessionManagement.prototype.addToken = function(tokenKey) {
+        token.push(tokenKey);
+}
+
+SessionManagement.prototype.removeToken = function(tokenKey) {
+        token.remove(tokenKey);
+}
 SessionManagement.prototype.indexOfUser = function(userId) {
     for(var i in sessions) {
         if(sessions[i].userId == userId)
@@ -76,6 +92,18 @@ SessionManagment.prototype.updateUserLeave = function(userId){
 		if(sessions[i].sessionId == userId) 
 		{
 			sessions[i].leaveRoom();
+		}
+	}
+}
+
+SessionManagment.prototype.updateUser = function(sessionData){
+	for(var i in sessions)
+	{
+		if(sessions[i].sessionId == sessionData.sessionId) 
+		{
+			sessions[i].roomID = sessionData.roomID;
+			sessions[i].status = sessionData.status; // 0 - rảnh rỗi, 1 - trong phòng chơi, 2 - sẵn sàng, 3 - đang chơi.
+			sessions[i].turnFinished = sessionData.turnFinished;
 		}
 	}
 }

@@ -1,42 +1,23 @@
-var http = require('http'),
-    session = require('./lib/core').magicSession();
+var socket = require('socket.io');
 
-// let's create a basic http server!
-http.createServer(function (request, response) {
+var http = require("http");
+var server = http.createServer();
+var io = socket.listen(server);
+server.listen(8888);
+var room = [];
+var room1  = new Object();
+room1.x = 1;
+room1.y = 2;
 
-  // please note: this is just an example of how to hook auth into session.js, its not ideal at all
+var room2  = new Object();
+room2.x = 3;
+room2.y = 4;
 
-  // super basic logout
-  if(request.url === '/logout'){
-    request.session.data.user = "Guest";
-    response.writeHead(200, {'Content-Type': 'text/plain'});
-    response.write('You\'ve been logged out');
-    response.end();
-    return;
-  }
+room.push(room1);
+room.push(room2);
 
-  // let's hardcode a username and password variable into the url
-  var urlParams = require('url').parse(request.url, true).query || {};
-
-  if(typeof urlParams.name != 'undefined'){
-    // if the "name" parameter has been sent, lets log in as that user
-    request.session.data.user = urlParams.name;
-  }
-
-  // request.session.data.user always defaults to "Guest"
-  if(request.session.data.user == "Guest"){
-    response.writeHead(200, {'Content-Type': 'text/plain'});
-    response.write('Hello, you are the Guest user');
-    response.end();
-  }
-  else{
-    response.writeHead(200, {'Content-Type': 'text/plain'});
-    response.write('Hello, you are ' + request.session.data.user);
-    response.end();
-  }
-
-
-}).listen(8080);
-
-/* server started */  
-console.log('> hello world running on port 8080');
+io.sockets.on('connection', function (socket) {
+		console.log("user");
+		socket.emit('res',[{x:room2.x},{y:room2.y}]);
+		socket.emit('log',"đăng nhập");
+});

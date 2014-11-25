@@ -8,11 +8,12 @@ function Room(name){
 	this.name = name;
 	this.matchLimit = 1;
 	this.coin = 0;
-	this.status = 0;
+	this.status = 0; // 0 - free, 1 - ready , 2 - playing, 3 - end
 	this.boss = 0;
 	this.table = new Chess();
-	this.turn = 0; // lượt đi : 0 - trắng, 1 - đen.
-	this.color = 0; // 0 - boss trắng, khách đen / 1 ngược lại.
+	this.turn = 0; // lượt đi : 0 - đỏ, 1 - đen.
+	this.color = 0; // 0 - boss đỏ, khách đen / 1 ngược lại. (đỏ đánh trước)
+	this.password = "";
 };
 
 Room.ID = 0;
@@ -63,6 +64,8 @@ Room.prototype.updateTable = function(id1,id2)
 	if(this.table.isValidMove(id1,id2))
 		{
 		this.table.chessMove(id1,id2);
+		if(turn == 0) turn = 1;
+		else turn = 0;
 		return this.table.checkStatus();
 		}
 	else return -3; // fail
