@@ -98,12 +98,15 @@ var chess = (function () {
         focusedValidMove=[],
         focused,
         bestMove=[],
+        general,
+        opGeneral,
         mainDiv,
         controlDiv,
         gameDiv,
         infoCanvas,
+        animateCanvas,
         newGameButton,
-        depthCombobox,
+        easyButton,
         pieceCanvas = [],
         boardCanvas,
         pieceImgs=[[],[]],
@@ -127,7 +130,7 @@ var chess = (function () {
     function lookAt(r, c) {
         return board[r * 9 + c];
     }
-    function validMoveGen(id, _captureMove, _otherMove, _pieceCount, _otherScore){
+    function validMoveGen(id, _captureMove, _otherMove){
         var piece = board[id];
         if(piece===0) return;//can be delete
         var col = id % 9;
@@ -136,15 +139,12 @@ var chess = (function () {
         var piece_color = piece&8;
         switch(piece_type){
             case 1://tướng
-                _pieceCount[1]++;
                 if(piece_color === 0){//engine
                     if(row>0){
                         if(lookAt(row-1,col)===0){
                             _otherMove.push(id, (row-1)*9+col);
                         }else if((lookAt(row-1,col)&8)!==piece_color){
                             _captureMove.push(id, (row-1)*9+col);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row<2){
@@ -152,8 +152,6 @@ var chess = (function () {
                             _otherMove.push(id, (row+1)*9+col);
                         }else if((lookAt(row+1,col)&8)!==piece_color){
                             _captureMove.push(id, (row+1)*9+col);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(col>3){
@@ -161,8 +159,6 @@ var chess = (function () {
                             _otherMove.push(id, row*9+col-1);
                         }else if((lookAt(row,col-1)&8)!==piece_color){
                             _captureMove.push(id, row*9+col-1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(col<5){
@@ -170,8 +166,6 @@ var chess = (function () {
                             _otherMove.push(id, row*9+col+1);
                         }else if((lookAt(row,col+1)&8)!==piece_color){
                             _captureMove.push(id, row*9+col+1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     //hở mặt tướng
@@ -189,8 +183,6 @@ var chess = (function () {
                             _otherMove.push(id, (row-1)*9+col);
                         }else if((lookAt(row-1,col)&8)!==piece_color){
                             _captureMove.push(id, (row-1)*9+col);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row<9){
@@ -198,8 +190,6 @@ var chess = (function () {
                             _otherMove.push(id, (row+1)*9+col);
                         }else if((lookAt(row+1,col)&8)!==piece_color){
                             _captureMove.push(id, (row+1)*9+col);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(col>3){
@@ -207,8 +197,6 @@ var chess = (function () {
                             _otherMove.push(id, row*9+col-1);
                         }else if((lookAt(row,col-1)&8)!==piece_color){
                             _captureMove.push(id, row*9+col-1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(col<5){
@@ -216,8 +204,6 @@ var chess = (function () {
                             _otherMove.push(id, row*9+col+1);
                         }else if((lookAt(row,col+1)&8)!==piece_color){
                             _captureMove.push(id, row*9+col+1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     //hở mặt tướng
@@ -232,15 +218,12 @@ var chess = (function () {
                 }
                 break;
             case 2://sĩ
-                _pieceCount[2]++;
                 if(piece_color===0){//engine
                     if(row>0 && col>3){
                         if(lookAt(row-1, col-1)===0){
                             _otherMove.push(id, (row-1)*9+col-1);
                         }else if((lookAt(row-1, col-1)&8) !== piece_color){
                             _captureMove.push(id, (row-1)*9+col-1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row<2 && col<5){
@@ -248,8 +231,6 @@ var chess = (function () {
                             _otherMove.push(id, (row+1)*9+col+1);
                         }else if((lookAt(row+1, col+1)&8) !== piece_color){
                             _captureMove.push(id, (row+1)*9+col+1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row>0 && col<5){
@@ -257,8 +238,6 @@ var chess = (function () {
                             _otherMove.push(id, (row-1)*9+col+1);
                         }else if((lookAt(row-1, col+1)&8) !== piece_color){
                             _captureMove.push(id, (row-1)*9+col+1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row<2 && col>3){
@@ -266,8 +245,6 @@ var chess = (function () {
                             _otherMove.push(id, (row+1)*9+col-1);
                         }else if((lookAt(row+1, col-1)&8) !== piece_color){
                             _captureMove.push(id, (row+1)*9+col-1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                 }else{//player
@@ -276,8 +253,6 @@ var chess = (function () {
                             _otherMove.push(id, (row-1)*9+col-1);
                         }else if((lookAt(row-1, col-1)&8) !== piece_color){
                             _captureMove.push(id, (row-1)*9+col-1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row<9 && col<5){
@@ -285,8 +260,6 @@ var chess = (function () {
                             _otherMove.push(id, (row+1)*9+col+1);
                         }else if((lookAt(row+1, col+1)&8) !== piece_color){
                             _captureMove.push(id, (row+1)*9+col+1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row>7 && col<5){
@@ -294,8 +267,6 @@ var chess = (function () {
                             _otherMove.push(id, (row-1)*9+col+1);
                         }else if((lookAt(row-1, col+1)&8) !== piece_color){
                             _captureMove.push(id, (row-1)*9+col+1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row<9 && col>3){
@@ -303,22 +274,17 @@ var chess = (function () {
                             _otherMove.push(id, (row+1)*9+col-1);
                         }else if((lookAt(row+1, col-1)&8) !== piece_color){
                             _captureMove.push(id, (row+1)*9+col-1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                 }
                 break;
             case 3://tượng
-                _pieceCount[3]++;
                 if(piece_color === 0 ){//engine
                     if(row>0 && col>0 && (lookAt(row-1,col-1)===0)){
                         if(lookAt(row-2, col-2)===0){
                             _otherMove.push(id, (row-2)*9+col-2);
                         }else if((lookAt(row-2, col-2)&8) !== piece_color){
                             _captureMove.push(id, (row-2)*9+col-2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row<4 && col<8 && (lookAt(row+1,col+1)===0)){
@@ -326,8 +292,6 @@ var chess = (function () {
                             _otherMove.push(id, (row+2)*9+col+2);
                         }else if((lookAt(row+2, col+2)&8) !== piece_color){
                             _captureMove.push(id, (row+2)*9+col+2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row>0 && col<8 && (lookAt(row-1,col+1)===0)){
@@ -335,8 +299,6 @@ var chess = (function () {
                             _otherMove.push(id, (row-2)*9+col+2);
                         }else if((lookAt(row-2, col+2)&8) !== piece_color){
                             _captureMove.push(id, (row-2)*9+col+2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row<4&& col>0 && (lookAt(row+1,col-1)===0)){
@@ -344,8 +306,6 @@ var chess = (function () {
                             _otherMove.push(id, (row+2)*9+col-2);
                         }else if((lookAt(row+2, col-2)&8) !== piece_color){
                             _captureMove.push(id, (row+2)*9+col-2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                 }else{//player
@@ -354,8 +314,6 @@ var chess = (function () {
                             _otherMove.push(id, (row-2)*9+col-2);
                         }else if((lookAt(row-2, col-2)&8) !== piece_color){
                             _captureMove.push(id, (row-2)*9+col-2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row<9 && col<8 && (lookAt(row+1,col+1)===0)){
@@ -363,8 +321,6 @@ var chess = (function () {
                             _otherMove.push(id, (row+2)*9+col+2);
                         }else if((lookAt(row+2, col+2)&8) !== piece_color){
                             _captureMove.push(id, (row+2)*9+col+2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row>5 && col<8 && (lookAt(row-1,col+1)===0)){
@@ -372,8 +328,6 @@ var chess = (function () {
                             _otherMove.push(id, (row-2)*9+col+2);
                         }else if((lookAt(row-2, col+2)&8) !== piece_color){
                             _captureMove.push(id, (row-2)*9+col+2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row<9&& col>0 && (lookAt(row+1,col-1)===0)){
@@ -381,22 +335,17 @@ var chess = (function () {
                             _otherMove.push(id, (row+2)*9+col-2);
                         }else if((lookAt(row+2, col-2)&8) !== piece_color){
                             _captureMove.push(id, (row+2)*9+col-2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                 }
                 break;
             case 4://xe
-                _pieceCount[4]++;
                 for(var i = col+1; i<9; i++){
                     if(lookAt(row,i)===0){
                         _otherMove.push(id, row*9+i);
                     }else{ 
                         if((lookAt(row,i)&8) !== piece_color){
                             _captureMove.push(id, row*9+i);
-                        }else{
-                            _otherScore[0]++;
                         }
                         break;
                     }
@@ -407,8 +356,6 @@ var chess = (function () {
                     }else{ 
                         if((lookAt(row,i)&8) !== piece_color){
                             _captureMove.push(id, row*9+i);
-                        }else{
-                            _otherScore[0]++;
                         }
                         break;
                     }
@@ -419,8 +366,6 @@ var chess = (function () {
                     }else{ 
                         if((lookAt(i,col)&8) !== piece_color){
                             _captureMove.push(id, i*9+col);
-                        }else{
-                            _otherScore[0]++;
                         }
                         break;
                     }
@@ -431,15 +376,12 @@ var chess = (function () {
                     }else{ 
                         if((lookAt(i,col)&8) !== piece_color){
                             _captureMove.push(id, i*9+col);
-                        }else{
-                            _otherScore[0]++;
                         }
                         break;
                     }
                 }
                 break;
             case 5://pháo
-                _pieceCount[5]++;
                 for(var i = col+1; i<9; i++){
                     if(lookAt(row,i)===0){
                         _otherMove.push(id, row*9+i);
@@ -448,8 +390,6 @@ var chess = (function () {
                             if(lookAt(row,j)!==0){
                                 if((lookAt(row,j)&8) !== piece_color){
                                     _captureMove.push(id, row*9+j);
-                                }else{
-                                    _otherScore[0]++;
                                 }
                                 break;
                             }
@@ -465,8 +405,6 @@ var chess = (function () {
                             if(lookAt(row,j)!==0){
                                 if((lookAt(row,j)&8) !== piece_color){
                                     _captureMove.push(id, row*9+j);
-                                }else{
-                                    _otherScore[0]++;
                                 }
                                 break;
                             }
@@ -482,8 +420,6 @@ var chess = (function () {
                             if(lookAt(j,col)!==0){
                                 if((lookAt(j,col)&8) !== piece_color){
                                     _captureMove.push(id, j*9+col);
-                                }else{
-                                    _otherScore[0]++;
                                 }
                                 break;
                             }
@@ -499,8 +435,6 @@ var chess = (function () {
                             if(lookAt(j,col)!==0){
                                 if((lookAt(j,col)&8) !== piece_color){
                                     _captureMove.push(id, j*9+col);
-                                }else{
-                                    _otherScore[0]++;
                                 }
                                 break;
                             }
@@ -510,15 +444,12 @@ var chess = (function () {
                 }
                 break;
             case 6://mã
-                _pieceCount[6]++;
                 if (row > 1 && lookAt(row - 1, col) === 0) {//không bị cản phía trên
                     if (col > 0) {
                         if (lookAt(row - 2, col - 1) === 0) {
                             _otherMove.push(id, (row - 2) * 9 + col - 1);
                         } else if ((lookAt(row - 2, col - 1) & 8) !== piece_color) {
                             _captureMove.push(id, (row - 2) * 9 + col - 1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if (col < 8) {
@@ -526,8 +457,6 @@ var chess = (function () {
                             _otherMove.push(id, (row - 2) * 9 + col + 1);
                         } else if ((lookAt(row - 2, col + 1) & 8) !== piece_color) {
                             _captureMove.push(id, (row - 2) * 9 + col + 1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                 }
@@ -537,8 +466,6 @@ var chess = (function () {
                             _otherMove.push(id, (row + 2) * 9 + col - 1);
                         } else if ((lookAt(row + 2, col - 1) & 8) !== piece_color) {
                             _captureMove.push(id, (row + 2) * 9 + col - 1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if (col < 8) {
@@ -546,8 +473,6 @@ var chess = (function () {
                             _otherMove.push(id, (row + 2) * 9 + col + 1);
                         } else if ((lookAt(row + 2, col + 1) & 8) !== piece_color) {
                             _captureMove.push(id, (row + 2) * 9 + col + 1);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                 }
@@ -557,8 +482,6 @@ var chess = (function () {
                             _otherMove.push(id, (row - 1) * 9 + col - 2);
                         } else if ((lookAt(row - 1, col - 2) & 8) !== piece_color) {
                             _captureMove.push(id, (row - 1) * 9 + col - 2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if (row < 9) {
@@ -566,8 +489,6 @@ var chess = (function () {
                             _otherMove.push(id, (row + 1) * 9 + col - 2);
                         } else if ((lookAt(row + 1, col - 2) & 8) !== piece_color) {
                             _captureMove.push(id, (row+1) * 9 + col -2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                 }
@@ -577,8 +498,6 @@ var chess = (function () {
                             _otherMove.push(id, (row - 1) * 9 + col + 2);
                         } else if ((lookAt(row - 1, col + 2) & 8) !== piece_color) {
                             _captureMove.push(id, (row - 1) * 9 + col + 2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if (row < 9) {
@@ -586,22 +505,17 @@ var chess = (function () {
                             _otherMove.push(id, (row + 1) * 9 + col + 2);
                         } else if ((lookAt(row + 1, col + 2) & 8 )!== piece_color) {
                             _captureMove.push(id, (row+1) * 9 + col + 2);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                 }
                 break;
             case 7://tốt
-                _pieceCount[7]++;
                 if(piece_color === 0){//engine
                     if(row<9){
                         if(lookAt(row+1, col)===0){
                             _otherMove.push(id, (row+1)*9+col);
                         }else if((lookAt(row+1, col)&8) !== piece_color){
                             _captureMove.push(id, (row+1)*9+col);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row>4){//đã sang sông
@@ -610,8 +524,6 @@ var chess = (function () {
                                 _otherMove.push(id, row*9+col+1);
                             }else if((lookAt(row, col+1)&8) !== piece_color){
                                 _captureMove.push(id, row*9+col+1);
-                            }else{
-                                _otherScore[0]++;
                             }
                         }
                         if(col>0){
@@ -619,8 +531,6 @@ var chess = (function () {
                                 _otherMove.push(id, row*9+col-1);
                             }else if((lookAt(row, col-1)&8) !== piece_color){
                                 _captureMove.push(id, row*9+col-1);
-                            }else{
-                                _otherScore[0]++;
                             }
                         }
                     }
@@ -630,8 +540,6 @@ var chess = (function () {
                             _otherMove.push(id, (row-1)*9+col);
                         }else if((lookAt(row-1, col)&8) !== piece_color){
                             _captureMove.push(id, (row-1)*9+col);
-                        }else{
-                            _otherScore[0]++;
                         }
                     }
                     if(row<5){//đã sang sông
@@ -640,8 +548,6 @@ var chess = (function () {
                                 _otherMove.push(id, row*9+col+1);
                             }else if((lookAt(row, col+1)&8) !== piece_color){
                                 _captureMove.push(id, row*9+col+1);
-                            }else{
-                                _otherScore[0]++;
                             }
                         }
                         if(col>0){
@@ -649,8 +555,6 @@ var chess = (function () {
                                 _otherMove.push(id, row*9+col-1);
                             }else if((lookAt(row, col-1)&8) !== piece_color){
                                 _captureMove.push(id, row*9+col-1);
-                            }else{
-                                _otherScore[0]++;
                             }
                         }
                     }
@@ -658,8 +562,7 @@ var chess = (function () {
                 break;
         }
     }
-    function evaluate(captureMove, otherMove, pieceCount, otherScore,//engine
-                      opCaptureMove, opOtherMove, opPieceCount, opOtherScore){//player
+    function evaluate(){
         var val = 0;
         var piece, piece_type, piece_color;
         for(var i =0; i<90; i++){
@@ -667,60 +570,42 @@ var chess = (function () {
             if(piece===0) continue;
             piece_type = piece&7;
             piece_color = piece&8;
-            val += piece_color!==0 ? -valueByPlace[piece_type][i] : valueByPlace[piece_type][89-i];
+            val += piece_color===0 ? valueByPlace[piece_type][89-i]:-valueByPlace[piece_type][i];
         }
-        val +=  (captureMove.length - opCaptureMove.length)/4; //each move represented by two number
-        //val +=  (otherMove.length -opOtherMove.length)/16; // loại bỏ vì không thấy hiệu quả
-        val +=  (otherScore[0] - opOtherScore[0])/6;//protection
-        //được thêm 2 điểm nếu còn đủ sĩ, tượng
-//        if(pieceCount[2]===2){
-//            val += 2;
-//        }
-//        if(opPieceCount[2]===2){
-//            val -= 2;
-//        }
-//        if(pieceCount[3]===2){
-//            val += 2;
-//        }
-//        if(opPieceCount[3]===2){
-//            val -= 2;
-//        }
         return val;
     }
    
     function alphaBetaSearch(a, b, dep, isQS, isRoot, isCapture, _turn){
         var captureMove=[],
         otherMove=[],
-        pieceCount = [0,0,0,0,0,0,0,0],
-        otherScore = [0],//for now, otherScore[0] : protection score
-        opCaptureMove = [],
-        opOtherMove = [],
-        opPieceCount = [0,0,0,0,0,0,0,0],
-        opOtherScore = [0],
         prevValue;
+        general -1;
+        opGeneral = -1;
         for(var i = 0; i<90; i++){
             if(board[i]!==0){
                 if ((board[i]&8)===_turn){
-                    validMoveGen(i, captureMove, otherMove, pieceCount, otherScore);
+                    validMoveGen(i, captureMove, otherMove);
+                    if((board[i]&7) === 1){
+                        general = i;
+                    }
                 }else{
-                    validMoveGen(i, opCaptureMove, opOtherMove, opPieceCount, opOtherScore);
+                    if((board[i]&7) === 1){
+                        opGeneral = i;
+                    }
                 }
             }
         }
-        if(pieceCount[1]===0){
+        if(general === -1){
             return _turn===0 ? -Infinity : Infinity;
         }
-        if(opPieceCount[1]===0){
+        if(opGeneral === -1){
             return _turn===0 ? Infinity : -Infinity;
         }
         
         if(isQS){
             //dep = 0;//debug
             if(dep===0){
-                return _turn===0 ?  evaluate(captureMove, otherMove, pieceCount, otherScore,
-                                        opCaptureMove, opOtherMove, opPieceCount, opOtherScore)+2: 
-                                        evaluate(opCaptureMove, opOtherMove, opPieceCount, opOtherScore,
-                                        captureMove, otherMove, pieceCount, otherScore)-2;
+                return evaluate();
             }else{//dep>0
                 if(_turn===0){//engine
                     var length, i, bestValue = -Infinity, val;
@@ -757,10 +642,6 @@ var chess = (function () {
                         board[captureMove[i+1]] = prevValue;
                         if(val<bestValue){
                             bestValue = val;
-                            /*if(isRoot){ //player is always not root
-                                bestMove[0] = captureMove[i];
-                                bestMove[1] = captureMove[i+1];
-                            }*/
                             b = min(b, bestValue);
                             if(b<=a){
                                 return bestValue;
@@ -773,16 +654,9 @@ var chess = (function () {
         }else{//not isQS
             if(dep===0){
                 if(isCapture){
-                    return min(alphaBetaSearch(a, b, depth-2, true, isRoot, true, _turn),
-                    _turn===0 ?  evaluate(captureMove, otherMove, pieceCount, otherScore, 
-                                        opCaptureMove, opOtherMove, opPieceCount, opOtherScore)+2: 
-                                        evaluate(opCaptureMove, opOtherMove, opPieceCount, opOtherScore,
-                                        captureMove, otherMove, pieceCount, otherScore)-2);// quiescence search
+                    return min(alphaBetaSearch(a, b, depth-2, true, isRoot, true, _turn), evaluate());// quiescence search
                 }else{
-                    return _turn===0 ?  evaluate(captureMove, otherMove, pieceCount, otherScore, 
-                                        opCaptureMove, opOtherMove, opPieceCount, opOtherScore)+2: 
-                                        evaluate(opCaptureMove, opOtherMove, opPieceCount, opOtherScore,
-                                        captureMove, otherMove, pieceCount, otherScore)-2;
+                    return evaluate();
                 }
             }else{//dep>0
                 if(_turn===0){//engine
@@ -840,10 +714,6 @@ var chess = (function () {
                         board[captureMove[i+1]] = prevValue;
                         if(val<bestValue){
                             bestValue = val;
-                            /*if(isRoot){ //player is always not root
-                                bestMove[0] = captureMove[i];
-                                bestMove[1] = captureMove[i+1];
-                            }*/
                             b = min(b, bestValue);
                             if(b<=a){
                                 return bestValue;
@@ -860,10 +730,6 @@ var chess = (function () {
                         board[otherMove[i+1]] = prevValue;
                         if(val<bestValue){
                             bestValue = val;
-                            /*if(isRoot){ player is always not root
-                                bestMove[0] = captureMove[i];
-                                bestMove[1] = captureMove[i+1];
-                            }*/
                             b = min(b, bestValue);
                             if(b<=a){
                                 return bestValue;
@@ -899,13 +765,6 @@ var chess = (function () {
                 pieceCtx.drawImage(validMoveImg, 0, 0, cellSize, cellSize);
             }
         }
-        if(turn!==0 && bestMove.length>0){//player
-            pieceCtx = pieceCanvas[bestMove[0]].getContext("2d");
-            pieceCtx.drawImage(focusImg, -3, -3, cellSize+3, cellSize+3);
-            pieceCtx = pieceCanvas[bestMove[1]].getContext("2d");
-            pieceCtx.drawImage(focusImg, -3, -3, cellSize+3, cellSize+3);
-            bestMove = [];
-        }
     }
     function hideInfo(){
         infoCanvas.style.display = "none";
@@ -930,39 +789,43 @@ var chess = (function () {
         infoCtx.drawImage(img, infoCanvas.width/2 - (width/2), infoCanvas.height/2 - height/2, width, height);
         infoCanvas.style.display = "inline";
         if(id===2){
-            setTimeout(hideInfo, 700);
+            setTimeout(hideInfo, 1000);
         }
     }
     function checkStatus(){
-        var captureMove = [], otherMove = [], pieceCount = [0,0,0,0,0,0,0,0], otherScore = [0],
-            kingPlayer = -1, i;
+        var captureMove = [], otherMove = [];
+        general -1;
+        opGeneral = -1;
         for(var i =0; i<90; i++){
             if(board[i]!==0){
                 if((board[i]&8)===0){
-                    validMoveGen(i, captureMove, otherMove, pieceCount, otherScore);
+                    validMoveGen(i, captureMove, otherMove);
+                    if(board[i]===1){
+                        general = i;
+                    }
                 }else if(board[i]===9){
-                    kingPlayer = i;
+                    opGeneral = i;
                 }
             }
         }
-        if(kingPlayer===-1){
+        if(opGeneral===-1){
             gameOver = true;
             showInfo(0);
-            return 0;
-        }else if(pieceCount[1]===0){
+            return 0;//player win
+        }else if(general===-1){
             gameOver = true;
             showInfo(1);
-            return 1;
+            return 1;//player lost
         }else{
             var length = captureMove.length;
             for(i=1; i< length; i+=2){
-                if(captureMove[i]===kingPlayer){
+                if(captureMove[i]===opGeneral){
                     showInfo(2);
-                    return 2;
+                    return 2;//check
                 }
             }
         }
-        return -1;
+        return -1;//normal
     }
     function engineMove(){
         bestMove = [];
@@ -973,11 +836,8 @@ var chess = (function () {
             }
             gameOver = true;
         }else{
-            board[bestMove[1]] = board[bestMove[0]];
-            board[bestMove[0]] = 0;
-            turn = turn^8;
-            checkStatus();
-            drawBoard();
+            makeMove(bestMove[0], bestMove[1]);
+            bestMove = [];
         }
     }
     function imageLoaded(){
@@ -986,15 +846,19 @@ var chess = (function () {
             drawBoard();
         }
     }
-    //PUBLIC API
-    return {
-        setDepth: function (d) {
+    function setDepth(d) {
             depth = d;
-        },
-        depthChange: function(){
-            this.setDepth(depthCombobox.options[depthCombobox.selectedIndex].value);
-        },
-        reset: function(){
+    }
+    function changeEasy(){
+        if(depth===3){
+            setDepth(5);
+            easyButton.innerHTML = "HARD";
+        }else{
+            setDepth(3);
+            easyButton.innerHTML = "EASY";
+        }
+    }
+    function reset(){
             board = [
             4, 6, 3, 2, 1, 2, 3, 6, 4,
             0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1002,7 +866,7 @@ var chess = (function () {
             7, 0, 7, 0, 7, 0, 7, 0, 7,
             0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0,
-           15, 0,15, 0,15, 0,15, 0,15,
+           15, 0,15, 0, 15, 0,15, 0,15,
             0,13, 0, 0, 0, 0, 0,13, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0,
            12,14,11,10, 9,10,11,14,12 
@@ -1013,6 +877,76 @@ var chess = (function () {
             focusedValidMove=[];
             focused = -1;
             infoCanvas.style.display = "none";
+            drawBoard();
+    }
+    function makeMove(id1, id2){
+        var r1, r2, c1, c2, x1, x2, y1, y2, piece, ctx, img, x, y, dx, dy, i, timer, intervals = 20;
+        function exec(){
+            i++;
+            if(i>=intervals){
+                board[id2] = piece;
+                animateCanvas.style.display = "none";
+                drawBoard();
+                if(turn===0){
+                    //engineMove();
+                    setTimeout(engineMove, 100);
+                }else{
+                    checkStatus();
+                    drawBoard();
+                }
+                return;
+            }
+            ctx.clearRect(x-1, y-1, cellSize+2, cellSize+2);
+            x += dx; y += dy;
+            ctx.drawImage(img, x, y, cellSize, cellSize);
+            timer = setTimeout(exec, 10);
+        }
+        
+        focusedValidMove = [];
+        focused = -1;
+        turn = turn^8;
+        
+        c1 = id1 % 9;
+        r1 = (id1-c1) / 9;
+        c2 = id2 % 9;
+        r2 = (id2-c2) / 9;
+        x1 = c1 * cellSize;
+        y1 = r1 * cellSize;
+        x2 = c2 * cellSize;
+        y2 = r2 * cellSize;
+        piece = board[id1];
+        img = pieceImgs[piece>>3][piece&7];
+        x = x1; y = y1;
+        dx = (x2 - x1)/intervals;
+        dy = (y2 - y1)/intervals;
+        board[id1] = 0;
+        drawBoard();
+        animateCanvas.style.display = "inline";
+        ctx = animateCanvas.getContext("2d");
+        ctx.clearRect(0, 0, animateCanvas.width, animateCanvas.height);
+        i = 0;
+        exec();
+    }
+    //PUBLIC API
+    return {
+        resize: function () {
+            cellSize = min((window.innerHeight * 0.9) / 10, (window.innerWidth * 0.9) / 9);
+            boardHeight = cellSize * 10;
+            boardWidth = cellSize * 9;
+            mainDiv.style.width = boardWidth + 10 + "px";
+            gameDiv.style.height = boardHeight + "px";
+            gameDiv.style.width = boardWidth + "px";
+            infoCanvas.width = boardWidth;
+            infoCanvas.height = (boardHeight * 0.3);
+            infoCanvas.style.top = (boardHeight * 0.3) + "px";
+            boardCanvas.height = boardHeight;
+            boardCanvas.width = boardWidth;
+            animateCanvas.width = boardWidth;
+            animateCanvas.height = boardHeight;
+            for (var i = 0; i < 90; i++) {
+                pieceCanvas[i].height = cellSize;
+                pieceCanvas[i].width = cellSize;
+            }
             drawBoard();
         },
         boardClicked: function(id){
@@ -1026,22 +960,15 @@ var chess = (function () {
                         }
                     }
                     if(i<length){//valid move
-                        board[id] = board[focused];
-                        board[focused] = 0;
-                        focusedValidMove = [];
-                        focused = -1;
-                        turn = turn^8;
-                        drawBoard();
-                        setTimeout(engineMove, 1);
+                        makeMove(focused, id);
                     }else{//not valid move
                         if((piece&8) !== 0){
                             focused = id;
                             focusedValidMove = [];
-                            var pieceCount = [0,0,0,0,0,0,0,0], otherScore=[0];//not use
-                            validMoveGen(focused, focusedValidMove, focusedValidMove, pieceCount, otherScore);
+                            validMoveGen(focused, focusedValidMove, focusedValidMove);
                             drawBoard();
                        }else{
-                            focused = -1;
+                          focused = -1;
                           focusedValidMove = [];
                           drawBoard();
                       }
@@ -1050,8 +977,7 @@ var chess = (function () {
                     if((piece&8) !== 0){
                         focused = id;
                         focusedValidMove = [];
-                        var pieceCount = [0,0,0,0,0,0,0,0], otherScore=[0];//not use
-                        validMoveGen(focused, focusedValidMove, focusedValidMove, pieceCount, otherScore);
+                        validMoveGen(focused, focusedValidMove, focusedValidMove);
                         drawBoard();
                     }
                 }
@@ -1113,22 +1039,27 @@ var chess = (function () {
             infoCanvas.style.top = (boardHeight*0.3)+"px";
             infoCanvas.onclick = hideInfo;
             
-            newGameButton = document.createElement("button");
-            newGameButton.innerHTML = "New Game";
-            newGameButton.setAttribute("onclick", "chess.reset();");
+            animateCanvas = document.createElement("canvas");
+            animateCanvas.id = "animateCanvas";
+            animateCanvas.width = boardWidth;
+            animateCanvas.height = boardHeight;
             
-            depthCombobox = document.createElement("select");
-            depthCombobox.innerHTML = "<option value=\"2\">2</option>\n\
-                                       <option value=\"3\" selected>3</option>\n\
-                                       <option value=\"4\">4</option>\n\
-                                       <option value=\"5\">5</option>";
-            depthCombobox.setAttribute("onchange", "chess.depthChange();");
+            newGameButton = document.createElement("button");
+            newGameButton.innerHTML = "NEW GAME";
+            newGameButton.onclick=reset;
+            newGameButton.className = "button_newgame";
+            
+            easyButton = document.createElement("button");
+            easyButton.innerHTML = "EASY";
+            easyButton.onclick=changeEasy;
+            easyButton.className = "button_easy";
             
             boardCanvas = document.createElement("canvas");
             boardCanvas.height = boardHeight;
             boardCanvas.width = boardWidth;
             boardCanvas.id = "boardCanvas";
             
+            gameDiv.appendChild(animateCanvas);
             gameDiv.appendChild(infoCanvas);
             gameDiv.appendChild(boardCanvas);
             for(i=0; i<90; i++){
@@ -1140,13 +1071,16 @@ var chess = (function () {
                 gameDiv.appendChild(pieceCanvas[i]);
             }
             
-            controlDiv.innerHTML = "Depth: ";
-            controlDiv.appendChild(depthCombobox);
             controlDiv.appendChild(newGameButton);
+            controlDiv.appendChild(easyButton);
             mainDiv.appendChild(controlDiv);
             mainDiv.appendChild(gameDiv);
-            this.reset();
-            imageLoaded();
+            window.onresize = this.resize;
+        },
+        init: function(id){
+            this.place(id);
+            reset();
+            imageLoaded();//đảm bảo tất cả đã sẵn sàng trước khi gọi hàm drawBoard() lần đầu tiên
         }
     };
 }());
