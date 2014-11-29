@@ -1,0 +1,68 @@
+/* 
+    Created on : Oct 17, 2014, 2:44:21 PM
+    Author     : Nguyen Tat Nguyen
+*/
+
+#gameDiv{
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#controlDiv{
+
+}
+
+.pieceCanvas{
+    float: left;
+    z-index: 5;
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#boardCanvas{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#infoCanvas{
+    position: absolute;
+    left: 0;
+    background-color: #ffffffff;
+    display: none;
+    z-index: 10;
+}
+
+#animateCanvas{
+    position: absolute;
+    left: 0;
+    background-color: #ffffffff;
+    display: none;
+    z-index: 11;
+}
+
+.buttonGreen{
+    border-radius: 8px;
+    color : white;
+    border-width: 1px;
+    border-color: white;
+    padding: 5px;
+    margin: 5px;
+    font-weight: bold;
+    background-color: green;
+    width: 20%;
+}
+
+.buttonRed{
+    border-radius: 8px;
+    color : white;
+    border-width: 1px;
+    border-color: white;
+    padding: 5px;
+    margin: 5px;
+    font-weight: bold;
+    background-color: red;
+    width: 20%;
+}

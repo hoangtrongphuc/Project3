@@ -1,71 +1,146 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>zô zô</title>
-<link href="../CSS/banco.css" rel="stylesheet" type="text/css" />
-<script type='text/javascript' src="../Javascript/jquery-1.11.1.min.js"></script>
-<script src="../libraries/jquery-ui-1.11.1.custom/jquery-ui.min.js" type="text/javascript"></script>
-<script src="../libraries/underscore-min.js" type="text/javascript"></script>
-<script src="../libraries/GS/TweenMax.min.js"></script>
-<script src="../libraries/GS/jquery.gsap.min.js"></script>
-<script src="../libraries/GS/utils/Draggable.min.js"></script>
-<script src="../libraries/GS/plugins/ScrollToPlugin.min.js"></script>
-<script src="../libraries/GS/plugins/RaphaelPlugin.min.js"></script>
-<script src="../libraries/GS/plugins/KineticPlugin.min.js"></script>
-<script src="../libraries/GS/plugins/ColorPropsPlugin.min.js"></script>
-<script src="../libraries/GS/plugins/CSSRulePlugin.min.js"></script>
-<script src="../libraries/GS/plugins/EaselPlugin.min.js"></script>
-<script src="../libraries/GS/plugins/TextPlugin.min.js"></script>
-<script src="../libraries/GS/plugins/ThrowPropsPlugin.min.js"></script>
-<script src="../Javascript/game.js" type="text/javascript"></script>
-</head>
-<body>
-<?php $baseurl = 'http://localhost/cotuong' ?>
-<div class="board" style="position:absolute;top:25px;left:100px;">
-<div class="board_inner" id="board">
+<html>
+    <head>
+        <title>Offline Chinese Chess</title>
+        <meta charset="UTF-8">
+        <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="js/socket.io.js"></script>
+        <script type="text/javascript" src="js/chinese_chess.js"></script>
+        <link title="text/css" href="css/chinese_chess.css" rel="stylesheet"/>
+        <link title="text/css" href="css/style.css" rel="stylesheet"/>
+        <link title="text/css" href="css/jquery-ui.css" rel="stylesheet"/>
+        <link title="text/css" href="css/jquery-ui.theme.css" rel="stylesheet"/>
+        <link title="text/css" href="css/jquery-ui.structure.css" rel="stylesheet"/>
+        <script>
+            var roomID;
+            $("document").ready(function(){
+                controller.initController("chessBoardDiv");
+                
+                $("#newRoomDialog").dialog({
+                    autoOpen: false, 
+                    buttons: {
+                        "Hủy": function(){
+                            $("#newRoomDialog").dialog("close");
+                        },
+                        "Tạo": function(){
+                            var ob = {};
+                            ob.name = $("#roomName").val();
+                            ob.match = $("#roomMatch").val();
+                            ob.coin = $("#roomCoin").val();
+                            ob.pass = $("#roomPass").val();
+                            controller.addRoom(ob);
+                            $("#newRoomDialog").dialog("close");
+                        }
+                    },
+                    title: "Tạo phòng chơi",
+                    height: 360,
+                    width: 300,
+                    modal: true
+                });
+                
+                $("#passwordDialog").dialog({
+                    autoOpen: false, 
+                    buttons: {
+                        "Hủy": function(){
+                            $("#passwordDialog").dialog("close");
+                            $("#pass").val('');
+                        },
+                        "Tham gia": function(){
+                            controller.joinRoom(roomID, $("#pass").val());
+                            $("#passwordDialog").dialog("close");
+                            $("#pass").val('');
+                        }
+                    },
+                    title: "Tham gia phòng chơi",
+                    height: 200,
+                    width: 300,
+                    modal: true
+                });
+                
+                $("#messageDialog").dialog({
+                    autoOpen: false,
+                    buttons: {
+                        "Đóng":function(){
+                            $("#messageDialog").dialog('close');
+                        }
+                    },
+                    height: 200,
+                    width: 300,
+                    modal: true,
+                    title: "Thông báo"
+                });
+            });    
+            function joinRoom(id, havePass){
+                    roomID = id;
+                    if(havePass){
+                        $("#passwordDialog").dialog('open');
+                    }else{
+                        controller.joinRoom(roomID, "");
+                    }
+            }
+            function addRoom(){
+                $('#newRoomDialog').dialog('open')
+            }
+        </script>
+    </head>
+    <body onhashchange="controller.onHashChange()" onload="controller.onHashChange()">
+        <div id="bodyDiv">     
+            <div id="listRoomDiv">
+                <div id="headerDiv">
+                    DANH SÁCH PHÒNG CHƠI
+                    <input id="searchInput" type="text" onchange="controller.searchRoom(this.value)">
+                </div>
+                <div id="roomTableDiv">
+                    <table id="roomTable"></table>
+                </div>
+                <div id="roomControlDiv">
+                    <button class="button" id="createRoomButton" onclick="addRoom();">TẠO PHÒNG</button>
+                    <button class="button" id="refreshRoomButton" onclick="controller.refreshRoom();">CẬP NHẬT DANH SÁCH</button>
+                </div>
+            </div>
+            <div id="roomDiv">
+                <div id="leftBoardDiv">
+                    LEFT
+                    <div id="user1Div"></div>
+                    <div id="timerDiv"></div>
+                    <div id ="user2Div"></div>
+                </div>
+                <div id="chessBoardDiv"></div>
+                <div id="rightBoardDiv">
+                    RIGHT
+                    <div id="roomInfoDiv"></div>
+                    <div id="messagesDiv"></div>
+                    <div id="typeDiv">
+                        <form onsubmit="controller.chatInRoom();">
+                            <input id="messageInput" type="text">
+                            <button class="button" id="sendButton" onclick="controller.chatInRoom();">Gửi</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="footer">
 
-<canvas id="chess" width="600" height="600" style="border:1px solid #000;"></canvas>
-<div class="pieces">
-<div class="mark" id="board-mark">
-
-</div>
-</div>
-
-</div>
-</div>
-<div id="menu">
-  <div id="room-name">004 - Thách đấu</div>
-  <div id="tat">X</div>
-  <div id="turn1"><img src="../images/turn.png"></div>
-  <div id="player1">
-    <div id="name1">Emma Watson</div>
-    <div id="avt1"><img src="../images/avt1.jpg" width="62" height="62"></div>
-    <div id="info1">
-      <div class="rank"><span><H1>R: 120</H1></span></div>
-      <div class="rick"><span><H1>M: 200$</H1></span></div>
-      <div class="medal"><span><H1>Trình độ: Gà Con</H1></span></div>
-    </div>
-    
-  </div>
-  <div id="time1"><img src="../images/time1.png"></div>
-  <div id="vesus"><img src="../images/vs.png"></div>
-  <div id="turn2"></div>
-  <div id="player2">
-    <div id="name2">Adam Levine</div>
-    <div id="avt2"><img src="../images/avt2.jpg" width="62" height="62"></div>
-    <div id="info2">
-      <div class="rank"><span><H1>R: 10</H1></span></div>
-      <div class="rick"><span><H1>M: 2200$</H1></span></div>
-      <div class="medal"><span><H1>Trình độ: Gà Bô Lão</H1></span></div>
-    </div>
-  </div>
- <div id="time2"><img src="../images/time2.png"></div>
-  <div id="button">
-    <a href="#"><img id="bocuoc" src="<?php echo $baseurl.'../../images/xinthua.png'?>" width='74' height='22'></a>
-    <a href="#"><img id="dilai" src="<?php echo $baseurl.'../../images/dilai.png'?>" width='74' height='22'></a>
-    <a href="#"><img id="xinhoa" src="<?php echo $baseurl.'../../images/xinhoa.png'?>" width='74' height='22'></a>
-  </div>
-</div>
-</body>
+        </div>
+          <div id="passwordDialog" class="dialog">
+            <form id="passForm">
+                <label>Password: </label>
+                <input type="text" id="pass">
+            </form>
+        </div>
+        <div id="newRoomDialog" class="dialog">
+            <form id="newRoomForm">
+                <label for="roomName">Tên phòng: </label> 
+                <input type="text" id="roomName" name="roomName" ><br/>
+                <label for="roomMatch">Số trận: </label> 
+                <input type="text" id="roomMatch" name="roomMatch" ><br/>
+                <label for="roomCoin">Tiền cược: </label> 
+                <input type="text" id="roomCoin" name="roomCoin" ><br/>
+                <label for="roomPass">Password: </label> 
+                <input type="text" id="roomPass" name="roomPass" ><br/>
+            </form>
+        </div>
+        <div id="messageDialog"></div>
+    </body>
 </html>
