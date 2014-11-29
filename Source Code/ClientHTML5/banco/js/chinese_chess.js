@@ -729,7 +729,7 @@ var controller = (function () {
                 "<tr>"+room.gameCount+"</tr>"+
                 "<tr>"+room.playingCount+"</tr>"+
                 "<tr>"+room.xu+"</tr>"+
-                (room.havePass==="true")?"<tr>LOCK</tr>":"<tr></tr>";
+                (room.hasOwnProperty('pass'))?"<tr>LOCK</tr>":"<tr></tr>";
                 table.append(row);
             }
         }
@@ -1020,12 +1020,18 @@ var controller = (function () {
         },
         readyToPlay: function(){
             console.log("readToPlay");
+            controlDiv.innerHTML='';
+            controlDiv.appendChild(leaveRoomButton);
+            controlDiv.appendChild(giveUpButton);
             //socket.emit('readyToPlay');
         },
         giveup: function(){
             console.log("giveup");
             if(confirm("Bạn có chắc chắn sẽ chịu thua ván này?")){
                 gameStart = false;
+                controlDiv.innerHTML='';
+                controlDiv.appendChild(leaveRoomButton);
+                controlDiv.appendChild(nextButton);
                 //socket.emit('giveUp','');
             }
         },
