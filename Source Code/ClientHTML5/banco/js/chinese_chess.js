@@ -9,7 +9,6 @@ var controller = (function () {
         token = getCookie('token'),
         roomInfo,
         roomList=[],
-        //gameOver = true,
         gameStart = false,
         focusedValidMove=[],
         focused,
@@ -972,34 +971,34 @@ var controller = (function () {
             window.onresize = resize;
             
             //Tao socket
-//            socket = io.connect(connectURL);
-//            socket.on('boardInfo', onBoardInfo);
-//            socket.on('opMove', onOpMove);
-//            socket.on('check', onCheck);
-//            socket.on('lose', onLose);
-//            socket.on('win', onWin);
-//            socket.on('loseRoom', onLoseRoom);
-//            socket.on('winRoom', onWinRoom);
-//            socket.on('invalidMove', onInvalidMove);
-//            socket.on('loseGU', onLoseGU);
-//            socket.on('winGU', onWinGU);
-//            socket.on('loseRoomGU', onLoseRoomGU);
-//            socket.on('winRoomGU', onWinRoomGU);
-//            socket.on('logging', onLogging);
-//            socket.on('roomInfo', onRoomInfo);
-//            socket.on('err', onErr);
-//            socket.on('roomList', onRoomList);
-//            socket.on('chatmessage', onChatMessage);
-//            socket.on('chatroommessage', onChatRoomMessage);
-//            socket.on('joined', onJoined);
-//            socket.on('added', onAdded);
-//            socket.on('roomFull', onRoomFull);
+            socket = io.connect(connectURL);
+            socket.on('boardInfo', onBoardInfo);
+            socket.on('opMove', onOpMove);
+            socket.on('check', onCheck);
+            socket.on('lose', onLose);
+            socket.on('win', onWin);
+            socket.on('loseRoom', onLoseRoom);
+            socket.on('winRoom', onWinRoom);
+            socket.on('invalidMove', onInvalidMove);
+            socket.on('loseGU', onLoseGU);
+            socket.on('winGU', onWinGU);
+            socket.on('loseRoomGU', onLoseRoomGU);
+            socket.on('winRoomGU', onWinRoomGU);
+            socket.on('logging', onLogging);
+            socket.on('roomInfo', onRoomInfo);
+            socket.on('err', onErr);
+            socket.on('roomList', onRoomList);
+            socket.on('chatmessage', onChatMessage);
+            socket.on('chatroommessage', onChatRoomMessage);
+            socket.on('joined', onJoined);
+            socket.on('added', onAdded);
+            socket.on('roomFull', onRoomFull);
         },
         initController: function(id){
             this.place(id);
             reset();
             imageLoaded();//đảm bảo tất cả đã sẵn sàng trước khi gọi hàm drawBoard() lần đầu tiên
-            //connectToServer();
+            connectToServer();
             updateRoomList(roomList);
         },
         joinRoom: function(id, pass){
@@ -1008,22 +1007,22 @@ var controller = (function () {
             ob.roomID = id;
             ob.pass = pass;
             console.log("joinRoom: "+ob.sessionId+" "+ob.roomID+" "+ob.pass);
-            //socket.emit('joinRoom', JSON.stringify(ob));
+            socket.emit('joinRoom', JSON.stringify(ob));
         },
         refreshRoom: function(){
             console.log("refreshRoom");
-            //socket.emit('refreshRoom','');
+            socket.emit('refreshRoom','');
         },
         addRoom: function(ob){
             console.log("addRoom "+ob.name+" "+ob.coin+" "+ob.pass);
-            //socket.emit('addroom', JSON.stringify(ob));
+            socket.emit('addroom', JSON.stringify(ob));
         },
         readyToPlay: function(){
             console.log("readToPlay");
             controlDiv.innerHTML='';
             controlDiv.appendChild(leaveRoomButton);
             controlDiv.appendChild(giveUpButton);
-            //socket.emit('readyToPlay');
+            socket.emit('readyToPlay');
         },
         giveup: function(){
             console.log("giveup");
@@ -1032,14 +1031,14 @@ var controller = (function () {
                 controlDiv.innerHTML='';
                 controlDiv.appendChild(leaveRoomButton);
                 controlDiv.appendChild(nextButton);
-                //socket.emit('giveUp','');
+                socket.emit('giveUp','');
             }
         },
         leaveRoom: function(){
             console.log("leaveRoom");
             if(confirm("Bạn có chắc chắn sẽ chịu thua phòng chơi này?")){
                 gameStart = false;
-                //socket.emit('leaveRoom','');
+                socket.emit('leaveRoom','');
                 document.location.hash = "#listRoomDiv";
             }
         },
@@ -1047,7 +1046,7 @@ var controller = (function () {
         chatInRoom: function(){
             var s = $("#messageInput").val();
             console.log("chatInRoom: "+s);
-            //socket.emit('chatInRoom', s);
+            socket.emit('chatInRoom', s);
             $("#messageInput").val("");
             event.preventDefault();
         },
