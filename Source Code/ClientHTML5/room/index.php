@@ -31,9 +31,12 @@
   <div id="info">
     <div id="name-info">Emma Watson</div>
     <div id="avt"><img src="../images/avt1.jpg" style="width:140px;" class="img-rounded"></div>
-    <div id="rank">Rank : 12</div>
-    <div id="rick">Money: 120$</div>
-    <div id="medal">Gà bô lão</div>
+    <div id="rank" title="Xếp hạng cá nhân">RANK : <span class="value">12</span></div>
+    <div id="rick" title="Số tiền hiện có">$: <span class="value">120$</span></div>
+    <div id="medal" title="Cấp độ đạt được">Gà bô lão</div>
+    <div id="editprofile"><button id="update" type="button" class="btn btn-default">Chỉnh sửa profile </button></div>
+    
+    
   </div>
   <div id="list-room">
     <div id="head-list">
@@ -133,7 +136,11 @@
     </table>
 
 
-</div>
+	</div>
+    <div id="bot-list">
+    	<div id="page"> </div>
+       	<div id="refresh"><button type="button" id="refresh-list" class="btn btn-danger" style="width:100px;height:30px; margin:5px 22px;" ><span class="glyphicon glyphicon-refresh"></span> Refresh</button></div>	 
+    </div>
   </div>
   <div id="friend">
   <div id="list-name">Danh sách bạn bè</div>
@@ -184,7 +191,7 @@
     
     <div id="shop"><button type="button" class="btn btn-danger" disabled="disabled">Shop<small style="color:#CCC">(Chưa mở)</small></button></div>
     <div id="guide"><a href="/cotuong/?page=howtoplay"><button type="button" class="btn btn-danger">Hướng dẫn</button></a></div>
-    <div id="top-board"><a href="/cotuong/layout/bill-board"><button type="button" class="btn btn-danger">Bảng xếp hạng</button></a>	</div>
+    <div id="top-board"><a href="/cotuong/bxh"><button type="button" class="btn btn-danger">Bảng xếp hạng</button></a>	</div>
   </div>
 </div>
 <?php require('../layout/footer.php'); ?>
