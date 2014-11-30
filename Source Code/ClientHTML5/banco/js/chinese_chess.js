@@ -625,8 +625,7 @@ var controller = (function () {
     //các sự kiện khi chơi game 
     function onBoardInfo(data){
         console.log("onBoardInfo");
-        //var ob = JSON.parse(data);
-        var ob = data;
+        var ob = JSON.parse(data);
         if(gameStart === false){
             if(ob.turn === username){
                 myColor = 8;//đỏ, đi trước
@@ -649,8 +648,7 @@ var controller = (function () {
     }
     function onOpMove(data){
         console.log("onOpMove");
-        //var move = JSON.parse(data);
-        var move=data;
+        var move = JSON.parse(data);
         if(myColor===0){
             moveAnimatedly(90-move.id1, 90-move.id2);
         }else{
@@ -746,14 +744,13 @@ var controller = (function () {
             case "4" : showMessage("Nước bạn vừa đi không hợp lệ"); break;
             case "5" : showMessage("Đã xảy ra lỗi hệ thống"); break;
             case "6" : showMessage("Lỗi không xác định"); break;
-            case "7" : showMessage("Tài khoản đang được sử dụng ở thiết bị khác"); break;
+			case "7" : showMessage("Tài khoản đang được sử dụng"); break;
             default : showMessage("Mã lỗi không đúng. "); break;
         }
     }
     function onRoomInfo(data){
         console.log("onRoomInfo");
-        //roomInfo = JSON.parse(data);
-        roomInfo = data;
+        roomInfo = JSON.parse(data);
         console.log("onRoomInfo: "+roomInfo.ID);
         var html = "<b>Mã phòng chơi</b>"+roomInfo.ID+
                 "<br/><b>Tên phòng chơi</b>"+roomInfo.name+
@@ -780,8 +777,7 @@ var controller = (function () {
         console.log("onChatMessage");
     }
     function onChatRoomMessage(s){
-        //var m = JSON.parse(s);
-        var m = s;
+        var m = JSON.parse(s);
         console.log("onChatRoomMessage: "+m.username+" "+m.message);
         $("#messagesDiv").append("<b>"+m.username+":</b> "+m.message+"<br/>");
     }
@@ -791,11 +787,10 @@ var controller = (function () {
     function connectToServer(){
         console.log("connectToServer");
         var ob={};
-        //ob.token = token;
-        //ob.username = username;
-        ob.token = 'kaka';
-        ob.usrename = 'NTN';
-        socket.emit('connectToServer', ob);
+        //ob.token = "xax";
+        ob.token = "kaka";
+        ob.username = "hp";
+        socket.emit('connectToServer', {token : "xax", username : "hp"});
     }
     function move(id1, id2) {
         var ob={};
@@ -807,7 +802,7 @@ var controller = (function () {
         ob.id2 = id2;
         console.log("move: "+ob.id1+" "+ob.id2);
         moveAnimatedly(id1, id2);
-        socket.emit('move', ob);
+        socket.emit('move', JSON.stringify(ob));
     }
 //===========END - Các hàm phát sự kiện lên server======================
     function resize() {
@@ -1003,13 +998,14 @@ var controller = (function () {
             socket.on('joined', onJoined);
             socket.on('added', onAdded);
             socket.on('roomFull', onRoomFull);
+			socket.on('notGiveUp','');
         },
         initController: function(id){
             this.place(id);
             reset();
             imageLoaded();//đảm bảo tất cả đã sẵn sàng trước khi gọi hàm drawBoard() lần đầu tiên
             connectToServer();
-            updateRoomList(roomList);
+          //  updateRoomList(roomList);
         },
         joinRoom: function(id, pass){
             var ob={};
@@ -1017,18 +1013,18 @@ var controller = (function () {
             ob.roomID = id;
             ob.pass = pass;
             console.log("joinRoom: "+ob.sessionId+" "+ob.roomID+" "+ob.pass);
-            socket.emit('joinRoom', ob);
+            socket.emit('joinRoom', {sessionId : "xax", roomID : id, pass: pass});
         },
         refreshRoom: function(){
             console.log("refreshRoom");
-            socket.emit("refreshRoom","");
+            socket.emit('refreshRoom','');
         },
         addRoom: function(ob){
             console.log("addRoom "+ob.name+" "+ob.coin+" "+ob.pass);
-            socket.emit('addRoom', ob);
+            socket.emit('addRoom', JSON.stringify(ob));
         },
         readyToPlay: function(){
-            console.log("readyToPlay");
+            console.log("readToPlay");
             controlDiv.innerHTML='';
             controlDiv.appendChild(leaveRoomButton);
             controlDiv.appendChild(giveUpButton);
