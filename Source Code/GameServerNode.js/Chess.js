@@ -1,9 +1,53 @@
+
+
 function Chess()
 {
-	this.board = createBoard();
+	this.board = [4, 6, 3, 2, 1, 2, 3, 6, 4,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 5, 0, 0, 0, 0, 0, 5, 0,
+                7, 0, 7, 0, 7, 0, 7, 0, 7,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                15, 0,15, 0,15, 0,15, 0,15,
+                0,13, 0, 0, 0, 0, 0,13, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                12,14,11,10, 9,10,11,14,12];
 }
 
-Chess.prototype.lookAt(row, col) {
+
+
+Chess.prototype.resetBoard = function(){
+    var newBoard = [4, 6, 3, 2, 1, 2, 3, 6, 4,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 5, 0, 0, 0, 0, 0, 5, 0,
+                7, 0, 7, 0, 7, 0, 7, 0, 7,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                15, 0,15, 0,15, 0,15, 0,15,
+                0,13, 0, 0, 0, 0, 0,13, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                12,14,11,10, 9,10,11,14,12];
+    for(var i = 0; i<90; i++){
+        this.board[i] = newBoard[i];
+    }
+}
+
+Chess.prototype.createBoard = function()
+{
+	var newBoard = [4, 6, 3, 2, 1, 2, 3, 6, 4,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 5, 0, 0, 0, 0, 0, 5, 0,
+                7, 0, 7, 0, 7, 0, 7, 0, 7,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                15, 0,15, 0,15, 0,15, 0,15,
+                0,13, 0, 0, 0, 0, 0,13, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                12,14,11,10, 9,10,11,14,12];
+    return newBoard;
+}
+
+Chess.prototype.lookAt = function(row, col) {
     return this.board[row * 9 + col];
 }
 
@@ -528,13 +572,13 @@ Chess.prototype.createBoard = function()
     return newBoard;
 }
 
-Chess.prototype.chessMove(r1, c1, r2, c2)
+Chess.prototype.chessMove = function(r1, c1, r2, c2)
 {
     this.board[r2*9+c2] = this.board[r1*9+c1];
     this.board[r1*9+c1] = 0;
 }
 
-Chess.prototype.chessMove(id1,id2)
+Chess.prototype.chessMove = function(id1,id2)
 {
     this.board[id2] = this.board[id1];
     this.board[id1] = 0;
