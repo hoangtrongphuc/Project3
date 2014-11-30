@@ -21,20 +21,31 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('connectToServer',function(data) {
     var sess = new Player(socket.id,data.token,data.username);
-	if(sessionMagager.checkStatus(sess))
+	var check = sessionManager.checkUserSession(sess);
+	if(check == true) 
+	{
+	socket.emit('err',"7");
+	socket.disconnect();
+	}
+	else 
+	{
+	if(sessionManager.checkStatus(sess.sessionId))
 	{
 		sessionManager.addUser(sess);
 		io.sockets.emit("logging", {message: data.username + " đã đăng nhập."});
 		socket.emit("roomList",roomList);
+		//sessionManager.removeToken(data.token);
 	}
 	else 
 	{
 		socket.emit('err',"1");
 	}
+	}
   });
 
   socket.on('addRoom', function(data){
      var room = new Room(data.name);
+	 if(data.pass) room.pass = data.pass;
 	 room.matchLimit = data.match;
 	 room.coin = data.coin;
 	 room.boss = data.sessionId;
@@ -85,7 +96,7 @@ io.sockets.on('connection', function (socket) {
 	 var check = 0;
 	 for(var i in roomList)
 	 {
-		if(roomList[i].ID == data.roomID && roomList[i].countPlaying < 2 && player.status == 0) 
+		if(roomList[i].ID == data.roomID && roomList[i].countPlaying < 2 && player.status == 0 && data.pass === roomList[i].pass ) 
 		{
 		if(player.roomID == -1)
 		{
@@ -107,7 +118,7 @@ io.sockets.on('connection', function (socket) {
 	socket.emit('roomList',roomList);
  });
  
-   socket.on('activeToken', function(data)){
+   socket.on('activeToken', function(data){
    sessionManager.addToken(data.tonkenKey);
  });
  
@@ -139,7 +150,7 @@ io.sockets.on('connection', function (socket) {
 	 }   
  });
  
-   socket.on('playGame', function(data){ 
+   socket.on('move', function(data){ 
       var errorFlag = false;
       var player = sessionManager.getSessionById(socket.id);
       for(var k in roomList)
@@ -147,15 +158,46 @@ io.sockets.on('connection', function (socket) {
 		if(roomList[k].ID == player.roomID )
 			{
 				var res = roomList[k].updateTable(data.id1,data.id2);
-				if(res == -3) io.to(room.ID).emit('err',"Fail");
+				if(res == -3) io.to(room.ID).emit('err',"6");
 			}
 		}
 });
 
+socket.on('chatInRoom', function(data){
+	var player  = sessionManager.getSessionById(socket.id);
+	io.to(player.roomID).emit('chatroommessage',{message : data.message, username : player.username});
+});
+
+socket.on('giveUp',function(data){
+	var player  = sessionManager.getSessionById(socket.id);
+	  for(var i in roomList)
+	 {
+		if(roomList[i].ID == player.roomID) 
+		{
+		    roomList[i].bossWin++;
+			if(roomList[i].color == 0) roomList[i].color = 1;
+			else roomList[i].color = 0;
+			roomList[i].turn = 0;
+			roomList[i].countMatch++;
+			roomList[i].table.resetBoard();
+			socket.emit("roomList",roomList);
+			io.to(room.ID).emit("roomInfor",roomList[i]);
+		}
+		socket.emit("roomList",roomList);
+	 }
+});
+
+
+socket.on('chatFriend', function(data){
+	var player1  = sessionManager.getSessionByUsername(data.username1);
+	var player2  = sessionManager.getSessionByUsername(data.username2);
+	message.sendEventToAPlayer('chatmessage',{message : data.message, username : data.username1},io,sessionManager.sessions,player2);
+});
 
   socket.on("disconnect", function() {
     var player = sessionManager.getSessionById(socket.id);
-    if (player && player.status >= 1) { 
+	console.log(socket.id + " dis\n");
+    if (player!=null && player.status >= 1) { 
       //Remove from table
        for(var k in roomList)
 			{
@@ -184,8 +226,13 @@ io.sockets.on('connection', function (socket) {
 					io.sockets.emit("logging", {message: player.username + " đã đăng xuất."});
 				}
 			}
-     
     }
-		sessionManager.removeToken(player.sessionId);
+	else if(player!=null && player.status == 0)
+	{
+		sessionManager.removeUser(player.sessionId);
+		io.sockets.emit("logging", {message: player.username + " đã đăng xuất."});
+	}
+		//if(player != null)
+		//sessionManager.removeToken(player.sessionId);
   });
 });//end of socket.on

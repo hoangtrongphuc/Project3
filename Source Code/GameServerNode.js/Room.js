@@ -2,7 +2,7 @@ var Chess = require("./Chess.js");
 
 function Room(name){
 	this.players = [];
-	ID++;
+	this.ID++;
 	this.countPlaying = 1; // số người đang chơi
 	this.countMatch = 0; // số trận đã đấu
 	this.name = name;
@@ -14,6 +14,7 @@ function Room(name){
 	this.turn = 0; // lượt đi : 0 - đỏ, 1 - đen.
 	this.color = 0; // 0 - boss đỏ, khách đen / 1 ngược lại. (đỏ đánh trước)
 	this.password = "";
+	this.bossWin = 0; // số trận thắng của chủ phòng
 };
 
 Room.ID = 0;

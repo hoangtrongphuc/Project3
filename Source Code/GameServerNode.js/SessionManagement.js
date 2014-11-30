@@ -2,49 +2,51 @@
 
 function SessionManagement()
 {
-	var sessions = [];
-	var token = []
+	this.sessions = [];
+	this.token = ["xax","kaka"]
 }
 
 SessionManagement.prototype.indexOf = function(sessionId) {
-    for(var i in sessions) {
-        if(sessions[i].sessionId == sessionId)
+    for(var i in this.sessions) {
+        if(this.sessions[i].sessionId == sessionId)
             return i;
     }
     return null;
 }
 
 SessionManagement.prototype.checkStatus = function(tokenKey) {
-	    for(var i in token) {
-        if(token[i] == tokenKey)
+	    for(var i in this.token) {
+        if(this.token[i] == tokenKey)
             return true;
     }
     return false;
 }
 
 SessionManagement.prototype.addToken = function(tokenKey) {
-        token.push(tokenKey);
+        this.token.push(tokenKey);
 }
 
 SessionManagement.prototype.removeToken = function(tokenKey) {
-        token.remove(tokenKey);
+		var index = this.token.indexOf(tokenKey);
+        this.token.splice(index,1);
 }
+
 SessionManagement.prototype.indexOfUser = function(userId) {
-    for(var i in sessions) {
-        if(sessions[i].userId == userId)
+    for(var i in this.sessions) {
+        if(this.sessions[i].userId === userId)
             return i;
     }
     return null;
 }
   
 SessionManagement.prototype.addUser = function(sessionData) {
-    sessions.push(sessionData);
+    this.sessions.push(sessionData);
 }
   
 SessionManagement.prototype.removeUser = function(sessionId) {
     var index = this.indexOf(sessionId);
     if(index != null) {
-        sessions.splice(index, 1);
+        this.sessions.splice(index, 1);
     } else {
         return null;
     }
@@ -53,7 +55,7 @@ SessionManagement.prototype.removeUser = function(sessionId) {
 SessionManagement.prototype.removeByUserId = function(userId) {
     var index = this.indexOf(userId);
     if(index != null) {
-        sessions.splice(index, 1);
+        this.sessions.splice(index, 1);
     } else {
         return null;
     }
@@ -62,16 +64,16 @@ SessionManagement.prototype.removeByUserId = function(userId) {
 SessionManagement.prototype.getSessionById = function(userId) {
     var index = this.indexOfUser(userId);
     if(index != null) {
-        return sessions[index];
+        return this.sessions[index];
     } else {
         return null;
     }
 }
 
 SessionManagement.prototype.checkUserSession = function(sessionData) {
-	for(var i in sessions)
+	for(var i in this.sessions)
 	{
-		if(sessions[i].sessionId == sessionData.sessionId) return true;
+		if(this.sessions[i].sessionId === sessionData.sessionId) return true;
 	}
 	return false;
 }
@@ -79,42 +81,49 @@ SessionManagement.prototype.checkUserSession = function(sessionData) {
 SessionManagement.prototype.getSessionByUserId = function(userId) {
     var index = this.indexOfUser(userId);
     if(index != null) {
-        return sessions[index];
+        return this.sessions[index];
     } else {
         return null;
     }
 }
 
+SessionManagement.prototype.getSessionByUsername = function(username) {
+    for(var i in this.sessions) {
+        if(this.sessions[i].username === username)
+            return i;
+    }
+    return null;
+}
 
-SessionManagment.prototype.updateUserLeave = function(userId){
-	for(var i in sessions)
+SessionManagement.prototype.updateUserLeave = function(userId){
+	for(var i in this.sessions)
 	{
-		if(sessions[i].sessionId == userId) 
+		if(this.sessions[i].sessionId === userId) 
 		{
-			sessions[i].leaveRoom();
+			this.sessions[i].leaveRoom();
 		}
 	}
 }
 
-SessionManagment.prototype.updateUser = function(sessionData){
-	for(var i in sessions)
+SessionManagement.prototype.updateUser = function(sessionData){
+	for(var i in this.sessions)
 	{
-		if(sessions[i].sessionId == sessionData.sessionId) 
+		if(this.sessions[i].sessionId === sessionData.sessionId) 
 		{
-			sessions[i].roomID = sessionData.roomID;
-			sessions[i].status = sessionData.status; // 0 - rảnh rỗi, 1 - trong phòng chơi, 2 - sẵn sàng, 3 - đang chơi.
-			sessions[i].turnFinished = sessionData.turnFinished;
+			this.sessions[i].roomID = sessionData.roomID;
+			this.sessions[i].status = sessionData.status; // 0 - rảnh rỗi, 1 - trong phòng chơi, 2 - sẵn sàng, 3 - đang chơi.
+			this.sessions[i].turnFinished = sessionData.turnFinished;
 		}
 	}
 }
 
 
-SessionManagment.prototype.updateUserJoin = function(userId, roomID){
-	for(var i in sessions)
+SessionManagement.prototype.updateUserJoin = function(userId, roomID){
+	for(var i in this.sessions)
 	{
-		if(sessions[i].sessionId == userId) 
+		if(this.sessions[i].userId === userId) 
 		{
-			sessions[i].joinRoom(roomID);
+			this.sessions[i].joinRoom(roomID);
 		}
 	}
 }

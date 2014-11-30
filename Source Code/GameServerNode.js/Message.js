@@ -1,6 +1,5 @@
 Game = require("./Chess.js");
 Room = require('./Room.js');
-var uuid = require('node-uuid');
 
 function Messaging() {};
 
@@ -29,9 +28,8 @@ Messaging.prototype.sendEventToAPlayer = function(event,message,io,players,playe
 Messaging.prototype.createSampleRooms = function(amount) {
 	var roomList = [];
 	for(var i = 0; i < amount; i++){
-		//var table = new Table(uuid.v4());
 		var room = new Room(1);
-		room.setName("Test Table" + (i + 1));
+		room.name = "Test Table" + (i + 1);
 		room.status = 0;
 		room.countPlaying = 1;
 		room.matchLimit = 3;
