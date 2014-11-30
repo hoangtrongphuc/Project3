@@ -52,7 +52,7 @@
     margin: 5px;
     font-weight: bold;
     background-color: green;
-    width: 20%;
+    /*width: 20%;*/
 }
 
 .buttonRed{
@@ -64,5 +64,5 @@
     margin: 5px;
     font-weight: bold;
     background-color: red;
-    width: 20%;
+    /*width: 20%;*/
 }
