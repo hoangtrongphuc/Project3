@@ -634,8 +634,10 @@ var controller = (function () {
     function onBoardInfo(data){
         console.log("onBoardInfo");
         var ob = data;
+        console.log("TURN:"+ob.turn+" this_username="+test_user);
         if(gameStart === false){
-            if(ob.turn === username){
+            //if(ob.turn === username){//code đúng, dòng ở dưới chỉ để test
+            if(ob.turn === test_user){//TEST
                 myColor = 8;//đỏ, đi trước
             }else{
                 myColor = 0;
@@ -649,28 +651,38 @@ var controller = (function () {
         for(var i = 0; i< 90; i++){
             board[i] = 0;
         }
-        for( var j in ob.board){
-            var i = ob.board[j];
-            if(myColor===0){//quân đen, phải xoay ngược bàn
-                board[90-i.cid] = i.pid;
-            }else{//quân đỏ, không cần xoay bàn
-                board[i.cid] = i.pid;
+//        for( var j in ob.board){
+//            var i = ob.board[j];
+//            if(myColor===0){//quân đen, phải xoay ngược bàn
+//                board[90-i.cid] = i.pid;
+//            }else{//quân đỏ, không cần xoay bàn
+//                board[i.cid] = i.pid;
+//            }
+//        }
+        if(myColor===8){
+            board = ob.board;
+        }else{
+            for(var i = 0; i<90; i++){
+                board[89-i] = ob.board[i];
             }
         }
+        drawBoard();
     }
     function onOpMove(data){
-        console.log("onOpMove");
         var move = data;
         if(myColor===0){
-            moveAnimatedly(90-move.id1, 90-move.id2);
+            moveAnimatedly(89-move.id1, 89-move.id2);
+            console.log("onOpMove: "+89-move.id1+":"+89-move.id2);
         }else{
             moveAnimatedly(move.id1, move.id2);
+            console.log("onOpMove: "+move.id1+":"+move.id2);
         }
     }
     function onCheck(){
         showCheckWarning();
     }
     function onLose(){
+        console.log("onLose");
         gameStart = false;
         showMessage("Bạn đã thua ván này!");
         controlDiv.innerHTML='';
@@ -678,6 +690,7 @@ var controller = (function () {
         controlDiv.appendChild(nextButton);
     }
     function onWin(){
+        console.log("onWin");
         gameStart = false;
         showMessage("Chúc mừng! Bạn đã thua ván này.");
         controlDiv.innerHTML='';
@@ -685,21 +698,25 @@ var controller = (function () {
         controlDiv.appendChild(nextButton);
     }
     function onLoseRoom(){
+        console.log("onLoseRoom");
         gameStart = false;
         showMessage("Bạn đã thua. Cơ hội cho bạn đã hết!");
         controlDiv.innerHTML='';
         controlDiv.appendChild(closeRoomButton);
     }
     function onWinRoom(){
+        console.log("onWinRoom");
         gameStart = false;
         showMessage("Chúc mừng! Bạn là người chiến thắng trong phòng chơi này");
         controlDiv.innerHTML='';
         controlDiv.appendChild(closeRoomButton);
     }
     function onInvalidMove(){
+        console.log("onInvalidMove");
         showMessage("Nước đi của bạn không hợp lệ");
     }
     function onLoseGU(){
+        console.log("onLoseGU");
         gameStart = false;
         showMessage("Rất tiếc khi bạn đã từ bỏ ván chơi này");
         controlDiv.innerHTML='';
@@ -707,6 +724,7 @@ var controller = (function () {
         controlDiv.appendChild(nextButton);
     }
     function onWinGU(){
+        console.log("onWinGU");
         gameStart = false;
         showMessage("Đối thủ đã bỏ cuộc. Bạn là người chiến thắng trong ván này!");
         controlDiv.innerHTML='';
@@ -714,12 +732,14 @@ var controller = (function () {
         controlDiv.appendChild(nextButton);
     }
     function onLoseRoomGU(){
+        console.log("onLoseRoomGU");
         gameStart = false;
         showMessage("Rất tiếc khi bạn đã bỏ cuộc và nhận thua trong phòng chơi này");
         haveRoom = false;
         document.location.hash = "#listRoomDiv";
     }
     function onWinRoomGU(){
+        console.log("onWinRoomGU");
         gameStart = false;
         showMessage("Đối thủ đã bỏ cuộc. Bạn là người chiến thắng trong phòng này");
         controlDiv.innerHTML='';
@@ -816,8 +836,8 @@ var controller = (function () {
     function move(id1, id2) {
         var ob={};
         if(myColor===0){
-            id1 = 90 - id1;
-            id2 = 90 - id2;
+            id1 = 89 - id1;
+            id2 = 89 - id2;
         }
         ob.id1 = id1;
         ob.id2 = id2;
