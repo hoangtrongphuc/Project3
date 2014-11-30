@@ -625,7 +625,7 @@ var controller = (function () {
     //các sự kiện khi chơi game 
     function onBoardInfo(data){
         console.log("onBoardInfo");
-        var ob = JSON.parse(data);
+        var ob = data;
         if(gameStart === false){
             if(ob.turn === username){
                 myColor = 8;//đỏ, đi trước
@@ -648,7 +648,7 @@ var controller = (function () {
     }
     function onOpMove(data){
         console.log("onOpMove");
-        var move = JSON.parse(data);
+        var move = data;
         if(myColor===0){
             moveAnimatedly(90-move.id1, 90-move.id2);
         }else{
@@ -712,7 +712,7 @@ var controller = (function () {
     //các sự kiện khác
     function onRoomList(data){
         console.log("onRoomList");
-        roomList = JSON.parse(JSON.stringify(data));
+        roomList = data;
         updateRoomList(roomList);
     }
     function updateRoomList(list){//không tương ứng với event
@@ -750,7 +750,7 @@ var controller = (function () {
     }
     function onRoomInfo(data){
         console.log("onRoomInfo");
-        roomInfo = JSON.parse(data);
+        roomInfo = data;
         console.log("onRoomInfo: "+roomInfo.ID);
         var html = "<b>Mã phòng chơi</b>"+roomInfo.ID+
                 "<br/><b>Tên phòng chơi</b>"+roomInfo.name+
@@ -777,7 +777,7 @@ var controller = (function () {
         console.log("onChatMessage");
     }
     function onChatRoomMessage(s){
-        var m = JSON.parse(s);
+        var m = s;
         console.log("onChatRoomMessage: "+m.username+" "+m.message);
         $("#messagesDiv").append("<b>"+m.username+":</b> "+m.message+"<br/>");
     }
@@ -802,7 +802,7 @@ var controller = (function () {
         ob.id2 = id2;
         console.log("move: "+ob.id1+" "+ob.id2);
         moveAnimatedly(id1, id2);
-        socket.emit('move', JSON.stringify(ob));
+        socket.emit('move', ob);
     }
 //===========END - Các hàm phát sự kiện lên server======================
     function resize() {
@@ -1021,7 +1021,7 @@ var controller = (function () {
         },
         addRoom: function(ob){
             console.log("addRoom "+ob.name+" "+ob.coin+" "+ob.pass);
-            socket.emit('addRoom', JSON.stringify(ob));
+            socket.emit('addRoom', ob);
         },
         readyToPlay: function(){
             console.log("readToPlay");
