@@ -32,8 +32,16 @@ io.sockets.on('connection', function (socket) {
 	if(sessionManager.checkStatus(sess.sessionId))
 	{
 		sessionManager.addUser(sess);
-		io.sockets.emit("logging", {message: data.username + " đã đăng nhập."});
-		socket.emit("roomList",roomList);
+		//io.sockets.emit("logging", {message: data.username + " đã đăng nhập."});
+		var dup_array = roomList.slice();
+		for(var i in dup_array)
+		{
+		delete dup_array[i].table;
+		delete dup_array[i].turn;
+		delete dup_array[i].bossWin;
+		delete dup_array[i].color;
+		}
+		socket.emit("roomList",dup_array);
 		//sessionManager.removeToken(data.token);
 	}
 	else 
@@ -48,45 +56,72 @@ io.sockets.on('connection', function (socket) {
 	 if(data.pass) room.pass = data.pass;
 	 room.matchLimit = data.match;
 	 room.coin = data.coin;
-	 room.boss = data.sessionId;
-	 var player = sessionManager.getSessionByUserId(data.userId);
+	 var player = sessionManager.getSessionByUserId(socket.id);
+	 room.boss = player.username;
 	 player.joinRoom(room.ID);
 	 sessionManager.updateUser(player);
 	 room.players.push(player);
 	 roomList.push(room);
 	 
-	 io.sockets.emit("roomList",roomList);
+	 var dup_array = roomList.slice();
+		for(var i in dup_array)
+		{
+		delete dup_array[i].table;
+		delete dup_array[i].turn;
+		delete dup_array[i].bossWin;
+		delete dup_array[i].color;
+		}
+	 socket.emit('added',{message : "tạo phòng thành công"});
+	 io.sockets.emit("roomList",dup_array);
      socket.emit('roomInfor',room);
 	 socket.join(room.ID);
  });
  
    socket.on('leaveRoom', function(data){
-	 var player = sessionManager.getSessionByUserId(data.sessionId);
+	 var player = sessionManager.getSessionByUserId(socket.id);
 	 for(var i in roomList)
 	 {
-		if(roomList[i].ID == player.roomID && roomList[i].boss != player.sessionId) 
+		if(roomList[i].ID === player.roomID && roomList[i].boss !== player.username) 
 		{
+		console.log(roomList[i].boss + " " +  player.sessionId);
 			roomList[i].removePlayer(player);
 			roomList[i].resetRoom();
 			sessionManager.updateUserLeave(player.sessionId);
-			socket.leave(room.ID);
-			socket.emit("roomList",roomList);
-			io.to(room.ID).emit("roomInfor",roomList[i]);
+			socket.leave(roomList[i].ID);
+			var dup_array = roomList.slice();
+		for(var i in dup_array)
+		{
+		delete dup_array[i].table;
+		delete dup_array[i].turn;
+		delete dup_array[i].bossWin;
+		delete dup_array[i].color;
 		}
-		else if(roomList[i].ID == player.roomID && roomList[i].boss == player.sessionId)
+		socket.emit("roomList",dup_array);
+			io.to(roomList[i].ID).emit("roomInfor",roomList[i]);
+		}
+		else if(roomList[i].ID === player.roomID && roomList[i].boss === player.username)
 		{
 		for(var k in roomList[i].player)
 			{
 				sessionManager.updateUserLeave(roomList[i].players[k].sessionId);
 			}
-		var clients = io.sockets.clients(roomList.ID); // all users from room `room`
+		var clients = io.sockets.adapter.rooms[roomList[i].ID];
 		for(var t in clients)
 			{
-					clients[t].leave(roomList.ID)
+			console.log(clients[t].id);
+					clients[t].leave(roomList[i].ID)
 			}
-			roomList.remove(i);
+			roomList.splice(i,1);
 		}
-		socket.emit("roomList",roomList);
+		var dup_array = roomList.slice();
+		for(var v in dup_array)
+		{
+		delete dup_array[v].table;
+		delete dup_array[v].turn;
+		delete dup_array[v].bossWin;
+		delete dup_array[v].color;
+		}
+		socket.emit("roomList",dup_array);
 	 }
 	 
  });
@@ -115,7 +150,15 @@ io.sockets.on('connection', function (socket) {
  });
  
    socket.on('refreshRoom', function(){
-	socket.emit('roomList',roomList);
+	var dup_array = roomList.slice();
+		for(var i in dup_array)
+		{
+		delete dup_array[i].table;
+		delete dup_array[i].turn;
+		delete dup_array[i].bossWin;
+		delete dup_array[i].color;
+		}
+		socket.emit("roomList",dup_array);
  });
  
    socket.on('activeToken', function(data){
@@ -132,8 +175,8 @@ io.sockets.on('connection', function (socket) {
 			 {
 			 roomList[k].status = 1;
 			 player.status = 2;
-			 sessionManger.updateUser(player);
-			 io.to(room.ID).emit("roomInfor",room);
+		//	 sessionManger.updateUser(player);
+			 io.to(roomList[k].ID).emit("roomInfor",roomList[k]);
 			 break;
 			 }
 			else if(roomList[k].status == 1)
@@ -142,8 +185,8 @@ io.sockets.on('connection', function (socket) {
 			 roomList[k].turn = roomList[k].countMatch%2;
 			 roomList[k].color = roomList[k].countMatch%2;
 			 player.status = 3;
-			 sessionManger.updateUser(player);
-			 io.to(room.ID).emit("roomInfor",room);
+		//	 sessionManger.updateUser(player);
+			 io.to(roomList[k].ID).emit("roomInfor",roomList[k]);
 			 break;
 			}
 		}
@@ -180,10 +223,17 @@ socket.on('giveUp',function(data){
 			roomList[i].turn = 0;
 			roomList[i].countMatch++;
 			roomList[i].table.resetBoard();
-			socket.emit("roomList",roomList);
+			var dup_array = roomList.slice();
+		for(var i in dup_array)
+		{
+		delete dup_array[i].table;
+		delete dup_array[i].turn;
+		delete dup_array[i].bossWin;
+		delete dup_array[i].color;
+		}
+		socket.emit("roomList",dup_array);
 			io.to(room.ID).emit("roomInfor",roomList[i]);
 		}
-		socket.emit("roomList",roomList);
 	 }
 });
 
@@ -206,7 +256,7 @@ socket.on('chatFriend', function(data){
 					roomList[k].removePlayer(player);
 					roomList[k].resetRoom();
 					sessionManager.removeUser(player.sessionId);
-					io.to(room.ID).emit("roomInfor", roomList[k]);
+					io.to(roomList[k].ID).emit("roomInfor", roomList[k]);
 					io.sockets.emit("logging", {message: player.username + " đã đăng xuất."});
 				}
 				else if(roomList[k].ID == player.roomID && roomList[k].boss == player.sessionId)
@@ -222,7 +272,15 @@ socket.on('chatFriend', function(data){
 						clients[t].leave(roomList.ID)
 					}
 					roomList.remove(k);
-					socket.broadcast.emit("roomList",roomList);
+					var dup_array = roomList.slice();
+					for(var i in dup_array)
+					{
+					delete dup_array[i].table;
+					delete dup_array[i].turn;
+					delete dup_array[i].bossWin;
+					delete dup_array[i].color;
+					}
+					socket.broadcast.emit("roomList",dup_array);
 					io.sockets.emit("logging", {message: player.username + " đã đăng xuất."});
 				}
 			}

@@ -2,14 +2,15 @@ var Chess = require("./Chess.js");
 
 function Room(name){
 	this.players = [];
-	this.ID++;
+	this.ID = Room.ID;
+	Room.ID++;
 	this.countPlaying = 1; // số người đang chơi
 	this.countMatch = 0; // số trận đã đấu
 	this.name = name;
 	this.matchLimit = 1;
 	this.coin = 0;
 	this.status = 0; // 0 - free, 1 - ready , 2 - playing, 3 - end
-	this.boss = 0;
+	this.boss = "";
 	this.table = new Chess();
 	this.turn = 0; // lượt đi : 0 - đỏ, 1 - đen.
 	this.color = 0; // 0 - boss đỏ, khách đen / 1 ngược lại. (đỏ đánh trước)
@@ -23,7 +24,7 @@ Room.prototype.resetRoom = function(){
 	this.countPlaying = 1; 
 	this.countMatch = 0; 
 	this.status = 0;
-	this.table.resetBoard();
+	this.table = new Chess();
 	this.turn = 0; 
 	this.color = 0;
 }
@@ -41,7 +42,7 @@ Room.prototype.removePlayer = function(player) {
 			break;
 		}
 	}
-	this.players.remove(playerIndex);
+	this.players.splice(playerIndex, 1);
 	this.countPlaying--;
 };
 

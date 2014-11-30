@@ -29,6 +29,7 @@ Messaging.prototype.createSampleRooms = function(amount) {
 	var roomList = [];
 	for(var i = 0; i < amount; i++){
 		var room = new Room(1);
+		room.boss = "hp";
 		room.name = "Test Table" + (i + 1);
 		room.status = 0;
 		room.countPlaying = 1;
