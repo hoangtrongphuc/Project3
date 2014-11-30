@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="http://localhost:8888/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+ var socket = io.connect('http://localhost:8888');
+  socket.emit('connectToServer', {token : "xax", username: "kaak"});
+
+  socket.on('roomList', function(data){
+	console.log(data);
+  });
+  
+  socket.on('logging', function(data){
+	console.log(data);
+  
+  });
+  socket.emit('client', {message : "hehe", name : "nam"});
+    socket.on('log', function (data) {
+    console.log(data);
+	
+  });
+ 
+</script>
+</head>
+<body>
+ <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+	<div id='result'></div>
+
+</body>
+</html>

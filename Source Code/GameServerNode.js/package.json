@@ -1,0 +1,10 @@
+{
+     "name": "Chess_Server",
+     "description": "Chinese Chess Server Game",
+     "version": "0.0.1",
+     "dependencies": 
+     {
+        "express": "3.12.0",
+        "socket.io": "1.2.0"
+     }
+}
