@@ -14,6 +14,8 @@
         <link title="text/css" href="css/jquery-ui.structure.css" rel="stylesheet"/>
         <script>
             var roomID;
+            window.onbeforeunload = onBeforeUnload;
+            window.onunload = onUnload;
             $("document").ready(function(){
                 controller.initController("chessBoardDiv");
                 
@@ -82,6 +84,16 @@
             function addRoom(){
                 $('#newRoomDialog').dialog('open')
             }
+            function onUnload(){
+                if(document.location.hash==="#roomDiv"){
+                    controller.leavePage();
+                }
+            }
+            function onBeforeUnload(){
+                if(document.location.hash==="#roomDiv"){
+                    return "Nếu bạn rời đi, phòng chơi sẽ bị hủy. Bạn có chắc chắn muốn rời khỏi trang?";
+                }
+            }
         </script>
     </head>
     <body onhashchange="controller.onHashChange()" onload="controller.onHashChange()">
@@ -101,14 +113,12 @@
             </div>
             <div id="roomDiv">
                 <div id="leftBoardDiv">
-                    LEFT
                     <div id="user1Div"></div>
                     <div id="timerDiv"></div>
                     <div id ="user2Div"></div>
                 </div>
                 <div id="chessBoardDiv"></div>
                 <div id="rightBoardDiv">
-                    RIGHT
                     <div id="roomInfoDiv"></div>
                     <div id="messagesDiv"></div>
                     <div id="typeDiv">

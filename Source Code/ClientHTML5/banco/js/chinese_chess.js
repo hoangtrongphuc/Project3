@@ -8,6 +8,7 @@ var controller = (function () {
         username = getCookie('username'),//tên người chơi
         token = getCookie('token'),
         roomInfo,
+        haveRoom = false,
         roomList=[],
         gameStart = false,
         focusedValidMove=[],
@@ -23,6 +24,7 @@ var controller = (function () {
         leaveRoomButton,
         readyButton,
         nextButton,
+        closeRoomButton,
         timer,
         pieceCanvas = [],
         boardCanvas,
@@ -620,12 +622,15 @@ var controller = (function () {
         $("#messageDialog").html(s);
         $("#messageDialog").dialog('open');
     }
-    
+    function closeRoom(){
+        haveRoom = false;
+        document.location.hash = "#listRoomDiv";
+    }
 //==========Các hàm được gọi khi server phát event tương ứng==============
     //các sự kiện khi chơi game 
     function onBoardInfo(data){
         console.log("onBoardInfo");
-        var ob = JSON.parse(data);
+        var ob = data;
         if(gameStart === false){
             if(ob.turn === username){
                 myColor = 8;//đỏ, đi trước
@@ -634,6 +639,9 @@ var controller = (function () {
             }
             turn = 8;
             gameStart = true;
+            controlDiv.innerHTML='';
+            controlDiv.appendChild(leaveRoomButton);
+            controlDiv.appendChild(giveUpButton);
         }
         for(var i = 0; i< 90; i++){
             board[i] = 0;
@@ -648,7 +656,7 @@ var controller = (function () {
     }
     function onOpMove(data){
         console.log("onOpMove");
-        var move = JSON.parse(data);
+        var move = data;
         if(myColor===0){
             moveAnimatedly(90-move.id1, 90-move.id2);
         }else{
@@ -675,12 +683,14 @@ var controller = (function () {
     function onLoseRoom(){
         gameStart = false;
         showMessage("Bạn đã thua. Cơ hội cho bạn đã hết!");
-        document.location.hash = "#listRoomDiv";
+        controlDiv.innerHTML='';
+        controlDiv.appendChild(closeRoomButton);
     }
     function onWinRoom(){
         gameStart = false;
         showMessage("Chúc mừng! Bạn là người chiến thắng trong phòng chơi này");
-        document.location.hash = "#listRoomDiv";
+        controlDiv.innerHTML='';
+        controlDiv.appendChild(closeRoomButton);
     }
     function onInvalidMove(){
         showMessage("Nước đi của bạn không hợp lệ");
@@ -702,17 +712,19 @@ var controller = (function () {
     function onLoseRoomGU(){
         gameStart = false;
         showMessage("Rất tiếc khi bạn đã bỏ cuộc và nhận thua trong phòng chơi này");
+        haveRoom = false;
         document.location.hash = "#listRoomDiv";
     }
     function onWinRoomGU(){
         gameStart = false;
         showMessage("Đối thủ đã bỏ cuộc. Bạn là người chiến thắng trong phòng này");
-        document.location.hash = "#listRoomDiv";
+        controlDiv.innerHTML='';
+        controlDiv.appendChild(closeRoomButton);
     }
     //các sự kiện khác
     function onRoomList(data){
         console.log("onRoomList");
-        roomList = JSON.parse(data).rooms;
+        roomList = data;
         updateRoomList(roomList);
     }
     function updateRoomList(list){//không tương ứng với event
@@ -720,15 +732,18 @@ var controller = (function () {
             $("#roomTableDiv").html("Không có dữ liệu");
         }else{
             var table = $("#roomTable");
-            table.html("<tr> <th>ID</th> <th>Tên phòng</th> <th>Số người chơi</th> <th>Số ván</th> <th>Xu</th> <th>Lock</th> <tr>");
+            table.html("<tr> <th>ID</th> <th>Tên phòng</th> <th>Số người chơi</th> <th>Số ván</th><th>Chủ phòng</th> <th>Xu</th> <th>Lock</th> <th></th> </tr>");
             for(var room in list){
-                var row = "<tr>"+room.ID+"</tr>"+
-                "<tr>"+room.name+"</tr>"+
-                "<tr>"+room.playerCount+"</tr>"+
-                "<tr>"+room.gameCount+"</tr>"+
-                "<tr>"+room.playingCount+"</tr>"+
-                "<tr>"+room.xu+"</tr>"+
-                (room.hasOwnProperty('pass'))?"<tr>LOCK</tr>":"<tr></tr>";
+			var row = "<tr>" + "<td>"+list[room].ID+"</td>"+
+                "<td>"+list[room].name+"</td>"+
+                "<td>"+list[room].countPlaying+"</td>"+
+                "<td>"+list[room].matchLimit+"</td>"+
+                "<td>"+list[room].boss+"</td>"+				
+                "<td>"+list[room].coin+"</td>";
+				if(list[room].password !== "") row = row+ "<td>LOCK</td>"+"<td><button class='button' onclick='joinRoom("+list[room].ID+","+list[room].password+");' >Tham gia</button></td>" +"</tr>";
+				else row = row + "<td>NO</td>"+
+				"<td><button class='button' onclick='joinRoom("+list[room].ID+","+"false);' >Tham gia</button></td>" +
+				 "</tr>";
                 table.append(row);
             }
         }
@@ -741,12 +756,13 @@ var controller = (function () {
             case "4" : showMessage("Nước bạn vừa đi không hợp lệ"); break;
             case "5" : showMessage("Đã xảy ra lỗi hệ thống"); break;
             case "6" : showMessage("Lỗi không xác định"); break;
+			case "7" : showMessage("Tài khoản đang được sử dụng"); break;
             default : showMessage("Mã lỗi không đúng. "); break;
         }
     }
     function onRoomInfo(data){
         console.log("onRoomInfo");
-        roomInfo = JSON.parse(data);
+        roomInfo = data;
         console.log("onRoomInfo: "+roomInfo.ID);
         var html = "<b>Mã phòng chơi</b>"+roomInfo.ID+
                 "<br/><b>Tên phòng chơi</b>"+roomInfo.name+
@@ -759,10 +775,14 @@ var controller = (function () {
     }
     function onAdded(){
         console.log("onAdded");
+        haveRoom = true;
+        reset();
         document.location.hash="#roomDiv";
     }
     function onJoined(){
         console.log("onJoined");
+        haveRoom = true;
+        reset();
         document.location.hash="#roomDiv";
     }
     function onRoomFull(){
@@ -773,7 +793,7 @@ var controller = (function () {
         console.log("onChatMessage");
     }
     function onChatRoomMessage(s){
-        var m = JSON.parse(s);
+        var m = s;
         console.log("onChatRoomMessage: "+m.username+" "+m.message);
         $("#messagesDiv").append("<b>"+m.username+":</b> "+m.message+"<br/>");
     }
@@ -783,9 +803,10 @@ var controller = (function () {
     function connectToServer(){
         console.log("connectToServer");
         var ob={};
-        ob.token = token;
-        ob.username = username;
-        socket.emit('connectToServer', JSON.stringify(ob));
+        //ob.token = "xax";
+        ob.token = "kaka";
+        ob.username = "hp";
+        socket.emit('connectToServer', {token : "xax", username : "hp"});
     }
     function move(id1, id2) {
         var ob={};
@@ -797,7 +818,7 @@ var controller = (function () {
         ob.id2 = id2;
         console.log("move: "+ob.id1+" "+ob.id2);
         moveAnimatedly(id1, id2);
-        socket.emit('move', JSON.stringify(ob));
+        socket.emit('move', ob);
     }
 //===========END - Các hàm phát sự kiện lên server======================
     function resize() {
@@ -824,14 +845,23 @@ var controller = (function () {
     return {
         onHashChange: function () {
             console.log("onHashChange");
-            if (document.location.hash === "#roomDiv") {
-                document.getElementById("listRoomDiv").style.display = "none";
-                document.getElementById("roomDiv").style.display = "block";
-                reset();
-            } else {
-                document.getElementById("listRoomDiv").style.display = "block";
-                document.getElementById("roomDiv").style.display = "none";
-            }
+//            if (document.location.hash === "#roomDiv") {
+//                document.getElementById("listRoomDiv").style.display = "none";
+//                document.getElementById("roomDiv").style.display = "block";
+//                reset();
+//            } else {
+//                document.getElementById("listRoomDiv").style.display = "block";
+//                document.getElementById("roomDiv").style.display = "none";  
+//            }
+              if(haveRoom === true){
+                  document.location.hash = "#roomDiv";
+                  document.getElementById("listRoomDiv").style.display = "none";
+                  document.getElementById("roomDiv").style.display = "block";
+              }else{
+                  document.location.hash = "#listRoomDiv";
+                  document.getElementById("listRoomDiv").style.display = "block";
+                  document.getElementById("roomDiv").style.display = "none";
+              }
         },
         boardClicked: function(id){
             if(turn===myColor && gameStart){
@@ -945,6 +975,11 @@ var controller = (function () {
             readyButton.innerHTML = "Sẵn sàng";
             readyButton.onclick = this.readyToPlay;
             readyButton.className = "buttonRed";
+            
+            closeRoomButton = document.createElement("button");
+            closeRoomButton.innerHTML = "Đóng phòng chơi";
+            closeRoomButton.onclick = closeRoom;
+            closeRoomButton.className = "buttonRed";
                     
             boardCanvas = document.createElement("canvas");
             boardCanvas.height = boardHeight;
@@ -993,13 +1028,14 @@ var controller = (function () {
             socket.on('joined', onJoined);
             socket.on('added', onAdded);
             socket.on('roomFull', onRoomFull);
+			socket.on('notGiveUp','');
         },
         initController: function(id){
             this.place(id);
             reset();
             imageLoaded();//đảm bảo tất cả đã sẵn sàng trước khi gọi hàm drawBoard() lần đầu tiên
             connectToServer();
-            updateRoomList(roomList);
+          //  updateRoomList(roomList);
         },
         joinRoom: function(id, pass){
             var ob={};
@@ -1007,7 +1043,7 @@ var controller = (function () {
             ob.roomID = id;
             ob.pass = pass;
             console.log("joinRoom: "+ob.sessionId+" "+ob.roomID+" "+ob.pass);
-            socket.emit('joinRoom', JSON.stringify(ob));
+            socket.emit('joinRoom', {sessionId : "xax", roomID : id, pass: pass});
         },
         refreshRoom: function(){
             console.log("refreshRoom");
@@ -1015,13 +1051,14 @@ var controller = (function () {
         },
         addRoom: function(ob){
             console.log("addRoom "+ob.name+" "+ob.coin+" "+ob.pass);
-            socket.emit('addroom', JSON.stringify(ob));
+            socket.emit('addRoom', ob);
         },
         readyToPlay: function(){
             console.log("readToPlay");
             controlDiv.innerHTML='';
             controlDiv.appendChild(leaveRoomButton);
-            controlDiv.appendChild(giveUpButton);
+            /*controlDiv.appendChild(giveUpButton);*/
+            controlDiv.appendChild(document.createTextNode("Đang đợi người chơi còn lại sẵn sàng"));
             socket.emit('readyToPlay');
         },
         giveup: function(){
@@ -1039,10 +1076,14 @@ var controller = (function () {
             if(confirm("Bạn có chắc chắn sẽ chịu thua phòng chơi này?")){
                 gameStart = false;
                 socket.emit('leaveRoom','');
+                haveRoom = false;
                 document.location.hash = "#listRoomDiv";
             }
         },
-    
+        leavePage: function(){
+            gameStart = false;
+            socket.emit('leaveRoom','');
+        },
         chatInRoom: function(){
             var s = $("#messageInput").val();
             console.log("chatInRoom: "+s);
