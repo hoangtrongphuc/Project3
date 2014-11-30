@@ -649,7 +649,8 @@ var controller = (function () {
         for(var i = 0; i< 90; i++){
             board[i] = 0;
         }
-        for( var i in ob.board){
+        for( var j in ob.board){
+            var i = ob.board[j];
             if(myColor===0){//quân đen, phải xoay ngược bàn
                 board[90-i.cid] = i.pid;
             }else{//quân đỏ, không cần xoay bàn
@@ -859,13 +860,13 @@ var controller = (function () {
 //            }
               if(haveRoom === true){
                   document.location.hash = "#roomDiv";
-                  document.getElementById("listRoomDiv").style.display = "none";
-                  document.getElementById("roomDiv").style.display = "block";
+                document.getElementById("listRoomDiv").style.display = "none";
+                document.getElementById("roomDiv").style.display = "block";
               }else{
                   document.location.hash = "#listRoomDiv";
-                  document.getElementById("listRoomDiv").style.display = "block";
-                  document.getElementById("roomDiv").style.display = "none";
-              }
+                document.getElementById("listRoomDiv").style.display = "block";
+                document.getElementById("roomDiv").style.display = "none";
+            }
         },
         boardClicked: function(id){
             if(turn===myColor && gameStart){
@@ -979,7 +980,7 @@ var controller = (function () {
             readyButton.innerHTML = "Sẵn sàng";
             readyButton.onclick = this.readyToPlay;
             readyButton.className = "buttonRed";
-            
+                    
             closeRoomButton = document.createElement("button");
             closeRoomButton.innerHTML = "Đóng phòng chơi";
             closeRoomButton.onclick = closeRoom;
