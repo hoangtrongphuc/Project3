@@ -2,6 +2,9 @@
  * Copyright (c) 2014 Nguyen Tat Nguyen
  */
 var controller = (function () {
+    var token1="kaka", user1="p", token2="xax", user2='n';
+    var test_token = token1;
+    var test_user = user1;
     var board=[],
         turn,//bằng 0 hoặc 8. 0-đen, 8-đỏ
         myColor,// bằng 0 hoặc 8
@@ -646,7 +649,8 @@ var controller = (function () {
         for(var i = 0; i< 90; i++){
             board[i] = 0;
         }
-        for( var i in ob.board){
+        for( var j in ob.board){
+            var i = ob.board[j];
             if(myColor===0){//quân đen, phải xoay ngược bàn
                 board[90-i.cid] = i.pid;
             }else{//quân đỏ, không cần xoay bàn
@@ -803,10 +807,11 @@ var controller = (function () {
     function connectToServer(){
         console.log("connectToServer");
         var ob={};
-        //ob.token = "xax";
-        ob.token = "kaka";
-        ob.username = "hp";
-        socket.emit('connectToServer', {token : "xax", username : "hp"});
+        ob.token = token;
+        ob.username = username;
+        ob.token = test_token;//TEST
+        ob.username = test_user;//TEST
+        socket.emit('connectToServer', ob);
     }
     function move(id1, id2) {
         var ob={};
@@ -855,13 +860,13 @@ var controller = (function () {
 //            }
               if(haveRoom === true){
                   document.location.hash = "#roomDiv";
-                  document.getElementById("listRoomDiv").style.display = "none";
-                  document.getElementById("roomDiv").style.display = "block";
+                document.getElementById("listRoomDiv").style.display = "none";
+                document.getElementById("roomDiv").style.display = "block";
               }else{
                   document.location.hash = "#listRoomDiv";
-                  document.getElementById("listRoomDiv").style.display = "block";
-                  document.getElementById("roomDiv").style.display = "none";
-              }
+                document.getElementById("listRoomDiv").style.display = "block";
+                document.getElementById("roomDiv").style.display = "none";
+            }
         },
         boardClicked: function(id){
             if(turn===myColor && gameStart){
@@ -975,7 +980,7 @@ var controller = (function () {
             readyButton.innerHTML = "Sẵn sàng";
             readyButton.onclick = this.readyToPlay;
             readyButton.className = "buttonRed";
-            
+                    
             closeRoomButton = document.createElement("button");
             closeRoomButton.innerHTML = "Đóng phòng chơi";
             closeRoomButton.onclick = closeRoom;
@@ -1043,7 +1048,8 @@ var controller = (function () {
             ob.roomID = id;
             ob.pass = pass;
             console.log("joinRoom: "+ob.sessionId+" "+ob.roomID+" "+ob.pass);
-            socket.emit('joinRoom', {sessionId : "xax", roomID : id, pass: pass});
+            ob.sessionId = test_token;//TEST
+            socket.emit('joinRoom', ob);
         },
         refreshRoom: function(){
             console.log("refreshRoom");
