@@ -2,6 +2,9 @@
  * Copyright (c) 2014 Nguyen Tat Nguyen
  */
 var controller = (function () {
+    var token1="kaka", user1="p", token2="xax", user2='n';
+    var test_token = token1;
+    var test_user = user1;
     var board=[],
         turn,//bằng 0 hoặc 8. 0-đen, 8-đỏ
         myColor,// bằng 0 hoặc 8
@@ -803,10 +806,11 @@ var controller = (function () {
     function connectToServer(){
         console.log("connectToServer");
         var ob={};
-        //ob.token = "xax";
-        ob.token = "kaka";
-        ob.username = "hp";
-        socket.emit('connectToServer', {token : "xax", username : "hp"});
+        ob.token = token;
+        ob.username = username;
+        ob.token = test_token;//TEST
+        ob.username = test_user;//TEST
+        socket.emit('connectToServer', ob);
     }
     function move(id1, id2) {
         var ob={};
@@ -1043,7 +1047,8 @@ var controller = (function () {
             ob.roomID = id;
             ob.pass = pass;
             console.log("joinRoom: "+ob.sessionId+" "+ob.roomID+" "+ob.pass);
-            socket.emit('joinRoom', {sessionId : "xax", roomID : id, pass: pass});
+            ob.sessionId = test_token;//TEST
+            socket.emit('joinRoom', ob);
         },
         refreshRoom: function(){
             console.log("refreshRoom");
