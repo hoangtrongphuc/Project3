@@ -835,6 +835,7 @@ var controller = (function () {
     }
     function move(id1, id2) {
         var ob={};
+        moveAnimatedly(id1, id2);
         if(myColor===0){
             id1 = 89 - id1;
             id2 = 89 - id2;
@@ -842,7 +843,6 @@ var controller = (function () {
         ob.id1 = id1;
         ob.id2 = id2;
         console.log("move: "+ob.id1+" "+ob.id2);
-        moveAnimatedly(id1, id2);
         socket.emit('move', ob);
     }
 //===========END - Các hàm phát sự kiện lên server======================
