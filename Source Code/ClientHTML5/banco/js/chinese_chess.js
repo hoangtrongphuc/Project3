@@ -12,6 +12,7 @@ var controller = (function () {
         token = getCookie('token'),
         roomInfo,
         haveRoom = false,
+        ownRoom,
         roomList=[],
         gameStart = false,
         focusedValidMove=[],
@@ -672,7 +673,7 @@ var controller = (function () {
         var move = data;
         if(myColor===0){
             moveAnimatedly(89-move.id1, 89-move.id2);
-            console.log("onOpMove: "+89-move.id1+":"+89-move.id2);
+            console.log("onOpMove: "+(89-move.id1)+":"+(89-move.id2));
         }else{
             moveAnimatedly(move.id1, move.id2);
             console.log("onOpMove: "+move.id1+":"+move.id2);
@@ -742,8 +743,12 @@ var controller = (function () {
         console.log("onWinRoomGU");
         gameStart = false;
         showMessage("Đối thủ đã bỏ cuộc. Bạn là người chiến thắng trong phòng này");
-        controlDiv.innerHTML='';
-        controlDiv.appendChild(closeRoomButton);
+        if(ownRoom){
+            reset();
+        }else{
+            controlDiv.innerHTML='';
+            controlDiv.appendChild(closeRoomButton);
+        }
     }
     //các sự kiện khác
     function onRoomList(data){
@@ -800,16 +805,19 @@ var controller = (function () {
     function onAdded(){
         console.log("onAdded");
         haveRoom = true;
+        ownRoom = true;
         reset();
         document.location.hash="#roomDiv";
     }
     function onJoined(){
         console.log("onJoined");
         haveRoom = true;
+        ownRoom = false;
         reset();
         document.location.hash="#roomDiv";
     }
     function onRoomFull(){
+        console.log("onRoomFull");
         showMessage("Phòng chơi đã đủ người, nhấn 'Bắt đầu' để chơi");
     }
     //chat
@@ -835,6 +843,7 @@ var controller = (function () {
     }
     function move(id1, id2) {
         var ob={};
+        moveAnimatedly(id1, id2);
         if(myColor===0){
             id1 = 89 - id1;
             id2 = 89 - id2;
@@ -842,7 +851,6 @@ var controller = (function () {
         ob.id1 = id1;
         ob.id2 = id2;
         console.log("move: "+ob.id1+" "+ob.id2);
-        moveAnimatedly(id1, id2);
         socket.emit('move', ob);
     }
 //===========END - Các hàm phát sự kiện lên server======================
@@ -879,7 +887,7 @@ var controller = (function () {
 //                document.getElementById("roomDiv").style.display = "none";  
 //            }
               if(haveRoom === true){
-                  document.location.hash = "#roomDiv";
+                document.location.hash = "#roomDiv";
                 document.getElementById("listRoomDiv").style.display = "none";
                 document.getElementById("roomDiv").style.display = "block";
               }else{
@@ -1100,6 +1108,7 @@ var controller = (function () {
         leaveRoom: function(){
             console.log("leaveRoom");
             if(confirm("Bạn có chắc chắn sẽ chịu thua phòng chơi này?")){
+                console.log("leaveRoom confirmed");
                 gameStart = false;
                 socket.emit('leaveRoom','');
                 haveRoom = false;
