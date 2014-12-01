@@ -12,6 +12,12 @@ function Chess()
                 0,13, 0, 0, 0, 0, 0,13, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 12,14,11,10, 9,10,11,14,12];
+	this.captureMove = [];
+	this.otherMove = [];
+	this.redCaptureMove = [];
+	this.blackOtherMove = [];
+	this.blackCaptureMove = [];
+	this.redOtherMove = [];
 }
 
 
@@ -51,8 +57,12 @@ Chess.prototype.lookAt = function(row, col) {
     return this.board[row * 9 + col];
 }
 
-Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
+Chess.prototype.validMoveGen = function(id) {
+    this.captureMove = [];
+	this.otherMove = [];
     var piece = this.board[id];
+	var _captureMove = [];
+	var _otherMove = [];
     if (piece === 0) return; 
     var col = id % 9;
     var row = (id - col) / 9;
@@ -62,37 +72,37 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
         case 1://tướng
             if (piece_color === 0) {//quân đen
                 if (row > 0) {
-                    if (lookAt( row - 1, col) === 0) {
+                    if (this.lookAt( row - 1, col) === 0) {
                         _otherMove.push(id, (row-1)*9+col);
-                    } else if ((lookAt( row - 1, col) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 1, col) & 8) !== piece_color) {
                        _captureMove.push(id, (row-1)*9+col);
                     }
                 }
                 if (row < 2) {
-                    if (lookAt( row + 1, col) === 0) {
+                    if (this.lookAt( row + 1, col) === 0) {
                         _otherMove.push(id,(row + 1)*9 + col);
-                    } else if ((lookAt( row + 1, col) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 1, col) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 1)*9 + col);
                     }
                 }
                 if (col > 3) {
-                    if (lookAt( row, col - 1) === 0) {
+                    if (this.lookAt( row, col - 1) === 0) {
                         _otherMove.push(id,row * 9 + col - 1);
-                    } else if ((lookAt( row, col - 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row, col - 1) & 8) !== piece_color) {
                         _captureMove.push(id,row * 9 + col - 1);
                     }
                 }
                 if (col < 5) {
-                    if (lookAt( row, col + 1) === 0) {
+                    if (this.lookAt( row, col + 1) === 0) {
                         _otherMove.push(id,row * 9 + col + 1);
-                    } else if ((lookAt( row, col + 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row, col + 1) & 8) !== piece_color) {
                         _captureMove.push(id,row * 9 + col + 1);
                     }
                 }
                 //hở mặt tướng
                 for (var i = row + 1; i < 10; i++) {
-                    if (lookAt( i, col) !== 0) {
-                        if (lookAt( i, col) === 9) {
+                    if (this.lookAt( i, col) !== 0) {
+                        if (this.lookAt( i, col) === 9) {
                             _captureMove.push(id,i * 9 + col);
                         }
                         break;
@@ -100,37 +110,37 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
                 }
             } else {//quân đỏ
                 if (row > 7) {
-                    if (lookAt( row - 1, col) === 0) {
+                    if (this.lookAt( row - 1, col) === 0) {
                         _otherMove.push(id,(row - 1)*9 + col);
-                    } else if ((lookAt( row - 1, col) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 1, col) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 1)*9 + col);
                     }
                 }
                 if (row < 9) {
-                    if (lookAt( row + 1, col) === 0) {
+                    if (this.lookAt( row + 1, col) === 0) {
                         _otherMove.push(id,(row + 1)*9 + col);
-                    } else if ((lookAt( row + 1, col) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 1, col) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 1)*9 + col);
                     }
                 }
                 if (col > 3) {
-                    if (lookAt( row, col - 1) === 0) {
+                    if (this.lookAt( row, col - 1) === 0) {
                         _otherMove.push(id,row * 9 + col - 1);
-                    } else if ((lookAt( row, col - 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row, col - 1) & 8) !== piece_color) {
                         _captureMove.push(id,row * 9 + col - 1);
                     }
                 }
                 if (col < 5) {
-                    if (lookAt( row, col + 1) === 0) {
+                    if (this.lookAt( row, col + 1) === 0) {
                         _otherMove.push(id,row * 9 + col + 1);
-                    } else if ((lookAt( row, col + 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row, col + 1) & 8) !== piece_color) {
                         _captureMove.push(id,row * 9 + col + 1);
                     }
                 }
                 //hở mặt tướng
                 for (var i = row - 1; i >= 0; i--) {
-                    if (lookAt( i, col) !== 0) {
-                        if (lookAt( i, col) === 1) {
+                    if (this.lookAt( i, col) !== 0) {
+                        if (this.lookAt( i, col) === 1) {
                             _captureMove.push(id,i * 9 + col);
                         }
                         break;
@@ -141,59 +151,59 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
         case 2://sĩ
             if (piece_color === 0) {//quân đen
                 if (row > 0 && col > 3) {
-                    if (lookAt( row - 1, col - 1) === 0) {
+                    if (this.lookAt( row - 1, col - 1) === 0) {
                         _otherMove.push(id,(row - 1)*9 + col - 1);
-                    } else if ((lookAt( row - 1, col - 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 1, col - 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 1)*9 + col - 1);
                     }
                 }
                 if (row < 2 && col < 5) {
-                    if (lookAt( row + 1, col + 1) === 0) {
+                    if (this.lookAt( row + 1, col + 1) === 0) {
                         _otherMove.push(id,(row + 1)*9 + col + 1);
-                    } else if ((lookAt( row + 1, col + 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 1, col + 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 1)*9 + col + 1);
                     }
                 }
                 if (row > 0 && col < 5) {
-                    if (lookAt( row - 1, col + 1) === 0) {
+                    if (this.lookAt( row - 1, col + 1) === 0) {
                         _otherMove.push(id,(row - 1)*9 + col + 1);
-                    } else if ((lookAt( row - 1, col + 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 1, col + 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 1)*9 + col + 1);
                     }
                 }
                 if (row < 2 && col > 3) {
-                    if (lookAt( row + 1, col - 1) === 0) {
+                    if (this.lookAt( row + 1, col - 1) === 0) {
                         _otherMove.push(id,(row + 1)*9 + col - 1);
-                    } else if ((lookAt( row + 1, col - 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 1, col - 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 1)*9 + col - 1);
                     }
                 }
             } else {//quân đỏ
                 if (row > 7 && col > 3) {
-                    if (lookAt( row - 1, col - 1) === 0) {
+                    if (this.lookAt( row - 1, col - 1) === 0) {
                         _otherMove.push(id,(row - 1)*9 + col - 1);
-                    } else if ((lookAt( row - 1, col - 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 1, col - 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 1)*9 + col - 1);
                     }
                 }
                 if (row < 9 && col < 5) {
-                    if (lookAt( row + 1, col + 1) === 0) {
+                    if (this.lookAt( row + 1, col + 1) === 0) {
                         _otherMove.push(id,(row + 1)*9 + col + 1);
-                    } else if ((lookAt( row + 1, col + 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 1, col + 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 1)*9 + col + 1);
                     }
                 }
                 if (row > 7 && col < 5) {
-                    if (lookAt( row - 1, col + 1) === 0) {
+                    if (this.lookAt( row - 1, col + 1) === 0) {
                         _otherMove.push(id,(row - 1)*9 + col + 1);
-                    } else if ((lookAt( row - 1, col + 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 1, col + 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 1)*9 + col + 1);
                     }
                 }
                 if (row < 9 && col > 3) {
-                    if (lookAt( row + 1, col - 1) === 0) {
+                    if (this.lookAt( row + 1, col - 1) === 0) {
                         _otherMove.push(id,(row + 1)*9 + col - 1);
-                    } else if ((lookAt( row + 1, col - 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 1, col - 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 1)*9 + col - 1);
                     }
                 }
@@ -201,60 +211,60 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
             break;
         case 3://tượng
             if ( piece_color === 0) {//quân đen
-                if (row > 0 && col > 0 && (lookAt( row - 1, col - 1) === 0)) {
-                    if (lookAt( row - 2, col - 2) === 0) {
+                if (row > 0 && col > 0 && (this.lookAt( row - 1, col - 1) === 0)) {
+                    if (this.lookAt( row - 2, col - 2) === 0) {
                         _otherMove.push(id,(row - 2)*9 + col - 2);
-                    } else if ((lookAt( row - 2, col - 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 2, col - 2) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 2)*9 + col - 2);
                     }
                 }
-                if (row < 4 && col < 8 && (lookAt( row + 1, col + 1) === 0)) {
-                    if (lookAt( row + 2, col + 2) === 0) {
+                if (row < 4 && col < 8 && (this.lookAt( row + 1, col + 1) === 0)) {
+                    if (this.lookAt( row + 2, col + 2) === 0) {
                         _otherMove.push(id,(row + 2)*9 + col + 2);
-                    } else if ((lookAt( row + 2, col + 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 2, col + 2) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 2)*9 + col + 2);
                     }
                 }
-                if (row > 0 && col < 8 && (lookAt( row - 1, col + 1) === 0)) {
-                    if (lookAt( row - 2, col + 2) === 0) {
+                if (row > 0 && col < 8 && (this.lookAt( row - 1, col + 1) === 0)) {
+                    if (this.lookAt( row - 2, col + 2) === 0) {
                         _otherMove.push(id,(row - 2)*9 + col + 2);
-                    } else if ((lookAt( row - 2, col + 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 2, col + 2) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 2)*9 + col + 2);
                     }
                 }
-                if (row < 4 && col > 0 && (lookAt( row + 1, col - 1) === 0)) {
-                    if (lookAt( row + 2, col - 2) === 0) {
+                if (row < 4 && col > 0 && (this.lookAt( row + 1, col - 1) === 0)) {
+                    if (this.lookAt( row + 2, col - 2) === 0) {
                         _otherMove.push(id,(row + 2)*9 + col - 2);
-                    } else if ((lookAt( row + 2, col - 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 2, col - 2) & 8) !== piece_color) {
                         _otherMove.push(id,(row + 2)*9 + col - 2);
                     }
                 }
             } else {//quân đỏ
-                if (row > 5 && col > 0 && (lookAt( row - 1, col - 1) === 0)) {
-                    if (lookAt( row - 2, col - 2) === 0) {
+                if (row > 5 && col > 0 && (this.lookAt( row - 1, col - 1) === 0)) {
+                    if (this.lookAt( row - 2, col - 2) === 0) {
                         _otherMove.push(id,(row - 2)*9 + col - 2);
-                    } else if ((lookAt( row - 2, col - 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 2, col - 2) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 2)*9 + col - 2);
                     }
                 }
-                if (row < 9 && col < 8 && (lookAt( row + 1, col + 1) === 0)) {
-                    if (lookAt( row + 2, col + 2) === 0) {
+                if (row < 9 && col < 8 && (this.lookAt( row + 1, col + 1) === 0)) {
+                    if (this.lookAt( row + 2, col + 2) === 0) {
                         _otherMove.push(id,(row + 2)*9 + col + 2);
-                    } else if ((lookAt( row + 2, col + 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 2, col + 2) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 2)*9 + col + 2);
                     }
                 }
-                if (row > 5 && col < 8 && (lookAt( row - 1, col + 1) === 0)) {
-                    if (lookAt( row - 2, col + 2) === 0) {
+                if (row > 5 && col < 8 && (this.lookAt( row - 1, col + 1) === 0)) {
+                    if (this.lookAt( row - 2, col + 2) === 0) {
                         _otherMove.push(id,(row - 2)*9 + col + 2);
-                    } else if ((lookAt( row - 2, col + 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 2, col + 2) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 2)*9 + col + 2);
                     }
                 }
-                if (row < 9 && col > 0 && (lookAt( row + 1, col - 1) === 0)) {
-                    if (lookAt( row + 2, col - 2) === 0) {
+                if (row < 9 && col > 0 && (this.lookAt( row + 1, col - 1) === 0)) {
+                    if (this.lookAt( row + 2, col - 2) === 0) {
                         _otherMove.push(id,(row + 2)*9 + col - 2);
-                    } else if ((lookAt( row + 2, col - 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 2, col - 2) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 2)*9 + col - 2);
                     }
                 }
@@ -262,40 +272,40 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
             break;
         case 4://xe
             for (var i = col + 1; i < 9; i++) {
-                if (lookAt( row, i) === 0) {
+                if (this.lookAt( row, i) === 0) {
                     _otherMove.push(id,row * 9 + i);
                 } else {
-                    if ((lookAt( row, i) & 8) !== piece_color) {
+                    if ((this.lookAt( row, i) & 8) !== piece_color) {
                         _captureMove.push(id,row * 9 + i);
                     }
                     break;
                 }
             }
             for (var i = col - 1; i >= 0; i--) {
-                if (lookAt( row, i) === 0) {
+                if (this.lookAt( row, i) === 0) {
                     _otherMove.push(id,row * 9 + i);
                 } else {
-                    if ((lookAt( row, i) & 8) !== piece_color) {
+                    if ((this.lookAt( row, i) & 8) !== piece_color) {
                         _captureMove.push(id,row * 9 + i);
                     }
                     break;
                 }
             }
             for (var i = row + 1; i < 10; i++) {
-                if (lookAt( i, col) === 0) {
+                if (this.lookAt( i, col) === 0) {
                     _otherMove.push(id,i * 9 + col);
                 } else {
-                    if ((lookAt( i, col) & 8) !== piece_color) {
+                    if ((this.lookAt( i, col) & 8) !== piece_color) {
                         _captureMove.push(id,i * 9 + col);
                     }
                     break;
                 }
             }
             for (var i = row - 1; i >= 0; i--) {
-                if (lookAt( i, col) === 0) {
+                if (this.lookAt( i, col) === 0) {
                     _otherMove.push(id,i * 9 + col);
                 } else {
-                    if ((lookAt( i, col) & 8) !== piece_color) {
+                    if ((this.lookAt( i, col) & 8) !== piece_color) {
                         _captureMove.push(id,i * 9 + col);
                     }
                     break;
@@ -304,12 +314,12 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
             break;
         case 5://pháo
             for (var i = col + 1; i < 9; i++) {
-                if (lookAt( row, i) === 0) {
+                if (this.lookAt( row, i) === 0) {
                     _otherMove.push(id,row * 9 + i);
                 } else {
                     for (var j = i + 1; j < 9; j++) {
-                        if (lookAt( row, j) !== 0) {
-                            if ((lookAt( row, j) & 8) !== piece_color) {
+                        if (this.lookAt( row, j) !== 0) {
+                            if ((this.lookAt( row, j) & 8) !== piece_color) {
                                 _captureMove.push(id,row * 9 + j);
                             }
                             break;
@@ -319,12 +329,12 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
                 }
             }
             for (var i = col - 1; i >= 0; i--) {
-                if (lookAt( row, i) === 0) {
+                if (this.lookAt( row, i) === 0) {
                     _otherMove.push(id,row * 9 + i);
                 } else {
                     for (var j = i - 1; j >= 0; j--) {
-                        if (lookAt( row, j) !== 0) {
-                            if ((lookAt( row, j) & 8) !== piece_color) {
+                        if (this.lookAt( row, j) !== 0) {
+                            if ((this.lookAt( row, j) & 8) !== piece_color) {
                                 _captureMove.push(id,row * 9 + j);
                             }
                             break;
@@ -334,12 +344,12 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
                 }
             }
             for (var i = row + 1; i < 10; i++) {
-                if (lookAt( i, col) === 0) {
+                if (this.lookAt( i, col) === 0) {
                     _otherMove.push(id,i * 9 + col);
                 } else {
                     for (var j = i + 1; j < 10; j++) {
-                        if (lookAt( j, col) !== 0) {
-                            if ((lookAt( j, col) & 8) !== piece_color) {
+                        if (this.lookAt( j, col) !== 0) {
+                            if ((this.lookAt( j, col) & 8) !== piece_color) {
                                 _captureMove.push(id,j * 9 + col);
                             }
                             break;
@@ -349,12 +359,12 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
                 }
             }
             for (var i = row - 1; i >= 0; i--) {
-                if (lookAt( i, col) === 0) {
+                if (this.lookAt( i, col) === 0) {
                     _otherMove.push(id,i * 9 + col);
                 } else {
                     for (var j = i - 1; j >= 0; j--) {
-                        if (lookAt( j, col) !== 0) {
-                            if ((lookAt( j, col) & 8) !== piece_color) {
+                        if (this.lookAt( j, col) !== 0) {
+                            if ((this.lookAt( j, col) & 8) !== piece_color) {
                                 _captureMove.push(id,j * 9 + col);
                             }
                             break;
@@ -365,66 +375,66 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
             }
             break;
         case 6://mã
-            if (row > 1 && lookAt( row - 1, col) === 0) {//không bị cản phía trên
+            if (row > 1 && this.lookAt( row - 1, col) === 0) {//không bị cản phía trên
                 if (col > 0) {
-                    if (lookAt( row - 2, col - 1) === 0) {
+                    if (this.lookAt( row - 2, col - 1) === 0) {
                         _otherMove.push(id,(row - 2) * 9 + col - 1);
-                    } else if ((lookAt( row - 2, col - 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 2, col - 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 2) * 9 + col - 1);
                     }
                 }
                 if (col < 8) {
-                    if (lookAt( row - 2, col + 1) === 0) {
+                    if (this.lookAt( row - 2, col + 1) === 0) {
                         _otherMove.push(id,(row - 2) * 9 + col + 1);
-                    } else if ((lookAt( row - 2, col + 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 2, col + 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 2) * 9 + col + 1);
                     }
                 }
             }
-            if (row < 8 && lookAt( row + 1, col) === 0) {//không bị cản phía dưới
+            if (row < 8 && this.lookAt( row + 1, col) === 0) {//không bị cản phía dưới
                 if (col > 0) {
-                    if (lookAt( row + 2, col - 1) === 0) {
+                    if (this.lookAt( row + 2, col - 1) === 0) {
                         _otherMove.push(id,(row + 2) * 9 + col - 1);
-                    } else if ((lookAt( row + 2, col - 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 2, col - 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 2) * 9 + col - 1);
                     }
                 }
                 if (col < 8) {
-                    if (lookAt( row + 2, col + 1) === 0) {
+                    if (this.lookAt( row + 2, col + 1) === 0) {
                         _otherMove.push(id,(row + 2) * 9 + col + 1);
-                    } else if ((lookAt( row + 2, col + 1) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 2, col + 1) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 2) * 9 + col + 1);
                     }
                 }
             }
-            if (col > 1 && lookAt( row, col - 1) === 0) {//không bị cản phía trái
+            if (col > 1 && this.lookAt( row, col - 1) === 0) {//không bị cản phía trái
                 if (row > 0) {
-                    if (lookAt( row - 1, col - 2) === 0) {
+                    if (this.lookAt( row - 1, col - 2) === 0) {
                         _otherMove.push(id,(row - 1) * 9 + col - 2);
-                    } else if ((lookAt( row - 1, col - 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 1, col - 2) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 1) * 9 + col - 2);
                     }
                 }
                 if (row < 9) {
-                    if (lookAt( row + 1, col - 2) === 0) {
+                    if (this.lookAt( row + 1, col - 2) === 0) {
                         _otherMove.push(id,(row + 1) * 9 + col - 2);
-                    } else if ((lookAt( row + 1, col - 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 1, col - 2) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 1) * 9 + col - 2);
                     }
                 }
             }
-            if (col < 7 && lookAt( row, col + 1) === 0) {//không bị cản phía phải
+            if (col < 7 && this.lookAt( row, col + 1) === 0) {//không bị cản phía phải
                 if (row > 0) {
-                    if (lookAt( row - 1, col + 2) === 0) {
+                    if (this.lookAt( row - 1, col + 2) === 0) {
                         _otherMove.push(id,(row - 1) * 9 + col + 2);
-                    } else if ((lookAt( row - 1, col + 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 1, col + 2) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 1) * 9 + col + 2);
                     }
                 }
                 if (row < 9) {
-                    if (lookAt( row + 1, col + 2) === 0) {
+                    if (this.lookAt( row + 1, col + 2) === 0) {
                         _otherMove.push(id,(row + 1) * 9 + col + 2);
-                    } else if ((lookAt( row + 1, col + 2) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 1, col + 2) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 1) * 9 + col + 2);
                     }
                 }
@@ -433,48 +443,48 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
         case 7://tốt
             if (piece_color === 0) {//quân đen
                 if (row < 9) {
-                    if (lookAt( row + 1, col) === 0) {
+                    if (this.lookAt( row + 1, col) === 0) {
                         _otherMove.push(id,(row + 1)*9 + col);
-                    } else if ((lookAt( row + 1, col) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row + 1, col) & 8) !== piece_color) {
                         _captureMove.push(id,(row + 1)*9 + col);
                     }
                 }
                 if (row > 4) {//đã sang sông
                     if (col < 8) {
-                        if (lookAt( row, col + 1) === 0) {
+                        if (this.lookAt( row, col + 1) === 0) {
                             _otherMove.push(id,row * 9 + col + 1);
-                        } else if ((lookAt( row, col + 1) & 8) !== piece_color) {
+                        } else if ((this.lookAt( row, col + 1) & 8) !== piece_color) {
                             _captureMove.push(id,row * 9 + col + 1);
                         }
                     }
                     if (col > 0) {
-                        if (lookAt( row, col - 1) === 0) {
+                        if (this.lookAt( row, col - 1) === 0) {
                             _otherMove.push(id,row * 9 + col - 1);
-                        } else if ((lookAt( row, col - 1) & 8) !== piece_color) {
+                        } else if ((this.lookAt( row, col - 1) & 8) !== piece_color) {
                             _captureMove.push(id,row * 9 + col - 1);
                         }
                     }
                 }
             } else {//quân đỏ
                 if (row > 0) {
-                    if (lookAt( row - 1, col) === 0) {
+                    if (this.lookAt( row - 1, col) === 0) {
                         _otherMove.push(id,(row - 1)*9 + col);
-                    } else if ((lookAt( row - 1, col) & 8) !== piece_color) {
+                    } else if ((this.lookAt( row - 1, col) & 8) !== piece_color) {
                         _captureMove.push(id,(row - 1)*9 + col);
                     }
                 }
                 if (row < 5) {//đã sang sông
                     if (col < 8) {
-                        if (lookAt( row, col + 1) === 0) {
+                        if (this.lookAt( row, col + 1) === 0) {
                             _otherMove.push(id,row * 9 + col + 1);
-                        } else if ((lookAt( row, col + 1) & 8) !== piece_color) {
+                        } else if ((this.lookAt( row, col + 1) & 8) !== piece_color) {
                             _captureMove.push(id,row * 9 + col + 1);
                         }
                     }
                     if (col > 0) {
-                        if (lookAt( row, col - 1) === 0) {
+                        if (this.lookAt( row, col - 1) === 0) {
                             _otherMove.push(id,row * 9 + col - 1);
-                        } else if ((lookAt( row, col - 1) & 8) !== piece_color) {
+                        } else if ((this.lookAt( row, col - 1) & 8) !== piece_color) {
                             _captureMove.push(id,row * 9 + col - 1);
                         }
                     }
@@ -482,19 +492,19 @@ Chess.prototype.validMoveGen = function(id,  _captureMove, _otherMove) {
             }
             break;
     }
+	this.captureMove = _captureMove;
+	this.otherMove = _otherMove;
 }
 
 Chess.prototype.isValidMove = function(id1, id2) {
-    var otherMove;
-    var captureMove;
-    validMoveGen(id1, otherMove, captureMove);
-    for (var i = 1; i < otherMove.length; i += 2) {
-        if (otherMove[i] === id2) {
+    this.validMoveGen(id1);
+    for (var i = 1; i < this.otherMove.length; i += 2) {
+        if (this.otherMove[i] === id2) {
             return true;
         }
     }
-    for (var i = 1; i < captureMove.length; i += 2) {
-        if (captureMove[i] === id2) {
+    for (var i = 1; i < this.captureMove.length; i += 2) {
+        if (this.captureMove[i] === id2) {
             return true;
         }
     }
@@ -502,19 +512,22 @@ Chess.prototype.isValidMove = function(id1, id2) {
 }
 
 Chess.prototype.checkStatus = function() {
-    var redCaptureMove, redOtherMove, blackCaptureMove, blackOtherMove;
+    this.redCaptureMove = [];
+	this.blackOtherMove = [];
+	this.blackCaptureMove = [];
+	this.redOtherMove = [];
     var redGeneral = - 1;
     var blackGeneral = -1;
     var i;
     for (i = 0; i < 90; i++) {
         if (this.board[i] !== 0) {
             if ((this.board[i] & 8) === 0) {//black
-                validMoveGen(i, blackCaptureMove, blackOtherMove);
+                this.validMoveGen(i);
                 if ((this.board[i] & 7) === 1) {
                     blackGeneral = i;
                 }
             } else {//red
-                validMoveGen(i, redCaptureMove, redOtherMove);
+                this.validMoveGen(i);
                 if ((this.board[i] & 7) === 1) {
                     redGeneral = i;
                 }
@@ -527,13 +540,13 @@ Chess.prototype.checkStatus = function() {
     if (redGeneral === -1) {
         return -2; //black win
     }
-    for (i = 1; i < redCaptureMove.length; i += 2) {
-        if (redCaptureMove[i] === blackGeneral) {
+    for (i = 1; i < this.redCaptureMove.length; i += 2) {
+        if (this.redCaptureMove[i] === blackGeneral) {
             return 1; //red check
         }
     }
-    for (i = 1; i < blackCaptureMove.length; i += 2) {
-        if (blackCaptureMove[i] === redGeneral) {
+    for (i = 1; i < this.blackCaptureMove.length; i += 2) {
+        if (this.blackCaptureMove[i] === redGeneral) {
             return -1; //black check
         }
     }

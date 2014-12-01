@@ -15,7 +15,7 @@ var sessionManager = new SessionManagement();
 var firstRound = 1;
 var roomList = [];
 var token = [];
-roomList = message.createSampleRooms(5);
+roomList = message.createSampleRooms(12);
 
 io.sockets.on('connection', function (socket) {
 
@@ -90,7 +90,7 @@ io.sockets.on('connection', function (socket) {
 			//sessionManager.updateUserLeave(player.sessionId);
 			socket.leave(roomList[i].ID);
 			socket.emit('loseGU','');
-			io.to(roomList[i].ID).emit("winGU",'');
+			io.to(roomList[i].ID).emit("winRoomGU",'');
 	  var dup_array = JSON.parse(JSON.stringify(roomList));
 		for(var i in dup_array)
 		{
@@ -142,9 +142,9 @@ io.sockets.on('connection', function (socket) {
 			//sessionManager.updateUserJoin(player.sessionId,player);
 			player.joinRoom(data.roomID);
 			roomList[i].addPlayer(player);
+			if(roomList[i].countPlaying === 2) socket.emit('roomFull','');
 			socket.join(roomList[i].ID);
 			check = i;
-			if(roomList[i].countPlaying === 2) socket.emit('roomFull','');
 		}
 		}
 	 }
@@ -210,9 +210,176 @@ io.sockets.on('connection', function (socket) {
 		if(roomList[k].ID == player.roomID )
 			{
 				var res = roomList[k].updateTable(data.id1,data.id2);
-				if(res == -3) io.to(roomList[k].ID).emit('err',"6");
-				else if(res == -1) io.to.(roomList[k].ID).emit
-				else io.to(roomList[k].ID).emit('opMove',{id1 : data.id1, id2 : data.id2});
+				if(res == -3) io.to(roomList[k].ID).emit('err',"4");
+				else if(res == -1) 
+				{
+					if(roomList[k].color == 0)
+						{
+							if(roomList[k].boss !== player.username)
+							{
+								socket.broadcast.to(roomList[k].ID).emit('check','');
+							}
+						}
+					else 
+						{
+							if(roomList[k].boss === player.username)
+							{
+								socket.broadcast.to(roomList[k].ID).emit('check','');
+							}
+						}
+					
+				}
+				else if(res == 1) 
+				{
+					if(roomList[k].color == 0)
+						{
+							if(roomList[k].boss === player.username)
+							{
+								socket.broadcast.to(roomList[k].ID).emit('check','');
+							}
+						}
+					else 
+						{
+							if(roomList[k].boss !== player.username)
+							{
+								socket.broadcast.to(roomList[k].ID).emit('check','');
+							}
+						}
+				}
+				else if(res == -2) 
+				{
+					if(roomList[k].color == 0)
+						{
+							if(roomList[k].boss !== player.username)
+							{
+								roomList[k].endRoom(0);
+								if( roomList[k].countMatch == roomList[k].matchLimit)
+								{
+									if(roomList[k].countMatch - roomList[k].bossWin > roomList[k].matchLimit/2)
+									{
+									socket.emit('winRoomGU','');
+									socket.broadcast.to(roomList[k].ID).emit('loseRoomGU','');
+									break;
+									}
+									else if(roomList[k].bossWin == roomList[k].matchLimit/2)
+									{
+									io.to(roomList[k].ID).emit('equalRoomGU','');
+									break;
+									}
+								}
+								if(roomList[k].countMatch - roomList[k].bossWin > roomList[k].matchLimit/2)
+								{
+									socket.emit('winRoomGU','');
+									socket.broadcast.to(roomList[k].ID).emit('loseRoomGU','');
+								}
+								else 
+								{
+								socket.emit('winGU','');
+								socket.broadcast.to(roomList[k].ID).emit('loseGU','');
+								}
+								break;
+							}
+						}
+					else {
+							if(roomList[k].boss === player.username)
+								{
+								roomList[k].endRoom(1);
+								if(roomList[k].countMatch == roomList[k].matchLimit)
+								{
+									if(roomList[k].bossWin > roomList[k].matchLimit/2)
+									{
+									socket.emit('winRoomGU','');
+									socket.broadcast.to(roomList[k].ID).emit('loseRoomGU','');
+									break;
+									}
+									else if(roomList[k].bossWin == roomList[k].matchLimit/2)
+									{
+									io.to(roomList[k].ID).emit('equalRoomGU','');
+									break;
+									}
+								}
+								if(roomList[k].bossWin > roomList[k].matchLimit/2)
+								{
+									socket.emit('winRoomGU','');
+									socket.broadcast.to(roomList[k].ID).emit('loseRoomGU','');
+								}
+								else 
+								{
+								socket.emit('winGU','');
+								socket.broadcast.to(roomList[k].ID).emit('loseGU','');
+								}
+								break;
+								}
+							}
+				}
+				else if(res == 2) 
+				{
+					if(roomList[k].color == 0)
+						{
+							if(roomList[k].boss === player.username)
+							{
+								roomList[k].endRoom(1);
+								if(roomList[k].countMatch == roomList[k].matchLimit)
+								{
+									if(roomList[k].bossWin > roomList[k].matchLimit/2)
+									{
+									socket.emit('winRoomGU','');
+									socket.broadcast.to(roomList[k].ID).emit('loseRoomGU','');
+									break;
+									}
+									else if(roomList[k].bossWin == roomList[k].matchLimit/2)
+									{
+									io.to(roomList[k].ID).emit('equalRoomGU','');
+									break;
+									}
+									
+								}
+								if(roomList[k].bossWin > roomList[k].matchLimit/2)
+								{
+									socket.emit('winRoomGU','');
+									socket.broadcast.to(roomList[k].ID).emit('loseRoomGU','');
+								}
+								else 
+								{
+								socket.emit('winGU','');
+								socket.broadcast.to(roomList[k].ID).emit('loseGU','');
+								}
+								break;
+							}
+						}
+						else {
+							if(roomList[k].boss !== player.username)
+								{
+								roomList[k].endRoom(0);
+								if(roomList[k].countMatch == roomList[k].matchLimit)
+								{
+									if(roomList[k].countMatch - roomList[k].bossWin > roomList[k].matchLimit/2)
+									{
+									socket.emit('winRoomGU','');
+									socket.broadcast.to(roomList[k].ID).emit('loseRoomGU','');
+									break;
+									}
+									else if(roomList[k].bossWin == roomList[k].matchLimit/2)
+									{
+									io.to(roomList[k].ID).emit('equalRoomGU','');
+									break;
+									}
+								}
+								if(roomList[k].countMatch - roomList[k].bossWin > roomList[k].matchLimit/2)
+								{
+									socket.emit('winRoomGU','');
+									socket.broadcast.to(roomList[k].ID).emit('loseRoomGU','');
+								}
+								else 
+								{
+								socket.emit('winGU','');
+								socket.broadcast.to(roomList[k].ID).emit('loseGU','');
+								}
+								break;
+								}
+							}
+				}
+				socket.broadcast.to(roomList[k].ID).emit('opMove',{id1 : data.id1, id2 : data.id2});
 			}
 		}
 });
