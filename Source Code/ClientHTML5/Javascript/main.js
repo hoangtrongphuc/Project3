@@ -1,6 +1,35 @@
 // JavaScript Document
+function bigger()
+{
+setTimeout(function zxc()
+{
+$('#submit-login').css({
+'transform':'scale(1.15)',
+'font-size':'20px'
+});
+smaller();
+},200);
+};	
 
+function smaller(){
+	setTimeout(function zxc()
+{
+$('#submit-login').css({
+'transform':'scale(1.05)',
+'font-size':'20px'
+});
+bigger();
+},300);
+};
+
+bigger();
 $(document).ready(function(e) {
+	$('#submit-signin').hover(function(e){
+
+		
+		
+	});
+
     $('#submit-login').click(function(e) {
 		//alert('đasa');
         name = $('#username').val();
@@ -32,4 +61,5 @@ $(document).ready(function(e) {
 		});
 		
     });
+	$('#submit-login').animate({left:20},50);
 });
