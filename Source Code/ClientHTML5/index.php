@@ -5,7 +5,6 @@
 <title>Cờ tướng online</title>
 <link rel="stylesheet" type="text/css" href="CSS/index.css" >
 <link rel="stylesheet" type="text/css" href="add-in/bootstrap/css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="CSS/font/CODE Light.otf" />
 <script src="Javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
 <script src="add-in/md5js-master/md5js-master/md5js.js" type="text/javascript"></script>
 <script src="Javascript/main.js" type="text/javascript"></script>
