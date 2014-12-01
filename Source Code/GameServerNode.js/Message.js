@@ -32,7 +32,7 @@ Messaging.prototype.createSampleRooms = function(amount) {
 		room.boss = "hp";
 		room.name = "Test Table" + (i + 1);
 		room.status = 0;
-		room.countPlaying = 1;
+		room.countPlaying = 0;
 		room.matchLimit = 3;
 		room.coin = 1000;
 		roomList.push(room);

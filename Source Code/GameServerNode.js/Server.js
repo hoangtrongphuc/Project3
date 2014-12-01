@@ -33,7 +33,7 @@ io.sockets.on('connection', function (socket) {
 	{
 		sessionManager.addUser(sess);
 		//io.sockets.emit("logging", {message: data.username + " đã đăng nhập."});
-		var dup_array = roomList.slice();
+	  var dup_array = JSON.parse(JSON.stringify(roomList));
 		for(var i in dup_array)
 		{
 		delete dup_array[i].table;
@@ -53,7 +53,7 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('addRoom', function(data){
      var room = new Room(data.name);
-	 if(data.pass) room.pass = data.pass;
+	 if(data.pass) room.password = data.pass;
 	 room.matchLimit = data.match;
 	 room.coin = data.coin;
 	 var player = sessionManager.getSessionByUserId(socket.id);
@@ -62,15 +62,16 @@ io.sockets.on('connection', function (socket) {
 	 sessionManager.updateUser(player);
 	 room.players.push(player);
 	 roomList.push(room);
-	 
-	 var dup_array = roomList.slice();
+	 console.log(room);
+	  var dup_array = JSON.parse(JSON.stringify(roomList));
 		for(var i in dup_array)
 		{
 		delete dup_array[i].table;
 		delete dup_array[i].turn;
 		delete dup_array[i].bossWin;
 		delete dup_array[i].color;
-		}
+		} 
+	 console.log(room);
 	 socket.emit('added',{message : "tạo phòng thành công"});
 	 io.sockets.emit("roomList",dup_array);
      socket.emit('roomInfor',room);
@@ -83,12 +84,14 @@ io.sockets.on('connection', function (socket) {
 	 {
 		if(roomList[i].ID === player.roomID && roomList[i].boss !== player.username) 
 		{
-		console.log(roomList[i].boss + " " +  player.sessionId);
+			player.leaveRoom();
 			roomList[i].removePlayer(player);
 			roomList[i].resetRoom();
-			sessionManager.updateUserLeave(player.sessionId);
+			//sessionManager.updateUserLeave(player.sessionId);
 			socket.leave(roomList[i].ID);
-			var dup_array = roomList.slice();
+			socket.emit('loseGU','');
+			io.to(roomList[i].ID).emit("winGU",'');
+	  var dup_array = JSON.parse(JSON.stringify(roomList));
 		for(var i in dup_array)
 		{
 		delete dup_array[i].table;
@@ -97,23 +100,23 @@ io.sockets.on('connection', function (socket) {
 		delete dup_array[i].color;
 		}
 		socket.emit("roomList",dup_array);
-			io.to(roomList[i].ID).emit("roomInfor",roomList[i]);
+		io.to(roomList[i].ID).emit("roomInfor",roomList[i]);
 		}
 		else if(roomList[i].ID === player.roomID && roomList[i].boss === player.username)
 		{
-		for(var k in roomList[i].player)
+		for(var k in roomList[i].players)
 			{
-				sessionManager.updateUserLeave(roomList[i].players[k].sessionId);
+				//sessionManager.updateUserLeave(roomList[i].players[k].sessionId);
+				//player.leaveRoom();
+				roomList[i].players[k].leaveRoom();
 			}
-		var clients = io.sockets.adapter.rooms[roomList[i].ID];
-		for(var t in clients)
-			{
-			console.log(clients[t].id);
-					clients[t].leave(roomList[i].ID)
+		for (var socketId in io.nsps['/'].adapter.rooms[roomList[i].ID]) {
+			var socketA = io.sockets.connected[socketId];
+			socketA.leave(roomList[i].ID);
 			}
-			roomList.splice(i,1);
+		roomList.splice(i,1);
 		}
-		var dup_array = roomList.slice();
+	  var dup_array = JSON.parse(JSON.stringify(roomList));
 		for(var v in dup_array)
 		{
 		delete dup_array[v].table;
@@ -127,30 +130,34 @@ io.sockets.on('connection', function (socket) {
  });
  
    socket.on('joinRoom', function(data){
-     var player = sessionManager.getSessionByUserId(data.sessionId);
-	 var check = 0;
+     var player = sessionManager.getSessionByUserId(socket.id);
+	 var check = -1;
+//	 player.roomID = -1;
 	 for(var i in roomList)
 	 {
-		if(roomList[i].ID == data.roomID && roomList[i].countPlaying < 2 && player.status == 0 && data.pass === roomList[i].pass ) 
+		if(roomList[i].ID == data.roomID && roomList[i].countPlaying < 2 && (data.pass === roomList[i].password || !data.pass) ) 
 		{
 		if(player.roomID == -1)
 		{
-			sessionManager.updateUserJoin(player.sessionId,player);
+			//sessionManager.updateUserJoin(player.sessionId,player);
+			player.joinRoom(data.roomID);
 			roomList[i].addPlayer(player);
 			socket.join(roomList[i].ID);
-			check = 1;
+			check = i;
+			if(roomList[i].countPlaying === 2) socket.emit('roomFull','');
 		}
 		}
 	 }
-	 if(check == 0) socket.emit('err',"2");
+	 if(check < 0) socket.emit('err',"2");
      else
 	 { 
-	 io.to(room.ID).emit("roomInfor",room);
+	 io.to(roomList[check].ID).emit("roomInfor",roomList[check]);
+	 socket.emit('joined','');
 	 }
  });
  
    socket.on('refreshRoom', function(){
-	var dup_array = roomList.slice();
+	  var dup_array = JSON.parse(JSON.stringify(roomList));
 		for(var i in dup_array)
 		{
 		delete dup_array[i].table;
@@ -187,6 +194,8 @@ io.sockets.on('connection', function (socket) {
 			 player.status = 3;
 		//	 sessionManger.updateUser(player);
 			 io.to(roomList[k].ID).emit("roomInfor",roomList[k]);
+			 			 console.log(roomList[k]);
+			 io.to(roomList[k].ID).emit('boardInfo',{turn : player.username, board : roomList[k].table.board});
 			 break;
 			}
 		}
@@ -201,7 +210,9 @@ io.sockets.on('connection', function (socket) {
 		if(roomList[k].ID == player.roomID )
 			{
 				var res = roomList[k].updateTable(data.id1,data.id2);
-				if(res == -3) io.to(room.ID).emit('err',"6");
+				if(res == -3) io.to(roomList[k].ID).emit('err',"6");
+				else if(res == -1) io.to.(roomList[k].ID).emit
+				else io.to(roomList[k].ID).emit('opMove',{id1 : data.id1, id2 : data.id2});
 			}
 		}
 });
@@ -215,15 +226,16 @@ socket.on('giveUp',function(data){
 	var player  = sessionManager.getSessionById(socket.id);
 	  for(var i in roomList)
 	 {
-		if(roomList[i].ID == player.roomID) 
+		if(roomList[i].ID === player.roomID) 
 		{
+			if(roomList[i].status < 2) {socket.emit('notGiveUp',''); break;}
 		    roomList[i].bossWin++;
 			if(roomList[i].color == 0) roomList[i].color = 1;
 			else roomList[i].color = 0;
 			roomList[i].turn = 0;
 			roomList[i].countMatch++;
-			roomList[i].table.resetBoard();
-			var dup_array = roomList.slice();
+			roomList[i].table = new Chess();
+	  var dup_array = JSON.parse(JSON.stringify(roomList));
 		for(var i in dup_array)
 		{
 		delete dup_array[i].table;
@@ -232,7 +244,12 @@ socket.on('giveUp',function(data){
 		delete dup_array[i].color;
 		}
 		socket.emit("roomList",dup_array);
-			io.to(room.ID).emit("roomInfor",roomList[i]);
+			for (var socketId in io.nsps['/'].adapter.rooms[roomList[i].ID]) {
+			var socketA = io.sockets.connected[socketId];
+			if(socketId === socket.id)
+			socketA.emit('loseGU','');
+			else socketA.emit('winGU','');
+			}
 		}
 	 }
 });
@@ -272,7 +289,7 @@ socket.on('chatFriend', function(data){
 						clients[t].leave(roomList.ID)
 					}
 					roomList.remove(k);
-					var dup_array = roomList.slice();
+	  var dup_array = JSON.parse(JSON.stringify(roomList));
 					for(var i in dup_array)
 					{
 					delete dup_array[i].table;
