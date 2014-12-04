@@ -202,20 +202,20 @@ io.sockets.on('connection', function (socket) {
 	 }   
  });
  
-   socket.on('move', function(data){ 
-      var errorFlag = false;
-      var player = sessionManager.getSessionById(socket.id);
-      for(var k in roomList)
-		{
-		if(roomList[k].ID == player.roomID )
-			{
-				var res = roomList[k].updateTable(data.id1,data.id2);
-				if(res == -3) io.to(roomList[k].ID).emit('err',"6");
-				else if(res == -1) io.to.(roomList[k].ID).emit
-				else io.to(roomList[k].ID).emit('opMove',{id1 : data.id1, id2 : data.id2});
-			}
-		}
-});
+//    socket.on('move', function(data){ 
+//       var errorFlag = false;
+//       var player = sessionManager.getSessionById(socket.id);
+//       for(var k in roomList)
+// 		{
+// 		if(roomList[k].ID == player.roomID )
+// 			{
+// 				var res = roomList[k].updateTable(data.id1,data.id2);
+// 				if(res == -3) io.to(roomList[k].ID).emit('err',"6");
+// 				else if(res == -1) io.to.(roomList[k].ID).emit
+// 				else io.to(roomList[k].ID).emit('opMove',{id1 : data.id1, id2 : data.id2});
+// 			}
+// 		}
+// });
 
 socket.on('chatInRoom', function(data){
 	var player  = sessionManager.getSessionById(socket.id);
