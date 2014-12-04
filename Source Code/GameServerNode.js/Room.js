@@ -29,6 +29,14 @@ Room.prototype.resetRoom = function(){
 	this.color = 0;
 }
 
+Room.prototype.equalRoom = function(){
+	this.countMatch = 0; 
+	this.status = 0;
+	this.table = new Chess();
+	this.turn = 0; 
+	this.color = 0;
+	this.bossWin = 0;
+}
 
 Room.prototype.endRoom = function(boss){
 	this.countMatch++; 

@@ -3,7 +3,7 @@
 function SessionManagement()
 {
 	this.sessions = [];
-	this.token = ["xax","kaka"]
+	this.token = []
 }
 
 SessionManagement.prototype.indexOf = function(sessionId) {

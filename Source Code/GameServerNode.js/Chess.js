@@ -57,9 +57,10 @@ Chess.prototype.lookAt = function(row, col) {
     return this.board[row * 9 + col];
 }
 
-Chess.prototype.validMoveGen = function(id) {
+Chess.prototype.validMoveGen = function(id,status) {
     this.captureMove = [];
 	this.otherMove = [];
+	
     var piece = this.board[id];
 	var _captureMove = [];
 	var _otherMove = [];
@@ -492,12 +493,25 @@ Chess.prototype.validMoveGen = function(id) {
             }
             break;
     }
+	if(status == 0)
+	{
 	this.captureMove = _captureMove;
 	this.otherMove = _otherMove;
+	}
+	else if(status == 1)
+	{
+	Array.prototype.push.apply(this.redCaptureMove,_captureMove);
+	Array.prototype.push.apply(this.redOtherMove,_otherMove);
+	}
+	else 
+	{
+	Array.prototype.push.apply(this.blackCaptureMove,_captureMove);
+	Array.prototype.push.apply(this.blackOtherMove,_otherMove);
+	}
 }
 
 Chess.prototype.isValidMove = function(id1, id2) {
-    this.validMoveGen(id1);
+    this.validMoveGen(id1,0);
     for (var i = 1; i < this.otherMove.length; i += 2) {
         if (this.otherMove[i] === id2) {
             return true;
@@ -512,7 +526,7 @@ Chess.prototype.isValidMove = function(id1, id2) {
 }
 
 Chess.prototype.checkStatus = function() {
-    this.redCaptureMove = [];
+	this.redCaptureMove = [];
 	this.blackOtherMove = [];
 	this.blackCaptureMove = [];
 	this.redOtherMove = [];
@@ -522,12 +536,12 @@ Chess.prototype.checkStatus = function() {
     for (i = 0; i < 90; i++) {
         if (this.board[i] !== 0) {
             if ((this.board[i] & 8) === 0) {//black
-                this.validMoveGen(i);
+                this.validMoveGen(i,2);
                 if ((this.board[i] & 7) === 1) {
                     blackGeneral = i;
                 }
             } else {//red
-                this.validMoveGen(i);
+                this.validMoveGen(i,1);
                 if ((this.board[i] & 7) === 1) {
                     redGeneral = i;
                 }
