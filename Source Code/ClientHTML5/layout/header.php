@@ -30,17 +30,17 @@
     <div id="menu">
     <ul id="nav" class="js">
     	<li class="<?php echo $trangchu; ?>">
-        <a href="/cotuong">Trang chủ</a></li>
+        <a href="index.php">Trang chủ</a></li>
     	<li class="<?php echo $aboutus; ?>">
-        <a href="/cotuong?page=aboutus">Giới thiệu</a></li>
+        <a href="index.php?page=aboutus">Giới thiệu</a></li>
     	<li class="<?php echo $napxu; ?>">
-        <a href="/cotuong?page=napxu">Nạp xu</a></li>
+        <a href="index.php?page=napxu">Nạp xu</a></li>
     	<li class="<?php echo $tintuc; ?>">
-        <a href="/cotuong?page=tintuc">Tin tức</a></li>
+        <a href="index.php?page=tintuc">Tin tức</a></li>
     	<li class="<?php echo $howtoplay; ?>">
-        <a href="/cotuong?page=howtoplay">Hướng dẫn</a></li>
+        <a href="index.php?page=howtoplay">Hướng dẫn</a></li>
     	<li class="<?php echo $contactus; ?>">
-        <a href="/cotuong?page=contactus">Liên hệ</a></li>
+        <a href="index.php?page=contactus">Liên hệ</a></li>
 </ul>
     </div>
   </div>

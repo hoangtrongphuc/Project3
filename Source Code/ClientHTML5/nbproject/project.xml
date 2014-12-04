@@ -5,5 +5,15 @@
         <data xmlns="http://www.netbeans.org/ns/php-project/1">
             <name>ClientHTML5</name>
         </data>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>CHƠI</word>
+            <word>CẬP</word>
+            <word>DANH</word>
+            <word>Gửi</word>
+            <word>NHẬT</word>
+            <word>PHÒNG</word>
+            <word>SÁCH</word>
+            <word>TẠO</word>
+        </spellchecker-wordlist>
     </configuration>
 </project>
