@@ -1,18 +1,12 @@
-/* 
- * Copyright (c) 2014 Nguyen Tat Nguyen
- */
 var controller = (function () {
-    var token1="kaka", user1="p", token2="xax", user2='n';
-    var test_token = token1;
-    var test_user = user1;
+
     var board=[],
-        turn,//bằng 0 hoặc 8. 0-đen, 8-đ�?
+        turn,//bằng 0 hoặc 8. 0-đen, 8-đỏ
         myColor,// bằng 0 hoặc 8
-        username = getCookie('username'),//tên ngư�?i chơi
-        token = getCookie('token'),
+        username = getCookie('cookie_username'),//tên người chơi
+        token = getCookie('cookie_tokenkey'),
         roomInfo,
         haveRoom = false,
-        ownRoom,
         roomList=[],
         gameStart = false,
         focusedValidMove=[],
@@ -499,7 +493,7 @@ var controller = (function () {
     }
     
     function drawBoard(){
-        //vẽ bàn c�? và đánh dấu các nước đi hợp lệ
+        //vẽ bàn cờ và đánh dấu các nước đi hợp lệ
         var boardCtx = boardCanvas.getContext("2d");
         boardCtx.drawImage(boardImg, 0, 0, boardWidth, boardHeight);
         var i, pieceCtx, piece, piece_type, piece_color;
@@ -524,11 +518,11 @@ var controller = (function () {
         }
     }
     function hideCheckWarning(){
-        //ẩn thông báo chiếu tướng trên bàn c�? 
+        //ẩn thông báo chiếu tướng trên bàn cờ 
         infoCanvas.style.display = "none";
     }
     function showCheckWarning(){
-        //hiện thông báo chiếu tướng trên bàn c�?
+        //hiện thông báo chiếu tướng trên bàn cờ
         var infoCtx, img;
         img = checkImg;
         
@@ -580,7 +574,7 @@ var controller = (function () {
     }
     
     function moveAnimatedly(id1, id2){
-        //tạo chuyển động cho quân c�?, cập nhật bàn c�?, turn
+        //tạo chuyển động cho quân cờ, cập nhật bàn cờ, turn
         var r1, r2, c1, c2, x1, x2, y1, y2, piece, ctx, img, x, y, dx, dy, i, timer, intervals = 20;
         function exec(){
             i++;
@@ -627,17 +621,20 @@ var controller = (function () {
         $("#messageDialog").dialog('open');
     }
     function closeRoom(){
+		gameStart = false;
+        socket.emit('closeRoom','');
         haveRoom = false;
         document.location.hash = "#listRoomDiv";
     }
-//==========Các hàm được g�?i khi server phát event tương ứng==============
+//==========Các hàm được gọi khi server phát event tương ứng==============
     //các sự kiện khi chơi game 
     function onBoardInfo(data){
         console.log("onBoardInfo");
         var ob = data;
         if(gameStart === false){
-            if(ob.turn === username){
-                myColor = 8;//đ�?, đi trước
+            //if(ob.turn === username){//code đúng, dòng ở dưới chỉ để test
+            if(ob.turn === username){//TEST
+                myColor = 8;//đỏ, đi trước
             }else{
                 myColor = 0;
             }
@@ -650,21 +647,34 @@ var controller = (function () {
         for(var i = 0; i< 90; i++){
             board[i] = 0;
         }
-        for( var i in ob.board){
-            if(myColor===0){//quân đen, phải xoay ngược bàn
-                board[90-i.cid] = i.pid;
-            }else{//quân đ�?, không cần xoay bàn
-                board[i.cid] = i.pid;
+//        for( var j in ob.board){
+//            var i = ob.board[j];
+//            if(myColor===0){//quân đen, phải xoay ngược bàn
+//                board[90-i.cid] = i.pid;
+//            }else{//quân đỏ, không cần xoay bàn
+//                board[i.cid] = i.pid;
+//            }
+//        }
+        if(myColor===8){
+            board = ob.board;
+        }else{
+            for(var i = 0; i<90; i++){
+                board[89-i] = ob.board[i];
             }
         }
         drawBoard();
     }
+	
+	function onReset()
+	{
+		reset();
+	}
+	
     function onOpMove(data){
-        console.log("onOpMove");
         var move = data;
         if(myColor===0){
-            moveAnimatedly(90-move.id1, 90-move.id2);
-            console.log("onOpMove: "+(89-move.id1)+":"+(89-move.id2));
+            moveAnimatedly(89-move.id1, 89-move.id2);
+            console.log("onOpMove: "+89-move.id1+":"+89-move.id2);
         }else{
             moveAnimatedly(move.id1, move.id2);
             console.log("onOpMove: "+move.id1+":"+move.id2);
@@ -679,15 +689,17 @@ var controller = (function () {
         showMessage("Bạn đã thua ván này!");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-        controlDiv.appendChild(nextButton);
+		reset();
+        controlDiv.appendChild(readyButton);
     }
     function onWin(){
         console.log("onWin");
         gameStart = false;
-        showMessage("Chúc mừng! Bạn đã thua ván này.");
+        showMessage("Chúc mừng! Bạn đã thắng ván này.");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-        controlDiv.appendChild(nextButton);
+		reset();
+        controlDiv.appendChild(readyButton);
     }
     function onLoseRoom(){
         console.log("onLoseRoom");
@@ -699,7 +711,7 @@ var controller = (function () {
     function onWinRoom(){
         console.log("onWinRoom");
         gameStart = false;
-        showMessage("Chúc mừng! Bạn là ngư�?i chiến thắng trong phòng chơi này");
+        showMessage("Chúc mừng! Bạn là người chiến thắng trong phòng chơi này");
         controlDiv.innerHTML='';
         controlDiv.appendChild(closeRoomButton);
     }
@@ -710,33 +722,63 @@ var controller = (function () {
     function onLoseGU(){
         console.log("onLoseGU");
         gameStart = false;
-        showMessage("Rất tiếc khi bạn đã từ b�? ván chơi này");
+        showMessage("Rất tiếc khi bạn đã từ bỏ ván chơi này");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-        controlDiv.appendChild(nextButton);
+		reset();
+        controlDiv.appendChild(readyButton);
     }
     function onWinGU(){
         console.log("onWinGU");
         gameStart = false;
-        showMessage("�?ối thủ đã b�? cuộc. Bạn là ngư�?i chiến thắng trong ván này!");
+        showMessage("Đối thủ xin thua. Bạn đã thắng ván này!");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-        controlDiv.appendChild(nextButton);
+		reset();
+        controlDiv.appendChild(readyButton);
     }
     function onLoseRoomGU(){
         console.log("onLoseRoomGU");
         gameStart = false;
-        showMessage("Rất tiếc khi bạn đã b�? cuộc và nhận thua trong phòng chơi này");
+        showMessage("Rất tiếc khi bạn đã bỏ cuộc và nhận thua trong phòng chơi này");
         haveRoom = false;
         document.location.hash = "#listRoomDiv";
     }
+	
+	function onEqualRoom()
+	{
+		console.log("onWinRoomGU");
+        showMessage("Bất phân thắng bại. Tour đấu sẽ được bắt đầu lại!");
+        reset();
+	}
+	
     function onWinRoomGU(){
         console.log("onWinRoomGU");
         gameStart = false;
-        showMessage("�?ối thủ đã b�? cuộc. Bạn là ngư�?i chiến thắng trong phòng này");
+        showMessage("Đối thủ đã bỏ cuộc. Bạn là người chiến thắng trong phòng này");
         controlDiv.innerHTML='';
         controlDiv.appendChild(closeRoomButton);
     }
+	
+	function onLeaveOutRoom(){
+        console.log("leaveOutRoom");
+        showMessage("Đối thủ vừa thoát ra");
+    }
+	function onLeave(){
+        console.log("leave");
+        gameStart = false;
+        haveRoom = false;
+        document.location.hash = "#listRoomDiv";
+    }
+	
+	function onDelete(){
+        console.log("delete");
+        gameStart = false;
+        haveRoom = false;
+		showMessage("Phòng chơi đã bị hủy !");
+        document.location.hash = "#listRoomDiv";
+    }
+	
     //các sự kiện khác
     function onRoomList(data){
         console.log("onRoomList");
@@ -748,7 +790,7 @@ var controller = (function () {
             $("#roomTableDiv").html("Không có dữ liệu");
         }else{
             var table = $("#roomTable");
-            table.html("<tr> <th>ID</th> <th>Tên phòng</th> <th>Số ngư�?i chơi</th> <th>Số ván</th><th>Chủ phòng</th> <th>Xu</th> <th>Lock</th> <th></th> </tr>");
+            table.html("<tr> <td>No.</td> <td>Tên phòng</td> <td>Số người chơi</td> <td>Số ván</td><td>Chủ phòng</td> <td>Tiền cược</td> <td>Lock</td> <td></td> </tr>");
             for(var room in list){
 			var row = "<tr>" + "<td>"+list[room].ID+"</td>"+
                 "<td>"+list[room].name+"</td>"+
@@ -756,21 +798,41 @@ var controller = (function () {
                 "<td>"+list[room].matchLimit+"</td>"+
                 "<td>"+list[room].boss+"</td>"+				
                 "<td>"+list[room].coin+"</td>";
-				if(list[room].password !== "") row = row+ "<td>LOCK</td>"+"<td><button class='button' onclick='joinRoom("+list[room].ID+","+list[room].password+");' >Tham gia</button></td>" +"</tr>";
-				else row = row + "<td>NO</td>"+
-				"<td><button class='button' onclick='joinRoom("+list[room].ID+","+"false);' >Tham gia</button></td>" +
-				 "</tr>";
+				if(list[room].password !== "") 
+				{
+				if(list[room].status == 4)
+				row = row+ "<td>LOCK</td>"+"<td><button class='button' style='background-color:grey'>Kết thúc</button></td>" +"</tr>";
+				else 
+				{
+				if(list[room].countPlaying == 2)
+				row = row+ "<td>LOCK</td>"+"<td><button class='button' style='background-color:red'> Đầy </button></td>" +"</tr>";
+				else 
+				row = row+ "<td>LOCK</td>"+"<td><button class='button' onclick='joinRoom("+list[room].ID+","+list[room].password+");' >Tham gia</button></td>" +"</tr>";
+				}
+				}
+				else 
+				{
+				if(list[room].status == 4)
+				row = row+ "<td>NO</td>"+"<td><button class='button' style='background-color:grey'>Kết thúc</button></td>" +"</tr>";
+				else 
+				{
+				if(list[room].countPlaying == 2)
+				row = row+ "<td>NO</td>"+"<td><button class='button' style='background-color:red'> Đầy </button></td>" +"</tr>";
+				else 
+				row = row+ "<td>NO</td>"+"<td><button class='button' onclick='joinRoom("+list[room].ID+",false);' >Tham gia</button></td>" +"</tr>";
+				}
+				}
                 table.append(row);
             }
         }
     }
     function onErr(id){
         switch(id){
-            case "1" : showMessage("Không định danh được ngư�?i dùng. Hãy chắc chắn bạn đã đăng nhập"); break;
+            case "1" : showMessage("Không định danh được người dùng. Hãy chắc chắn bạn đã đăng nhập"); break;
             case "2" : showMessage("Phòng chơi không hợp lệ"); break;
             case "3" : showMessage("Bạn đã nhập sai password cho phòng chơi"); break;
             case "4" : showMessage("Nước bạn vừa đi không hợp lệ"); break;
-            case "5" : showMessage("�?ã xảy ra lỗi hệ thống"); break;
+            case "5" : showMessage("Đã xảy ra lỗi hệ thống"); break;
             case "6" : showMessage("Lỗi không xác định"); break;
 			case "7" : showMessage("Tài khoản đang được sử dụng"); break;
             default : showMessage("Mã lỗi không đúng. "); break;
@@ -783,7 +845,7 @@ var controller = (function () {
         var html = "<b>Mã phòng chơi</b>"+roomInfo.ID+
                 "<br/><b>Tên phòng chơi</b>"+roomInfo.name+
                 "<br/><b>Số trận</b>"+roomInfo.match+
-                "<br/><b>Số ti�?n cược</b>"+roomInfo.coin;
+                "<br/><b>Số tiền cược</b>"+roomInfo.coin;
         $("#roomInfoDiv").html(html);
     }
     function onLogging(){
@@ -792,46 +854,43 @@ var controller = (function () {
     function onAdded(){
         console.log("onAdded");
         haveRoom = true;
-        ownRoom = true;
         reset();
         document.location.hash="#roomDiv";
     }
     function onJoined(){
         console.log("onJoined");
         haveRoom = true;
-        ownRoom = false;
         reset();
         document.location.hash="#roomDiv";
     }
     function onRoomFull(){
-        showMessage("Phòng chơi đã đủ ngư�?i, nhấn 'Bắt đầu' để chơi");
+        showMessage("Phòng chơi đã đủ người, nhấn 'Sẵn sàng' để chơi");
     }
     //chat
     function onChatMessage(){
         console.log("onChatMessage");
     }
     function onChatRoomMessage(s){
-        var m = s;
+        var m = JSON.parse(JSON.stringify( s));
         console.log("onChatRoomMessage: "+m.username+" "+m.message);
         $("#messagesDiv").append("<b>"+m.username+":</b> "+m.message+"<br/>");
     }
-//==========END - Các hàm được g�?i khi server phát event tương ứng==============
+//==========END - Các hàm được gọi khi server phát event tương ứng==============
 
 //===========Các hàm phát sự kiện lên server======================
     function connectToServer(){
         console.log("connectToServer");
         var ob={};
-        //ob.token = "xax";
-        ob.token = "kaka";
-        ob.username = "hp";
-        socket.emit('connectToServer', {token : "xax", username : "hp"});
+        ob.token = token;
+        ob.username = username;
+        socket.emit('connectToServer', ob);
     }
     function move(id1, id2) {
         var ob={};
         moveAnimatedly(id1, id2);
         if(myColor===0){
-            id1 = 90 - id1;
-            id2 = 90 - id2;
+            id1 = 89 - id1;
+            id2 = 89 - id2;
         }
         ob.id1 = id1;
         ob.id2 = id2;
@@ -873,13 +932,13 @@ var controller = (function () {
 //            }
               if(haveRoom === true){
                   document.location.hash = "#roomDiv";
-                  document.getElementById("listRoomDiv").style.display = "none";
-                  document.getElementById("roomDiv").style.display = "block";
+                document.getElementById("listRoomDiv").style.display = "none";
+                document.getElementById("roomDiv").style.display = "block";
               }else{
                   document.location.hash = "#listRoomDiv";
-                  document.getElementById("listRoomDiv").style.display = "block";
-                  document.getElementById("roomDiv").style.display = "none";
-              }
+                document.getElementById("listRoomDiv").style.display = "block";
+                document.getElementById("roomDiv").style.display = "none";
+            }
         },
         boardClicked: function(id){
             if(turn===myColor && gameStart){
@@ -980,7 +1039,7 @@ var controller = (function () {
             giveUpButton.className = "buttonRed";
             
             leaveRoomButton = document.createElement("button");
-            leaveRoomButton.innerHTML = "Hủy phòng";
+            leaveRoomButton.innerHTML = "Rời phòng";
             leaveRoomButton.onclick = this.leaveRoom;
             leaveRoomButton.className = "buttonRed";
             
@@ -993,9 +1052,9 @@ var controller = (function () {
             readyButton.innerHTML = "Sẵn sàng";
             readyButton.onclick = this.readyToPlay;
             readyButton.className = "buttonRed";
-            
+                    
             closeRoomButton = document.createElement("button");
-            closeRoomButton.innerHTML = "�?óng phòng chơi";
+            closeRoomButton.innerHTML = "Đóng phòng chơi";
             closeRoomButton.onclick = closeRoom;
             closeRoomButton.className = "buttonRed";
                     
@@ -1025,7 +1084,9 @@ var controller = (function () {
             
             //Tao socket
             socket = io.connect(connectURL);
-			socket.on('connectToServer', roomList);
+			socket.on('delete',onDelete);
+			socket.on('leave',onLeave);
+			socket.on('leaveOutRoom',onLeaveOutRoom);
             socket.on('boardInfo', onBoardInfo);
             socket.on('opMove', onOpMove);
             socket.on('check', onCheck);
@@ -1038,6 +1099,7 @@ var controller = (function () {
             socket.on('winGU', onWinGU);
             socket.on('loseRoomGU', onLoseRoomGU);
             socket.on('winRoomGU', onWinRoomGU);
+			socket.on('equalRoom', onEqualRoom);
             socket.on('logging', onLogging);
             socket.on('roomInfo', onRoomInfo);
             socket.on('err', onErr);
@@ -1048,11 +1110,12 @@ var controller = (function () {
             socket.on('added', onAdded);
             socket.on('roomFull', onRoomFull);
 			socket.on('notGiveUp','');
+			socket.on('reset', onReset);
         },
         initController: function(id){
             this.place(id);
             reset();
-            imageLoaded();//đảm bảo tất cả đã sẵn sàng trước khi g�?i hàm drawBoard() lần đầu tiên
+            imageLoaded();//đảm bảo tất cả đã sẵn sàng trước khi gọi hàm drawBoard() lần đầu tiên
             connectToServer();
           //  updateRoomList(roomList);
         },
@@ -1062,7 +1125,7 @@ var controller = (function () {
             ob.roomID = id;
             ob.pass = pass;
             console.log("joinRoom: "+ob.sessionId+" "+ob.roomID+" "+ob.pass);
-            socket.emit('joinRoom', {sessionId : "xax", roomID : id, pass: pass});
+            socket.emit('joinRoom', ob);
         },
         refreshRoom: function(){
             console.log("refreshRoom");
@@ -1077,7 +1140,7 @@ var controller = (function () {
             controlDiv.innerHTML='';
             controlDiv.appendChild(leaveRoomButton);
             /*controlDiv.appendChild(giveUpButton);*/
-            controlDiv.appendChild(document.createTextNode("�?ang đợi ngư�?i chơi còn lại sẵn sàng"));
+            controlDiv.appendChild(document.createTextNode("Đang đợi người chơi còn lại sẵn sàng"));
             socket.emit('readyToPlay');
         },
         giveup: function(){
@@ -1086,14 +1149,13 @@ var controller = (function () {
                 gameStart = false;
                 controlDiv.innerHTML='';
                 controlDiv.appendChild(leaveRoomButton);
-                controlDiv.appendChild(nextButton);
+                controlDiv.appendChild(readyButton);
                 socket.emit('giveUp','');
             }
         },
         leaveRoom: function(){
             console.log("leaveRoom");
-            if(confirm("Bạn có chắc chắn sẽ chịu thua phòng chơi này?")){
-                console.log("leaveRoom confirmed");
+            if(confirm("Bạn muốn rời phòng chơi này?")){
                 gameStart = false;
                 socket.emit('leaveRoom','');
                 haveRoom = false;
@@ -1107,7 +1169,7 @@ var controller = (function () {
         chatInRoom: function(){
             var s = $("#messageInput").val();
             console.log("chatInRoom: "+s);
-            socket.emit('chatInRoom', s);
+            socket.emit('chatInRoom', {message : s});
             $("#messageInput").val("");
             event.preventDefault();
         },

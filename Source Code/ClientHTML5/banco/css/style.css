@@ -39,6 +39,8 @@ body, p, h1, h2, h3, h4, table, td, th, ul, ol, textarea, input {
     background-color: darkgreen;
 }
 
+
+
 input{
     border-radius: 8px;
 }
@@ -49,23 +51,21 @@ input{
 }
 /*----------*/
 #listRoomDiv{
-    width: 60%;
+    width: 70%;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 10px;
-    margin-top: 10px;
+    margin-bottom: 30px;
+    margin-top: 30px;
     padding: 20px;
-    min-height: 550px;
+    min-height: 500px;
     color: black;
 }
 
 #headerDiv{
-    width: 100%;
+    height: 70px;
+    width: 70%;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 30px;
-    padding-top: 20px;
-    padding-bottom: 20px;
     font-weight: bold;
 }
 #searchInput{
@@ -73,42 +73,23 @@ input{
 }
 
 #roomTableDiv{
+    width: 150px;
+    height: 450px;
     overflow: scroll;
-    margin: auto;
-    width: 100%;
-    max-height: 400px;
-    border: 1px solid white;
-}
-
-#roomTableDiv tr:nth-child(even){
-    background-color: white;
-}
-
-#roomTableDiv tr:nth-child(odd){
-    background-color: #eeeeee;
-}
-
-#roomTableDiv th{
-    background-color: darkgreen;
-    color: white;
-}
-
-#roomTable{
-    width: 100%;
 }
 
 #roomControlDiv{
-    width: 100%;
+    height: 70px;
+    width: 70%;
     margin: auto;
 }
 /*--------*/
 #roomDiv{
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 10px;
-    margin-top: 10px;
     width: 80%;
-    height: 550px;
+    min-height: 600px;
+    margin-bottom: 30px;
     color: black;
     padding: 20px;
 }
@@ -117,12 +98,16 @@ input{
     margin-left: auto;
     margin-right: auto;
     width: 250px;
-    height: 550px;
+    min-height: 80%;
     float: left;
     padding: 5px;
+    background-color: white;
+    box-shadow: 0px 0px 20px 3px #D3D3D3;
+    border-radius: 4px;
 }
 
 #user1Div, #user2Div, #timerDiv{
+    float: top;
     height: 30%;
     width: 100%;
 }
@@ -138,30 +123,28 @@ input{
     margin-left: auto;
     margin-right: auto;
     width: 250px;
-    height: 550px;
     float: left;
     padding: 5px;
+    background-color: white;
+    box-shadow: 0px 0px 20px 3px #D3D3D3;
+    border-radius: 4px;
 }
 
 #roomInfoDiv{
     margin-left: auto;
     margin-right: auto;
-    float: left;
+    float: top;
     width: 100%;
-    height: 40%;
+    height: 25%;
 }
 
 #messagesDiv{
     margin-left: auto;
     margin-right: auto;
-    float: left;
+    float: bottom;
     width: 100%;
-    height: 50%;
+    height: 30%;
     padding: 5px;
-    background-color: white;
-    border-radius: 10px;
-    color: black;
-    overflow: scroll;
 }
 
 #typeDiv{
@@ -186,310 +169,109 @@ input{
     display: block;
     width: 100%;
 }
-#info{
-    position:absolute;
-    top:100px;
-    left:0px;
-    margin:5px;
-    width:200px;
-    height:350px;
-    
-    padding:20px;
-    border:2px solid #878787;
-    
-    background: -moz-linear-gradient(top, #FFF, #f5f5f5 5%, #e2e2e2 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFF), color-stop(.03, #f5f5f5), to(#e2e2e2));
-    border-radius: 8px;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    }
-#avt:hover{
-    
-    border:5px solid #ACABA7;
-    border-radius:8px;
-    -moz-border-radius:8px;
-    -webkit-border-radius:8px;
-    -moz-box-shadow: 1px 1px 5px #999;
-    -webkit-box-shadow: 1px 1px 5px #999;
-    box-shadow: 1px 1px 5px #999;
-}
-#avt{
-    float:left;
-    width:140px;
-    height:140px;
-    margin:5px 5px;
-    border-radius:50%;
-    overflow:hidden;
-    
-    border:5px solid #ACABA7;
-    -moz-border-radius:50%;
-    -webkit-border-radius:50%;
 
-}
-#rank, #rick,#medal{
-    float:left;
-    width:140px;
-    height:30px;
-    margin:5px 5px;
-    padding:3px;
-    padding-left:10px;
-    font-size:16px;
-    border: 2px ridge #98bf21;
-    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
-    
-    -moz-box-shadow: 5px 5px 0px #999;
-    -webkit-box-shadow: 5px 5px 0px #999;
-    box-shadow: 5px 5px 0px #999;
 
-}
-#name-info{
-    float:left;
-    width:140px;
-    height:30px;
-    background:#3C3;
-    margin:5px 5px;
-    padding:3px;
-    padding-left:15px;
-    
-    border:2px ridge #003333;
-    -moz-border-radius:3px;
-    -webkit-border-radius:3px;
+#roomTableDiv {
+	margin:0px;padding:0px;
+	width:100%;
 
-    -moz-box-shadow: 5px 5px 0px #999;
-    -webkit-box-shadow: 5px 5px 0px #999;
-    box-shadow: 5px 5px 0px #999;
-        
+	-moz-border-radius-bottomleft:0px;
+	-webkit-border-bottom-left-radius:0px;
+	border-bottom-left-radius:0px;
+	
+	-moz-border-radius-bottomright:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-bottom-right-radius:0px;
+	
+	-moz-border-radius-topright:0px;
+	-webkit-border-top-right-radius:0px;
+	border-top-right-radius:0px;
+	
+	-moz-border-radius-topleft:0px;
+	-webkit-border-top-left-radius:0px;
+	border-top-left-radius:0px;
+}#roomTableDiv table{
+        border-spacing: 0;
+	width:100%;
+	height:100%;
+	margin:0px;padding:0px;
+}#roomTableDiv tr:last-child td:last-child {
+	-moz-border-radius-bottomright:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-bottom-right-radius:0px;
 }
-#editprofile{
-    float:left;
-    margin:40px auto;
-    width:140px;
-    height:60px;
-    font-size-adjust:none;
-}
-#update{
-    width:140px;
-    height:60px;
-}
-#update:hover{
-    width:140px;
-    height:60px;
-    -webkit-box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
-    -moz-box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
-    box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
-    font-weight:bold;
-    
+#roomTableDiv table tr:first-child td:first-child {
+	-moz-border-radius-topleft:0px;
+	-webkit-border-top-left-radius:0px;
+	border-top-left-radius:0px;
 }
 
-#friend{
-    position:absolute;
-    top:100px;
-    right:0px;
-    margin:5px;
-    width:200px;
-    height:350px;
-    background:#FF6;
-    }
-#list-name{
-    float:left;
-    width:190px;
-    height:30px;
-    background:#FFF;
-    margin:5px;
-    padding:5px;
-}
-#list-fri{
-    float:left;
-    width:188px;
-    height:295px;
-    border:solid 1px #CCC;
-    margin:5px;
-    display:table-column-group;
-}
-
-/* CSS phần info */
-
-#menu{
-    float:left;
-    position: absolute;
-    top: 40px;
-    left: 10px;
-    width:352px;
-    height:574px;
-    background:#133783;
-    margin:0 auto;
-    padding:20px;
-    border: 2px ridge #0000FF;
-    
-}
-#mtitle{
-    float:left;
-    width:482px;
-    height:030px;
-    background:#FFF;
-    padding:5px;
-    -webkit-box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
-    -moz-box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
-    box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
-    -moz-border-radius:3px;
-    -webkit-border-radius:3px;
-    border-radius:3px;
-}
-#tname{
-    float:left;
-    border:2px ridge #0000ff;   
-    width:432px;
-    height:20px;
-    padding:3px;
-}
-#rid{
-    width:74px;
-    height:16px;
-    padding:2px;
-    float:left;
-    background:#CF6;
-}
-#rname{
-    width:350px;
-    height:16px;
-    padding:2px;
-    float:left;
-
-}
-#tclose{
-    float:left;
-    margin-left:5px;
-    width:20px;
-    height:20px;
-    padding:3px;
-    border:2px ridge #C30;  
+#roomTableDiv table tr td:first-child {
+background-color:#FF3333 ;
+	color:white;
+width : 20px;
+ border: 1px solid;
+    border-style: solid;
+    border-color: #400000  #484848 ;
 }
 
 
-#p1{
-    float:left;
-    width:326px;
-    height:196px;
-    padding:5px;
-    border:2px ridge #0000FF;
-    margin: 10px 20px;
-}
-#p1img{
-    width:143px;
-    height:181px;
-    padding:2px;
-    float:left;
-    background:url(../images/UserFrame.png) no-repeat;
-    background-size:cover;
+#roomTableDiv table tr:first-child td:last-child {
+	-moz-border-radius-topright:0px;
+	-webkit-border-top-right-radius:0px;
+	border-top-right-radius:0px;
 
-}
-#p1img img{
-    margin:40px 10px 20px 10px;
-    width:100px;
-    height:100px;
-}
-#p2img{
-    width:143px;
-    height:181px;
-    padding:2px;
-    float:right;
-    background:url(../images/UserFrame.png) no-repeat;
-    background-size:cover;
+}#roomTableDiv tr:last-child td:first-child{
+	-moz-border-radius-bottomleft:0px;
+	-webkit-border-bottom-left-radius:0px;
+	border-bottom-left-radius:0px;
 
+}#roomTableDiv tr:hover td{
+	color:red;
 }
-#p2img img{
-    margin:40px 10px 20px 20px;
-    width:100px;
-    height:100px;
+#roomTableDiv tr:nth-child(odd) 
+{font-size:12px; color: #ffffff; text-align:center;background-color:grey; }
+#roomTableDiv tr:nth-child(even)    {font-size:12px;color : yellow; text-align:center; background-color:#383838   ; }.roomTableDiv td{
+	vertical-align:middle;
+	border:5px solid #000000;
+	border-width:0px 1px 1px 0px;
+	text-align:center;
+	padding:1px;
+	font-size:10px;
+	font-family:Arial;
+	font-weight:normal;
+	
+}#roomTableDiv tr:last-child td{
+	border-width:0px 1px 0px 0px;
+text-align:center;
+}#roomTableDiv tr td:last-child{
+text-align:center;
+	border-width:0px 0px 1px 0px;
+}#roomTableDiv tr:last-child td:last-child{
+	border-width:0px 0px 0px 0px;
+text-align:center;
 }
-#p1info{
-    float:left;
-    width:80px;
-    height:177px;
-    padding:2px;
-    border:2px solid #bd8c2a;
-    background:#0F9;
-}
-#p2info{
-    float:right;
-    width:80px;
-    height:177px;
-    padding:2px;
-    border:2px solid #bd8c2a;
-    background:#0F9;
-}
-#VS{
-    float:left;
-    width:496px;
-    height:46px;
-    border:2px ridge #0000FF;
-    margin:0 auto;
-    
-}
-#p2{
-    float:left;
-    width:326px;
-    height:196px;
-    padding:5px;
-    margin:10px 20px 10px 140px;
-    border:2px ridge #0000ff;
-}
-#btn{
-    float:left;
-    width:476px;
-    height:56px;
-    border:2px ridge #0000FF;
-    margin:0 auto;
-    padding:0 10px;
-}
-#pinfo1,#pinfo2{
-    width:235px;
-    height:185px;
-    border:1px solid #930;
-    padding:4px;
-}
-#pinfo1{
-    float:left;
-}
-#pinfo2{
-    float:right;
+#roomTableDiv tr:first-child td{
+		background:-o-linear-gradient(bottom, #ff7f00 5%, #bf5f00 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff7f00), color-stop(1, #bf5f00) );
+	background:-moz-linear-gradient( center top, #ff7f00 5%, #bf5f00 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff7f00", endColorstr="#bf5f00");	background: -o-linear-gradient(top,#ff7f00,bf5f00);
+	width: 80px;
+	height: 40px;
+	background-color:#FF3300;
+	border:0px solid #000000;
+	text-align:center;
+	border-width:0px 0px 1px 1px;
+	font-size:15px;
+	font-family:Verdana;
+
+	color:#ffffff;
 }
 
-#more1{
-    width:61px;
-    height:185px;
-    border:1px solid #930;
-    padding:4px;
-    float:left;
-    margin: 0 5px;
-}
-#more2{
-    width:61px;
-    height:185px;
-    border:1px solid #930;
-    padding:4px;
-    float:right;
-    margin: 0 5px;
-}
-#turn1,#turn2,#time1,#time2{
-    width:61px;
-    height:52px;
-    float:left;
-    padding-top:40px;
-}
-#btn1,#btn2,#btn3{
-    width:146px;
-    height:26px;
-    padding:15px 5px;
-    float:left;
-}
-#xinthua:hover,#dilai:hover,#xinhoa:hover{
-    src:url(../images/xinthua-push.png);
-}
-#p2rank,#p2rick,#p2medal{
-    margin:30px auto;
-}
-#p1rank,#p1rick,#p1medal{
-    margin:30px auto;
-}
+#roomTableDiv tr:first-child td:first-child{
+	border-width:0px 0px 1px 0px;
 
+}
+#roomTableDiv tr:first-child td:last-child{
+	border-width:0px 0px 1px 1px;
+
+}
