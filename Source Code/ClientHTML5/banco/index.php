@@ -114,7 +114,7 @@
             <div id="roomDiv">
                 <div id="leftBoardDiv">
                     <div id="user1Div"></div>
-                    <div id="timerDiv"></div>
+                    <div id="timerDiv" class="timer"></div>
                     <div id ="user2Div"></div>
                 </div>
                 <div id="chessBoardDiv"></div>

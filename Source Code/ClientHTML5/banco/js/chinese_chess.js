@@ -29,7 +29,9 @@ var controller = (function () {
         readyButton,
         nextButton,
         closeRoomButton,
-        timer,
+        maxCounter = 180,//3 minute
+        counter,//count from maxCounter to zero
+        counting,//bool
         pieceCanvas = [],
         boardCanvas,
         pieceImgs=[[],[]],
@@ -546,6 +548,38 @@ var controller = (function () {
         infoCanvas.style.display = "inline";
         setTimeout(hideCheckWarning, 700);
     }
+    
+    function startCounter(){
+        function countDown(){
+            console.log("countDown");
+            if(!counting){
+                $("#timerDiv").html("0");
+                return;
+            }
+            counter--;
+            $("#timerDiv").html(counter.toString());
+            if(counter===0){
+                var validMove=[], i;
+                for(i=0; i<90; i++){
+                    if((board[i]!==0) && ((board[i]&8)===myColor)){
+                        validMoveGen(i, validMove, validMove);
+                    }
+                }
+                if(validMoveGen.length !== 0){
+                    move(validMove[0], validMove[1]);
+                }
+                counting = 0;
+            }else{
+                setTimeout(countDown, 1000);
+            }
+        }
+        console.log("startCounter");
+        counting = true;
+        counter = maxCounter;
+        //$("timerDiv").html("");
+        //$("timerDiv").toggleClass("timer");
+        countDown();
+    }
 
     function imageLoaded(){
         imageCount++;
@@ -652,20 +686,20 @@ var controller = (function () {
         for(var i = 0; i< 90; i++){
             board[i] = 0;
         }
-//        for( var j in ob.board){
-//            var i = ob.board[j];
-//            if(myColor===0){//quân đen, phải xoay ngược bàn
-//                board[90-i.cid] = i.pid;
-//            }else{//quân đỏ, không cần xoay bàn
-//                board[i.cid] = i.pid;
-//            }
-//        }
         if(myColor===8){
             board = ob.board;
         }else{
             for(var i = 0; i<90; i++){
                 board[89-i] = ob.board[i];
             }
+        }
+//        if(ob.turn === username){
+//            turn = myColor;
+//        }else{
+//            turn = myColor^8;
+//        }
+        if(turn===myColor){
+            startCounter();
         }
         drawBoard();
     }
@@ -678,8 +712,10 @@ var controller = (function () {
             moveAnimatedly(move.id1, move.id2);
             console.log("onOpMove: "+move.id1+":"+move.id2);
         }
+        startCounter();
     }
     function onCheck(){
+        console.log("checked");
         showCheckWarning();
     }
     function onLose(){
@@ -852,6 +888,7 @@ var controller = (function () {
         ob.id2 = id2;
         console.log("move: "+ob.id1+" "+ob.id2);
         socket.emit('move', ob);
+        counting = false;
     }
 //===========END - Các hàm phát sự kiện lên server======================
     function resize() {
