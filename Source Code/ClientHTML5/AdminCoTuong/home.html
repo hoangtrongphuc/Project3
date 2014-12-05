@@ -1,0 +1,134 @@
+﻿<html>
+    <header>
+        <link href="./style/css/home.css" rel="stylesheet" type="text/css"/>
+    </header>
+    <body>
+    
+    <body>
+        <div id="user">
+			<div class="title">Danh sách tài khoản mới</div>
+			<div class="list">
+					<table class='home_list_user' border="1" cellspacing = "0" cellpadding = "0" width="1150px">
+						<tr>
+							<th width="50" height="30">STT</th>
+							<th width="120">Tên đăng nhập</th>
+							<th width="200">Tên đầy đủ</th>
+							<th width="100">Số điện thoại</th>
+							<th width="100">Email</th>
+							<th width="80">Xu</th>
+							<th width="120">Trạng thái</th>
+							<th width="170">Ban/Mở tài khoản</th>
+						</tr>
+					</table>
+			</div>
+		</div>
+		<div id="newevent">
+			<div class="title">Danh sách sự kiện mới</div>
+			<div class="list">
+					<table class='home_list_event' border="1" cellspacing = "0" cellpadding = "0" width="1150px">
+						<tr>
+							<th width="50" height="30">STT</th>
+							<th width="150">Tên sự kiện</th>
+							<th width="400">Chi tiết sự kiện</th>
+							<th width="150">Ngày bắt đầu</th>
+							<th width="150">Ngày kết thúc</th>
+						</tr>
+					</table>
+			</div>
+		</div>
+		<script type="text/javascript">
+    $(document).ready(function(){
+    	listUser();
+    	function listUser(){
+    		var $list = 1;
+    		$.ajax({
+        		url : "http://localhost:8080/rest/admin/index.php?api=user",
+        		type : "post",
+        		dataType : "json",
+        		data: "homelistuser="+$list,
+        		async : false,
+        		success: function(e){
+            		var jsonData = JSON.parse(JSON.stringify(e));
+            		for(var i=0 ; i<jsonData.data.length ; i++){
+                		var datas = jsonData.data[i];
+                		if(datas.user_gender == 1){
+                			$user_gender = "Nam";
+                		}
+                		else{
+                			$user_gender = "Nữ";
+                		}
+                		if(datas.user_level == 1){
+                			$user_level = "Admin";
+                		}
+                		else{
+                			$user_level = "Member";
+                		}
+                		if(datas.user_status == 1){
+                			$user_status = "ON";
+                		}
+                		else{
+                			$user_status = "OFF";
+                		}
+                		if(datas.user_ban_mo == 1){
+    	            		$user_ban_mo = "ban";
+                		}
+                		else{
+                			$user_ban_mo = "hoạt động";
+                		}
+                		$(".home_list_user").append(	 
+    		            		"<tr>"+
+    		            			"<th>"+$list+"</th>"+
+    		            			"<th width='120px' align='center'>"+datas.user_name+"</th>"+
+    		            			"<th width='120px' align='center'>"+datas.user_fullName+"</th>"+
+    		            			"<th>"+datas.user_tel+"</th>"+
+    		            			"<th>"+datas.user_email+"</th>"+
+    		            			"<th>"+datas.user_coin+"</th>"+
+    		            			"<th>"+$user_status+"</th>"+
+    		            			"<th>"+$user_ban_mo+"</th>"+
+    		            		"</tr>");
+    					$list ++;
+    	            }
+                	
+        		},
+    			error : function(err){
+    				var error = JSON.parse(JSON.stringify(err));
+    				alert(error);
+    			}
+        	});
+    	}
+    	
+		listEvent();
+		function listEvent(){
+			var $list = 1;
+			$.ajax({
+	    		url : "http://localhost:8080/rest/admin/index.php?api=event",
+	    		type : "post",
+	    		dataType : "json",
+	    		data: "homelistevent="+$list,
+	    		async : false,
+	    		success: function(e){
+	        		var jsonData = JSON.parse(JSON.stringify(e));
+	        		for(var i=0 ; i<jsonData.data.length ; i++){
+	            		var datas = jsonData.data[i];
+	            		$(".home_list_event").append(	 
+			            		"<tr>"+
+			            			"<th>"+$list+"</th>"+
+			            			"<th>"+datas.event_title+"</th>"+
+			            			"<th>"+datas.event_info+"</th>"+
+			            			"<th>"+datas.event_start+"</th>"+
+			            			"<th>"+datas.event_finish+"</th>"+
+			            		"</tr>");
+						$list ++;
+		            }
+	            	
+	    		},
+				error : function(err){
+					var error = JSON.parse(JSON.stringify(err));
+					alert(error);
+				}
+	    	});
+		}
+    });
+    </script>
+	</body>
+</html>

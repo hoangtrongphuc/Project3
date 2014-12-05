@@ -1,0 +1,56 @@
+*{
+    margin:0px auto;	
+    padding:0px;
+}
+body{
+    text-align: center;
+    background-image: url(../../image/Background.jpg);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+	color: white;
+}
+#hheader{
+    height: 100px;
+    background: rgb(54, 25, 25);
+    background: rgba(0, 0, 0, .9);
+    box-shadow: 0 2px 10px #000;
+    margin-bottom: 30px;
+}
+.logo{
+		height: 70px;
+		width: 70%;
+		font-family: "TimeNewRoman";
+		font-size: 25pt;
+		text-align: right;
+		float: left;
+		padding-top: 27px;
+	}
+#login{
+    height: 300px;
+    width: 510px;
+	background: rgb(54, 25, 25);
+	background: rgba(0, 0, 0, .7);
+	box-shadow: 0 2px 10px #000;
+    margin-top: 140px;
+}
+th{
+    font-size: 14pt;
+}
+td{
+    font-size: 13pt;
+    font-weight: bold;
+}
+input[type="text"], input[type="password"]{
+    font: 13pt "TimeNewRoman";
+    background: transparent
+}
+input[type="submit"]{
+    width: 100px;
+    height: 30px;
+    font:12pt 'Times New Roman';
+    font-weight: bold;
+}
+.error{
+    color: red;
+    font-weight: normal;
+}

@@ -30,19 +30,17 @@
     <div id="menu">
     <ul id="nav" class="js">
     	<li class="<?php echo $trangchu; ?>">
-        <a href="index.php">Trang chủ</a></li>
+        <a href="/cotuong">Trang chủ</a></li>
     	<li class="<?php echo $aboutus; ?>">
-        <a href="index.php?page=aboutus">Giới thiệu</a></li>
+        <a href="/cotuong?page=aboutus">Giới thiệu</a></li>
     	<li class="<?php echo $napxu; ?>">
-        <a href="index.php?page=napxu">Nạp xu</a></li>
+        <a href="/cotuong?page=napxu">Nạp xu</a></li>
     	<li class="<?php echo $tintuc; ?>">
-        <a href="index.php?page=tintuc">Tin tức</a></li>
+        <a href="/cotuong?page=tintuc">Tin tức</a></li>
     	<li class="<?php echo $howtoplay; ?>">
-        <a href="index.php?page=howtoplay">Hướng dẫn</a></li>
+        <a href="/cotuong?page=howtoplay">Hướng dẫn</a></li>
     	<li class="<?php echo $contactus; ?>">
-        <a href="index.php?page=contactus">Liên hệ</a></li>
+        <a href="/cotuong?page=contactus">Liên hệ</a></li>
 </ul>
-<div id="marquee"><marquee direction="left" contenteditable="false" scrollamount="3" onmouseover="this.stop()" onmouseout="this.start()" title="Viết cái title vào đây!!" dropzone="link"  >Chào mừng các bạn đến với website chơi cờ tướng trực tuyến lô cồ hót</marquee></div>
     </div>
-    
   </div>

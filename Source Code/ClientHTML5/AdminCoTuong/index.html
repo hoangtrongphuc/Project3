@@ -1,0 +1,230 @@
+﻿<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>
+            Admin 
+        </title>
+        <link href="style/CSS/index.css" rel="stylesheet" type="text/css"/>
+		<script src="style/Js/jquery-1.11.1.min.js" type="text/javascript"></script>
+		<script src="style/Js/md5.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				function getCookie(cname) {
+                    var name = cname + "=";
+                    var ca = document.cookie.split(';');
+                    for (var i = 0; i < ca.length; i++) {
+                        var c = ca[i];
+                        while (c.charAt(0) === ' ')
+                            c = c.substring(1);
+                        if (c.indexOf(name) !== -1)
+                            return c.substring(name.length, c.length);
+                    }
+                    return "";
+                }
+            	var cookie_id = getCookie("cookie_id");
+            	var cookie_level = getCookie("cookie_level");
+            	if(cookie_id == false || cookie_level != 1){
+            		window.location = "login.html";
+            		return false;
+            	}
+            	var cookie_username = getCookie("cookie_username");
+            	
+            	$("#admin").append(cookie_username);
+				$("ul li.sub").hover(function(){
+					$(this).find("ul").slideDown();
+				}, function(){
+					$("ul li.sub ul").hide();
+				})
+			
+				$("ul li.sub1").hover(function(){
+					$(this).find("ul").slideDown();
+				}, function(){
+					$("ul li.sub1 ul").hide();
+				})
+			
+				$("ul li.sub2").hover(function(){
+					$(this).find("ul").slideDown();
+				}, function(){
+					$("ul li.sub2 ul").hide();
+				})
+			});
+		</script>
+    </head>
+    <body>
+        <div id="hheader">
+            <div class = "logo">
+                <a href="?page=home">QUẢN TRỊ WEBGAME CỜ TƯỚNG</a>
+            </div>
+			<div class="account">
+				<img src="./image/icon/user.png" height="30"/> <font color="pink"> Xin chào: </font>
+                <a id='admin' href="#"></a>
+				<img src="./image/icon/logout.png" height="30"/> 
+                <a href="logout.html" style="border:none">Đăng xuất</a>
+				<br/>
+				<font color="violet">Chức vụ: Quản lý</font>
+            </div>
+
+        </div>
+        <div id="hcontent">
+            <div class="topcontent">
+				<ul>
+					<li align="left"><a href= "?page=home"><img src="./image/icon/Home.png" height="25"/> Home</a></li>
+					<li align="left" class="sub">
+						<a href= "#">Quản lý tài khoản <font size="2" color="red">&Del;</font></a>
+						<ul>
+							<li><a href= "?page=listuser" id="listuser">Danh sách tài khoản</a></li>
+							<li><a href= "?page=adduser">Thêm tài khoản mới</a></li>
+							<li style="border-bottom: none"><a href= "?page=trade">Quản lý giao dịch</a></li>
+						</ul>
+					</li>
+					<li align="left" class="sub1">
+						<a href= "#">Thống kê số liệu <font size="2" color="red">&Del;</font></a>
+						<ul>
+							<li><a href= "?page=stats">Thống kê hệ thống</a></li>
+							<li style="border-bottom: none"><a href= "?page=income" >Thống kê doanh thu</a></li>
+<!-- 							<li style="border-bottom: none"><a href= "?page=">Các thống kê khác</a></li> -->
+						</ul>
+					</li>
+					<li align="left" class="sub2">
+						<a href= "#">Quản lý sự kiện <font size="2" color="red">&Del;</font></a>
+						<ul>
+							<li><a href= "?page=listevent">Danh sách sự kiện</a></li>
+							<li style="border-bottom: none"><a href= "?page=addevent">Thêm sự kiện mới</a></li>
+						</ul>
+					</li>
+					<li align="left" class="sub1">
+						<a href= "?page=feedback">Danh mục góp ý<font size="2" color="red">&Del;</font></a>
+					</li>
+				</ul>
+            </div>
+            <div class="midcontent">
+                <div>
+                <script type="text/javascript">
+                $(document).ready(function() {
+	                function getUrlVars() {
+	            	    var vars = {};
+	            	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+	            	        vars[key] = value;
+	            	    });
+	            	    return vars;
+	            	}
+	            	if(getUrlVars()["page"]=="home"){
+		            	$.ajax({
+		                    url: 'home.html',
+		                    success: function(data) {
+		                        //alert('done')
+		                        //console.log(data)
+		                        $('.midcontent').append(data);
+		                    }
+		                });
+	            	}
+	            	else if(getUrlVars()["page"]=="listuser"){
+	            		$.ajax({
+		                    url: 'user/listuser.html',
+		                    success: function(data) {
+		                        //alert('done')
+		                        //console.log(data)
+		                        $('.midcontent').append(data);
+		                    }
+		                });
+	            	}
+	            	else if(getUrlVars()["page"]=="adduser"){
+	            		$.ajax({
+		                    url: 'user/adduser.html',
+		                    success: function(data) {
+		                        //alert('done')
+		                        //console.log(data)
+		                        $('.midcontent').append(data);
+		                    }
+		                });
+	            	}
+	            	else if(getUrlVars()["page"]=="trade"){
+	            		$.ajax({
+		                    url: 'trade/trade.html',
+		                    success: function(data) {
+		                        //alert('done')
+		                        //console.log(data)
+		                        $('.midcontent').append(data);
+		                    }
+		                });
+	            	}
+	            	else if(getUrlVars()["page"]=="stats"){
+	            		$.ajax({
+		                    url: 'income/stats.html',
+		                    success: function(data) {
+		                        //alert('done')
+		                        //console.log(data)
+		                        $('.midcontent').append(data);
+		                    }
+		                });
+	            	}
+	            	else if(getUrlVars()["page"]=="income"){
+	            		$.ajax({
+		                    url: 'income/income.html',
+		                    success: function(data) {
+		                        //alert('done')
+		                        //console.log(data)
+		                        $('.midcontent').append(data);
+		                    }
+		                });
+	            	}
+	            	else if(getUrlVars()["page"]=="listevent"){
+	            		$.ajax({
+		                    url: 'event/listevent.html',
+		                    success: function(data) {
+		                        //alert('done')
+		                        //console.log(data)
+		                        $('.midcontent').append(data);
+		                    }
+		                });
+	            	}
+	            	else if(getUrlVars()["page"]=="editevent"){
+	            		$.ajax({
+		                    url: 'event/editevent.html',
+		                    success: function(data) {
+		                        //alert('done')
+		                        //console.log(data)
+		                        $('.midcontent').append(data);
+		                    }
+		                });
+	            	}
+	            	else if(getUrlVars()["page"]=="addevent"){
+	            		$.ajax({
+		                    url: 'event/addevent.html',
+		                    success: function(data) {
+		                        //alert('done')
+		                        //console.log(data)
+		                        $('.midcontent').append(data);
+		                    }
+		                });
+	            	}
+	            	else if(getUrlVars()["page"]=="feedback"){
+	            		$.ajax({
+		                    url: 'feedback/feedback.html',
+		                    success: function(data) {
+		                        //alert('done')
+		                        //console.log(data)
+		                        $('.midcontent').append(data);
+		                    }
+		                });
+	            	}
+	            	else{
+	            		$.ajax({
+		                    url: 'home.html',
+		                    success: function(data) {
+		                        //alert('done')
+		                        //console.log(data)
+		                        $('.midcontent').append(data);
+		                    }
+		                });
+	            	}
+                });
+                </script>
+                </div>
+            </div>
+        </div>
+        <div id="hfooter">
+            
+        </div>
+    </body>
+</html>

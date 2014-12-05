@@ -547,7 +547,7 @@ var controller = (function () {
         infoCanvas.style.display = "inline";
         setTimeout(hideCheckWarning, 700);
     }
-    
+
     function startCounter(){
         function countDown(){
             console.log("countDown");
@@ -660,7 +660,7 @@ var controller = (function () {
         $("#messageDialog").dialog('open');
     }
     function closeRoom(){
-        gameStart = false;
+		gameStart = false;
         socket.emit('closeRoom','');
         haveRoom = false;
         document.location.hash = "#listRoomDiv";
@@ -693,11 +693,6 @@ var controller = (function () {
                 board[89-i] = ob.board[i];
             }
         }
-//        if(ob.turn === username){
-//            turn = myColor;
-//        }else{
-//            turn = myColor^8;
-//        }
         if(turn===myColor){
             startCounter();
         }
@@ -890,7 +885,7 @@ var controller = (function () {
         }else{
             myid = roomInfo.players[1].userId;
             otherid = roomInfo.players[0].userId;
-        }
+    }
         $.getJSON(restURL+"?api=user&getuser=1&user_id="+myid, function(data){
            var html = '';
            html += "<img src=\""+data.user_avatar+"\" class=\"avatar\"\><br\>";
@@ -1152,7 +1147,7 @@ var controller = (function () {
             closeRoomButton.innerHTML = "Đóng phòng chơi";
             closeRoomButton.onclick = closeRoom;
             closeRoomButton.className = "buttonRed";
-            
+                    
             friendRequestButton = document.createElement("button");
             friendRequestButton.innerHTML = "Kết bạn";
             friendRequestButton.onclick = sendFriendRequest;

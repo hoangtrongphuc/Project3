@@ -1,0 +1,149 @@
+<html>
+    <header>
+        <link href="./style/css/home.css" rel="stylesheet" type="text/css"/>
+    </header>
+    
+    <body>
+        <div id="user">
+			<div class="title">Danh sách góp ý</div>
+			<div class="list">
+					<table class="list_feedback" border="1" cellspacing = "0" cellpadding = "0" width="1000px">
+						<thead>
+							<tr>
+								<th width="50" height="30">STT</th>
+								<th width="170">Tên tài khoản</th>
+								<th width="170">tiêu đề</th>
+								<th width="400">Nội dung góp ý</th>
+								<th width="200">Ngày góp ý</th>
+								<th width="40">Xóa</th>
+							</tr>
+						</thead>
+						<tbody id='data_feedback'>
+						</tbody>
+					</table>
+			</div>
+			<div class='listpage' id='list_page'></div>
+		</div>
+		<style type='text/css'>
+		a.pagenumber{
+			text-decoration:none;
+			padding:0px 10px;
+			border:1px solid #CCC;
+			border-radius:3px;
+			margin-right:3px;
+		}
+		span.pagenumber{
+			color:#F00;
+			font-weight:bold;
+		}
+	</style>
+		<script type="text/javascript">
+    	$(document).ready(function(){
+    		 function getUrlVars() {
+          	    var vars = {};
+          	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+          	        vars[key] = value;
+          	    });
+          	    return vars;
+          	}
+    		listFeedBack();
+    		function listFeedBack(){
+    			var $list = 1;
+    			if(getUrlVars()['start'] == undefined){
+        			var $page = 0;
+    			}
+    			else{
+    				$page = getUrlVars()['start'];
+    			}
+        		$.ajax({
+            		url : "http://localhost:8080/rest/admin/index.php?api=feedback",
+            		type : "post",
+            		dataType : "json",
+            		data: "listfeedback="+$list+"&page_number="+$page,
+            		async : false,
+            		success: function(e){
+            			//alert(JSON.stringify(e));
+            			if(e.code == 0){
+	                		var jsonData = JSON.parse(JSON.stringify(e));
+	                		for(var i=0 ; i<jsonData.data.length ; i++){
+	                    		var datas = jsonData.data[i];
+	                    		$("#data_feedback").append(	 
+	        		            		"<tr>"+
+	        		            			"<th>"+$list+"</th>"+
+	        		            			"<th>"+datas.user_name+"</th>"+
+	        		            			"<th>"+datas.feedback_title+"</th>"+
+	        		            			"<th>"+datas.feedback_info+"</th>"+
+	        		            			"<th>"+datas.feedback_date+"</th>"+
+	        		            			"<th align='center' ><a class='delete_feedback' name='"+datas.feedback_ID+"' href='javascript:void(0)'><img src='./image/icon/delete.png' height='20'/></a></th>"+
+	        		            		"</tr>");
+	        					$list ++;
+	        	            }
+	                		if(e.totalpage > 1){
+	                			var current = parseInt(e.start/e.limit)+1;
+	                			if(current != 1){
+	                				newstart = parseInt(e.start) - parseInt(e.limit);
+	            					$(".listpage").append("<a class='pagenumber' name='"+newstart+"' href='javascript:void(0)'>Prev</a>");
+	            				}
+	                			for(var i=1; i <= e.totalpage; i++){
+	                				newstart = (i-1)*e.limit;
+	                				if(i == current)
+	                					$(".listpage").append("<span class='pagenumber'>"+i+"</span>");
+	                				else{
+	                					$(".listpage").append("<a class='pagenumber' name='"+newstart+"' href='javascript:void(0)'>"+i+"</a>");
+	                				}
+	                			}
+	                			if(current != e.totalpage){
+	                				newstart = parseInt(e.start) + parseInt(e.limit);
+	            					$(".listpage").append("<a class='pagenumber' name='"+newstart+"' href='javascript:void(0)'>Next</a>");
+	                			}
+	                		}
+	                		eventPage();
+            			}
+            			else{
+            				$("#data_feedback").html("<tr><th colspan='6' rowspan='0'>Không có dữ liệu</th></tr>");
+            			}
+                    	
+            		},
+        			error : function(err){
+        				var error = JSON.parse(JSON.stringify(err));
+        				alert(JSON.stringify(err));
+        			}
+            	});
+    		}
+    		eventPage();
+    		function eventPage(){
+    			$(".pagenumber").click(function(){
+        			var $num = $(this).attr("name");
+        			document.location.href='?page=feedback&start='+$num;
+    			});
+    		};
+    		deleteFeedBack();
+    		function deleteFeedBack(){
+    			$(".delete_feedback").click(function(){
+        			if(confirm("bạn có chắc chắn xóa sự kiện này không")){
+        				var $id = $(this).attr("name");
+            			$(this).parent().parent().fadeOut("show");
+            			var $delete = 1;
+        				$.ajax({
+        					url : "http://localhost:8080/rest/admin/index.php?api=feedback",
+        					type : "post",
+        					dataType : "json",
+        					data : "deletefeedback="+$delete+"&feedback_id="+$id,
+        					async : false,
+        					success : function(result){
+        						//alert(JSON.stringify(result));
+        						if(result.code == 0){
+        							alert("xóa feedback thành công");
+        						}
+        					},
+        					error : function(err){
+        						alert(JSON.stringify(err));
+        					}
+        				});
+        			}
+        		});
+    		}
+    	});
+    </script>
+    </body>
+</html>

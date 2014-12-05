@@ -1,0 +1,75 @@
+﻿<head>
+    <meta charset="utf-8"/>
+    <link href="./style/css/editevent.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+	<div id="event">
+		<form action="" method="post">
+				<table >
+					<tr>
+						<th colspan="2">Thêm sự kiện mới</th>
+					</tr>
+					<tr>
+						<td width="35%">&nbsp;&nbsp;Tiêu đề:</td>
+						<td><input type="text" id="title" size="35" /></td>
+					</tr>
+					<tr>
+						<td valign="top">&nbsp;&nbsp;Nội dung <span style="color: red">*</span>:</td>
+						<td><textarea cols="28" rows="10" id="info"></textarea> </td>
+					</tr>
+					<tr>
+						<td valign="top">&nbsp;&nbsp;Thời gian bắt đầu <span style='color: red'>*</span>:</td>
+						<td><input type="date" id="start" size="35" /></td>
+					</tr>
+					<tr>
+						<td valign="top">&nbsp;&nbsp;Thời gian kết thúc <span style="color: red">*</span>:</td>
+						<td><input type="date" id="finish" size="35" /></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><input type="submit" id="addevent" value="Thêm mới"/></td>
+					</tr>
+					<tr>
+						<td></td>
+					</tr>
+				</table>
+		</form>
+		<script type="text/javascript">
+    	$(document).ready(function(){
+        	addEvent();
+        	function addEvent(){
+        		$("#addevent").click(function(){
+                	var $title = $("#title").val();
+                	var $info = $("#info").val();
+                	var $start = $("#start").val();
+                	var $finish = $("#finish").val();
+                	
+    				var $insert = 1;
+
+                	//kiểm tra xong
+                	$.ajax({
+                    	url : "http://localhost:8080/rest/admin/index.php?api=event",
+                    	type : "post",
+                    	dataType : "json",
+                    	data : "insertevent="+$insert+"&title="+$title+"&info="+$info+"&start="+$start+"&finish="+$finish,
+                    	async : false,
+                    	success : function(e){
+                        	var jsonData = JSON.parse(JSON.stringify(e));
+                        	//alert(JSON.stringify(e));
+                        	if(jsonData.code == 0){
+                            	alert("thêm mới sự kiện thành công");
+        						//window.open("?page=addevent");
+                            	window.location = "?page=addevent";
+        					}
+        					else{
+        						alert(jsonData.data);
+        					}
+                        	
+                    	}
+                	});
+            	});
+        	}
+        });
+    </script>
+	</div>
+</body>

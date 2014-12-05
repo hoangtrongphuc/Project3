@@ -1,0 +1,109 @@
+<html>
+    <header>
+        <link href="./style/css/home.css" rel="stylesheet" type="text/css"/>
+    </header>
+    <body>
+        <div id="user">
+			<div class="title">Doanh thu tháng</div>
+			<div class="list">
+					<table border="1" cellspacing = "0" cellpadding = "0" width="1150px">
+						<thead>
+							<tr>
+								<th width="50" height="30">STT</th>
+								<th width="120">Tháng</th>
+								<th width="120">Năm</th>
+								<th width="200">Số tiền</th>
+								<th width="100">Số lần nạp</th>
+							</tr>
+						</thead>
+						<tbody id='income_month'>
+						</tbody>
+					</table>
+			</div>
+			<div class='listpage' id='list_page'></div>
+		</div>
+		<div id="newevent">
+			<div class="title">Doanh thu năm</div>
+			<div class="list">
+					<table border="1" cellspacing = "0" cellpadding = "0" width="1150px">
+						<thead>
+							<tr>
+								<th width="50" height="30">STT</th>
+								<th width="120">Năm</th>
+								<th width="200">Số tiền</th>
+								<th width="100">Số lần nạp</th>
+							</tr>
+						</thead>
+						<tbody id='income_year'>
+						</tbody>
+					</table>
+			</div>
+		</div>
+		<script type="text/javascript">
+    $(document).ready(function(){
+    	
+    	incomeMonth();
+    	function incomeMonth(){
+    		var $income_month = 1;
+    		
+        	$.ajax({
+        		url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+        		type : "post",
+        		dataType : "json",
+        		data : "doanhthuthang="+$income_month,
+        		async : false,
+        		success : function(result){
+        			var jsonData = JSON.parse(JSON.stringify(result));
+        			for(var i=0; i<jsonData.data.length; i++){
+        				var datas = jsonData.data[i];
+        				$("#income_month").append(
+        					"<tr>"+
+        						"<th>"+$income_month+"</th>"+
+        						"<th>"+datas.trade_month+"</th>"+
+        						"<th>"+datas.trade_year+"</th>"+
+        						"<th>"+datas.trade_coin+"</th>"+
+        						"<th>"+datas.quantity_month+"</th>"+
+        					"</tr>"
+        				);
+        				$income_month++;
+        			}
+        		},
+        		error : function(err){
+        			alert(JSON.stringify(err));
+        		}
+        	});
+    	}
+    	
+    	incomeYear();
+    	function incomeYear(){
+    		var $income_year = 1;
+        	$.ajax({
+        		url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+        		type : "post",
+        		dataType : "json",
+        		data : "doanhthunam="+$income_year,
+        		async : false,
+        		success : function(result){
+        			var jsonData = JSON.parse(JSON.stringify(result));
+        			for(var i=0; i<jsonData.data.length; i++){
+        				var datas = jsonData.data[i];
+        				$("#income_year").append(
+        					"<tr>"+
+        						"<th>"+$income_year+"</th>"+
+        						"<th>"+datas.trade_year+"</th>"+
+        						"<th>"+datas.trade_coin+"</th>"+
+        						"<th>"+datas.quantity_year+"</th>"+
+        					"</tr>"
+        				);
+        				$income_year++;
+        			}
+        		},
+        		error : function(err){
+        			alert(JSON.stringify(err));
+        		}
+        	});	
+    	}
+    });
+    </script>
+	</body>
+</html>
