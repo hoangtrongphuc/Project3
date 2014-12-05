@@ -29,6 +29,26 @@ Room.prototype.resetRoom = function(){
 	this.color = 0;
 }
 
+Room.prototype.equalRoom = function(){
+	this.countMatch = 0; 
+	this.status = 0;
+	this.table = new Chess();
+	this.turn = 0; 
+	this.color = 0;
+	this.bossWin = 0;
+}
+
+Room.prototype.endRoom = function(boss){
+	this.countMatch++; 
+	this.status = 0;
+	this.table = new Chess();
+	this.turn = 0; 
+	if(this.color == 0) this.color = 1;
+	else this.color = 0;
+	if(boss == 1) this.bossWin++;
+	
+}
+
 Room.prototype.addPlayer = function(player) {
 	this.players.push(player);
 	this.countPlaying++;
@@ -66,8 +86,8 @@ Room.prototype.updateTable = function(id1,id2)
 	if(this.table.isValidMove(id1,id2))
 		{
 		this.table.chessMove(id1,id2);
-		if(turn == 0) turn = 1;
-		else turn = 0;
+		if(this.turn == 0) this.turn = 1;
+		else this.turn = 0;
 		return this.table.checkStatus();
 		}
 	else return -3; // fail

@@ -42,5 +42,7 @@
     	<li class="<?php echo $contactus; ?>">
         <a href="index.php?page=contactus">Liên hệ</a></li>
 </ul>
+<div id="marquee"><marquee direction="left" contenteditable="false" scrollamount="3" onmouseover="this.stop()" onmouseout="this.start()" title="Viết cái title vào đây!!" dropzone="link"  >Chào mừng các bạn đến với website chơi cờ tướng trực tuyến lô cồ hót</marquee></div>
     </div>
+    
   </div>

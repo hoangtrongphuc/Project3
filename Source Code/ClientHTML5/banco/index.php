@@ -19,6 +19,31 @@
             $("document").ready(function(){
                 controller.initController("chessBoardDiv");
                 
+				$(window).on("navigate", function (event, data) {
+				var direction = data.state.direction;
+				if (direction == 'back') {
+					if(document.location.hash==="#listRoomDiv"){
+					  $.ajax({
+					url : "http://localhost:8080/rest/admin/index.php?api=logout",
+					type : "post",
+					dataType : "json",
+					data: "user_id="+$.cookie("cookie_id"),
+					async : false,
+					success: function(e){},
+					error : function(err){}
+						});
+					var cookies = $.cookie();
+					for(var cookie in cookies) {
+						$.removeCookie(cookie);
+							}
+					}
+					
+					}
+				if (direction == 'forward') {
+    // do something else
+					}
+				});
+
                 $("#newRoomDialog").dialog({
                     autoOpen: false, 
                     buttons: {
@@ -88,10 +113,14 @@
                 if(document.location.hash==="#roomDiv"){
                     controller.leavePage();
                 }
+				
             }
             function onBeforeUnload(){
                 if(document.location.hash==="#roomDiv"){
                     return "Nếu bạn rời đi, phòng chơi sẽ bị hủy. Bạn có chắc chắn muốn rời khỏi trang?";
+                }
+				else if(document.location.hash==="#listRoomDiv"){
+                    
                 }
             }
         </script>
@@ -99,10 +128,7 @@
     <body onhashchange="controller.onHashChange()" onload="controller.onHashChange()">
         <div id="bodyDiv">     
             <div id="listRoomDiv">
-                <div id="headerDiv">
-                    DANH SÁCH PHÒNG CHƠI
-                    <input id="searchInput" type="text" onchange="controller.searchRoom(this.value)">
-                </div>
+             
                 <div id="roomTableDiv">
                     <table id="roomTable"></table>
                 </div>

@@ -10,20 +10,18 @@
 }
 #background{
 	position:relative;
-	margin:5px auto;
-	z-index:1;
-	width:1100px;
-	height:628px;
-	background:#0F3;
+	margin:0 auto;
+	width:1366px;
+	height:768px;
+	
 }
 
 #menu{
 	position:absolute;
 	top:0px;
-	right:0px;
+	right:20px;
 	width:350px;
 	height:628px;
-	z-index:2;
 	margin:20px 20px;
 	border-radius: 2%;
 	border: solid 1px #CCC;

@@ -1,18 +1,12 @@
-/* 
- * Copyright (c) 2014 Nguyen Tat Nguyen
- */
 var controller = (function () {
-    var token1="kaka", user1="p", token2="xax", user2='n';
-    var test_token = token1;
-    var test_user = user1;
+
     var board=[],
         turn,//bằng 0 hoặc 8. 0-đen, 8-đỏ
         myColor,// bằng 0 hoặc 8
-        username = getCookie('username'),//tên người chơi
-        token = getCookie('token'),
+        username = getCookie('cookie_username'),//tên người chơi
+        token = getCookie('cookie_tokenkey'),
         roomInfo,
         haveRoom = false,
-        ownRoom,
         roomList=[],
         gameStart = false,
         focusedValidMove=[],
@@ -661,6 +655,8 @@ var controller = (function () {
         $("#messageDialog").dialog('open');
     }
     function closeRoom(){
+		gameStart = false;
+        socket.emit('closeRoom','');
         haveRoom = false;
         document.location.hash = "#listRoomDiv";
     }
@@ -669,10 +665,9 @@ var controller = (function () {
     function onBoardInfo(data){
         console.log("onBoardInfo");
         var ob = data;
-        console.log("TURN:"+ob.turn+" this_username="+test_user);
         if(gameStart === false){
             //if(ob.turn === username){//code đúng, dòng ở dưới chỉ để test
-            if(ob.turn === test_user){//TEST
+            if(ob.turn === username){//TEST
                 myColor = 8;//đỏ, đi trước
             }else{
                 myColor = 0;
@@ -703,11 +698,17 @@ var controller = (function () {
         }
         drawBoard();
     }
+	
+	function onReset()
+	{
+		reset();
+	}
+	
     function onOpMove(data){
         var move = data;
         if(myColor===0){
             moveAnimatedly(89-move.id1, 89-move.id2);
-            console.log("onOpMove: "+(89-move.id1)+":"+(89-move.id2));
+            console.log("onOpMove: "+89-move.id1+":"+89-move.id2);
         }else{
             moveAnimatedly(move.id1, move.id2);
             console.log("onOpMove: "+move.id1+":"+move.id2);
@@ -724,15 +725,17 @@ var controller = (function () {
         showMessage("Bạn đã thua ván này!");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-        controlDiv.appendChild(nextButton);
+		reset();
+        controlDiv.appendChild(readyButton);
     }
     function onWin(){
         console.log("onWin");
         gameStart = false;
-        showMessage("Chúc mừng! Bạn đã thua ván này.");
+        showMessage("Chúc mừng! Bạn đã thắng ván này.");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-        controlDiv.appendChild(nextButton);
+		reset();
+        controlDiv.appendChild(readyButton);
     }
     function onLoseRoom(){
         console.log("onLoseRoom");
@@ -758,15 +761,17 @@ var controller = (function () {
         showMessage("Rất tiếc khi bạn đã từ bỏ ván chơi này");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-        controlDiv.appendChild(nextButton);
+		reset();
+        controlDiv.appendChild(readyButton);
     }
     function onWinGU(){
         console.log("onWinGU");
         gameStart = false;
-        showMessage("Đối thủ đã bỏ cuộc. Bạn là người chiến thắng trong ván này!");
+        showMessage("Đối thủ xin thua. Bạn đã thắng ván này!");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-        controlDiv.appendChild(nextButton);
+		reset();
+        controlDiv.appendChild(readyButton);
     }
     function onLoseRoomGU(){
         console.log("onLoseRoomGU");
@@ -775,17 +780,41 @@ var controller = (function () {
         haveRoom = false;
         document.location.hash = "#listRoomDiv";
     }
+	
+	function onEqualRoom()
+	{
+		console.log("onWinRoomGU");
+        showMessage("Bất phân thắng bại. Tour đấu sẽ được bắt đầu lại!");
+        reset();
+	}
+	
     function onWinRoomGU(){
         console.log("onWinRoomGU");
         gameStart = false;
         showMessage("Đối thủ đã bỏ cuộc. Bạn là người chiến thắng trong phòng này");
-        if(ownRoom){
-            reset();
-        }else{
-            controlDiv.innerHTML='';
-            controlDiv.appendChild(closeRoomButton);
-        }
+        controlDiv.innerHTML='';
+        controlDiv.appendChild(closeRoomButton);
     }
+	
+	function onLeaveOutRoom(){
+        console.log("leaveOutRoom");
+        showMessage("Đối thủ vừa thoát ra");
+    }
+	function onLeave(){
+        console.log("leave");
+        gameStart = false;
+        haveRoom = false;
+        document.location.hash = "#listRoomDiv";
+    }
+	
+	function onDelete(){
+        console.log("delete");
+        gameStart = false;
+        haveRoom = false;
+		showMessage("Phòng chơi đã bị hủy !");
+        document.location.hash = "#listRoomDiv";
+    }
+	
     //các sự kiện khác
     function onRoomList(data){
         console.log("onRoomList");
@@ -797,7 +826,7 @@ var controller = (function () {
             $("#roomTableDiv").html("Không có dữ liệu");
         }else{
             var table = $("#roomTable");
-            table.html("<tr> <th>ID</th> <th>Tên phòng</th> <th>Số người chơi</th> <th>Số ván</th><th>Chủ phòng</th> <th>Xu</th> <th>Lock</th> <th></th> </tr>");
+            table.html("<tr> <td>No.</td> <td>Tên phòng</td> <td>Số người chơi</td> <td>Số ván</td><td>Chủ phòng</td> <td>Tiền cược</td> <td>Lock</td> <td></td> </tr>");
             for(var room in list){
 			var row = "<tr>" + "<td>"+list[room].ID+"</td>"+
                 "<td>"+list[room].name+"</td>"+
@@ -805,10 +834,30 @@ var controller = (function () {
                 "<td>"+list[room].matchLimit+"</td>"+
                 "<td>"+list[room].boss+"</td>"+				
                 "<td>"+list[room].coin+"</td>";
-				if(list[room].password !== "") row = row+ "<td>LOCK</td>"+"<td><button class='button' onclick='joinRoom("+list[room].ID+","+list[room].password+");' >Tham gia</button></td>" +"</tr>";
-				else row = row + "<td>NO</td>"+
-				"<td><button class='button' onclick='joinRoom("+list[room].ID+","+"false);' >Tham gia</button></td>" +
-				 "</tr>";
+				if(list[room].password !== "") 
+				{
+				if(list[room].status == 4)
+				row = row+ "<td>LOCK</td>"+"<td><button class='button' style='background-color:grey'>Kết thúc</button></td>" +"</tr>";
+				else 
+				{
+				if(list[room].countPlaying == 2)
+				row = row+ "<td>LOCK</td>"+"<td><button class='button' style='background-color:red'> Đầy </button></td>" +"</tr>";
+				else 
+				row = row+ "<td>LOCK</td>"+"<td><button class='button' onclick='joinRoom("+list[room].ID+","+list[room].password+");' >Tham gia</button></td>" +"</tr>";
+				}
+				}
+				else 
+				{
+				if(list[room].status == 4)
+				row = row+ "<td>NO</td>"+"<td><button class='button' style='background-color:grey'>Kết thúc</button></td>" +"</tr>";
+				else 
+				{
+				if(list[room].countPlaying == 2)
+				row = row+ "<td>NO</td>"+"<td><button class='button' style='background-color:red'> Đầy </button></td>" +"</tr>";
+				else 
+				row = row+ "<td>NO</td>"+"<td><button class='button' onclick='joinRoom("+list[room].ID+",false);' >Tham gia</button></td>" +"</tr>";
+				}
+				}
                 table.append(row);
             }
         }
@@ -841,27 +890,24 @@ var controller = (function () {
     function onAdded(){
         console.log("onAdded");
         haveRoom = true;
-        ownRoom = true;
         reset();
         document.location.hash="#roomDiv";
     }
     function onJoined(){
         console.log("onJoined");
         haveRoom = true;
-        ownRoom = false;
         reset();
         document.location.hash="#roomDiv";
     }
     function onRoomFull(){
-        console.log("onRoomFull");
-        showMessage("Phòng chơi đã đủ người, nhấn 'Bắt đầu' để chơi");
+        showMessage("Phòng chơi đã đủ người, nhấn 'Sẵn sàng' để chơi");
     }
     //chat
     function onChatMessage(){
         console.log("onChatMessage");
     }
     function onChatRoomMessage(s){
-        var m = s;
+        var m = JSON.parse(JSON.stringify( s));
         console.log("onChatRoomMessage: "+m.username+" "+m.message);
         $("#messagesDiv").append("<b>"+m.username+":</b> "+m.message+"<br/>");
     }
@@ -873,8 +919,6 @@ var controller = (function () {
         var ob={};
         ob.token = token;
         ob.username = username;
-        ob.token = test_token;//TEST
-        ob.username = test_user;//TEST
         socket.emit('connectToServer', ob);
     }
     function move(id1, id2) {
@@ -924,7 +968,7 @@ var controller = (function () {
 //                document.getElementById("roomDiv").style.display = "none";  
 //            }
               if(haveRoom === true){
-                document.location.hash = "#roomDiv";
+                  document.location.hash = "#roomDiv";
                 document.getElementById("listRoomDiv").style.display = "none";
                 document.getElementById("roomDiv").style.display = "block";
               }else{
@@ -1032,7 +1076,7 @@ var controller = (function () {
             giveUpButton.className = "buttonRed";
             
             leaveRoomButton = document.createElement("button");
-            leaveRoomButton.innerHTML = "Hủy phòng";
+            leaveRoomButton.innerHTML = "Rời phòng";
             leaveRoomButton.onclick = this.leaveRoom;
             leaveRoomButton.className = "buttonRed";
             
@@ -1077,6 +1121,9 @@ var controller = (function () {
             
             //Tao socket
             socket = io.connect(connectURL);
+			socket.on('delete',onDelete);
+			socket.on('leave',onLeave);
+			socket.on('leaveOutRoom',onLeaveOutRoom);
             socket.on('boardInfo', onBoardInfo);
             socket.on('opMove', onOpMove);
             socket.on('check', onCheck);
@@ -1089,6 +1136,7 @@ var controller = (function () {
             socket.on('winGU', onWinGU);
             socket.on('loseRoomGU', onLoseRoomGU);
             socket.on('winRoomGU', onWinRoomGU);
+			socket.on('equalRoom', onEqualRoom);
             socket.on('logging', onLogging);
             socket.on('roomInfo', onRoomInfo);
             socket.on('err', onErr);
@@ -1099,6 +1147,7 @@ var controller = (function () {
             socket.on('added', onAdded);
             socket.on('roomFull', onRoomFull);
 			socket.on('notGiveUp','');
+			socket.on('reset', onReset);
         },
         initController: function(id){
             this.place(id);
@@ -1113,7 +1162,6 @@ var controller = (function () {
             ob.roomID = id;
             ob.pass = pass;
             console.log("joinRoom: "+ob.sessionId+" "+ob.roomID+" "+ob.pass);
-            ob.sessionId = test_token;//TEST
             socket.emit('joinRoom', ob);
         },
         refreshRoom: function(){
@@ -1138,14 +1186,13 @@ var controller = (function () {
                 gameStart = false;
                 controlDiv.innerHTML='';
                 controlDiv.appendChild(leaveRoomButton);
-                controlDiv.appendChild(nextButton);
+                controlDiv.appendChild(readyButton);
                 socket.emit('giveUp','');
             }
         },
         leaveRoom: function(){
             console.log("leaveRoom");
-            if(confirm("Bạn có chắc chắn sẽ chịu thua phòng chơi này?")){
-                console.log("leaveRoom confirmed");
+            if(confirm("Bạn muốn rời phòng chơi này?")){
                 gameStart = false;
                 socket.emit('leaveRoom','');
                 haveRoom = false;
@@ -1159,7 +1206,7 @@ var controller = (function () {
         chatInRoom: function(){
             var s = $("#messageInput").val();
             console.log("chatInRoom: "+s);
-            socket.emit('chatInRoom', s);
+            socket.emit('chatInRoom', {message : s});
             $("#messageInput").val("");
             event.preventDefault();
         },
