@@ -66,6 +66,12 @@
                     modal: true
                 });
                 
+                $("#friendRequestDiv").dialog({
+                    autoOpen: false,
+                    title: "Yêu cầu kết bạn",
+                    modal: true
+                });
+                
                 $("#passwordDialog").dialog({
                     autoOpen: false, 
                     buttons: {
@@ -113,7 +119,6 @@
                 if(document.location.hash==="#roomDiv"){
                     controller.leavePage();
                 }
-				
             }
             function onBeforeUnload(){
                 if(document.location.hash==="#roomDiv"){
@@ -178,5 +183,8 @@
             </form>
         </div>
         <div id="messageDialog"></div>
+        <div id="friendRequestDiv">
+            <table id="requestsTable"></table> 
+        </div>
     </body>
 </html>

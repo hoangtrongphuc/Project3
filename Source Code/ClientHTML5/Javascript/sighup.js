@@ -97,7 +97,7 @@ $(document).ready(function(e) {
 		repass = $('#repass').val();
 		//alert(pass);
 		$.ajax({
-				"url"	: "http://192.168.1.51:8080/rest/index.php?api=register", // Nơi nhận dữ liệu
+				"url"	: "http://localhost:8080/rest/index.php?api=register", // Nơi nhận dữ liệu
 				"type"  : "post", // Phương thức truyền dữ liệu
 				"data"  : "&user_name="+name+"&user_pass="+pass+"&user_email="+repass, // Dữ liệu cần truyền sang PHP
 				"async" : false,
