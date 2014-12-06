@@ -1,0 +1,111 @@
+﻿<head>
+    <meta charset="utf-8"/>
+    <link href="./style/css/editevent.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+	<div id="event">
+		<form action="" method="post">
+			<center>
+				<table class='edit_event' cellspacing = "0" cellpadding = "0" width="550px">
+					
+				</table>
+			</center>
+		</form>
+		<script type="text/javascript">
+    $(document).ready(function(){
+    	function getUrlVars() {
+    	    var vars = {};
+    	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+    	        vars[key] = value;
+    	    });
+    	    return vars;
+    	}
+    	editEvent();
+    	function editEvent(){
+    		var $id = getUrlVars()["id"];
+    		var $edit = 1;
+    		$.ajax({
+    			url : "http://localhost:8080/rest/admin/index.php?api=event",
+    			type : "post",
+    			dataType : "json",
+    			data: "getevent="+$edit+"&event_id="+$id,
+    			async : false,
+    			success: function(e){
+    	    		var jsonEvent = JSON.parse(JSON.stringify(e));
+    	    		$(".edit_event").append(
+    	    				"<tr>"+
+    						"<td colspan='2'>Sửa thông tin sự kiện</td>"+
+    					"</tr>"+
+    					"<tr>"+
+    						"<td colspan='2'>"+
+    							"&nbsp;&nbsp;<span id='error'></span>"+
+    						"</td>"+
+    					"</tr>"+
+    					"<tr>"+
+    						"<td width='35%'>&nbsp;&nbsp;Tiêu đề:</td>"+
+    						"<td><input type='text' id='title' size='35' value='"+jsonEvent.data.event_title+"'/></td>"+
+    					"</tr>"+
+    					"<tr>"+
+    						"<td valign='top'>&nbsp;&nbsp;Nội dung <span style='color: red'>*</span>:</td>"+
+    						"<td><textarea cols='28' rows='10' id='info'>"+jsonEvent.data.event_info+"</textarea> </td>"+
+    					"</tr>"+
+    					"<tr>"+
+    						"<td valign='top'>&nbsp;&nbsp;Thời gian bắt đầu <span style='color: red'>*</span>:</td>"+
+    						"<td><input type='text' id='start' size='35' value='"+jsonEvent.data.event_start+"'/></td>"+
+    					"</tr>"+
+    					"<tr>"+
+    						"<td valign='top'>&nbsp;&nbsp;Thời gian kết thúc <span style='color: red'>*</span>:</td>"+
+    						"<td><input type='text' id='finish' size='35' value='"+jsonEvent.data.event_finish+"'/></td>"+
+    					"</tr>"+
+    					"<tr>"+
+    						"<td></td>"+
+    						"<td><input type='submit' id='update' value='Lưu thay đổi'/></td>"+
+    					"</tr>"+
+    					"<tr>"+
+    						"<td></td>"+
+    					"</tr>"
+    		    	);
+    	        	
+    			},
+    			error : function(err){
+    				var error = JSON.parse(JSON.stringify(err));
+    				alert(error);
+    			}
+    		}); 
+    	}
+		updateEvent();
+		function updateEvent(){
+			$("#update").click(function(){
+				var $id = getUrlVars()["id"];
+				var $title = $("#title").val();
+				var $info = $("#info").val();
+				var $start = $("#start").val();
+				var $finish = $("#finish").val();
+				var $edit = 1;
+				$.ajax({
+					url : "http://localhost:8080/rest/admin/index.php?api=event",
+					type : "post",
+					dataType : "json",
+					data : "editevent="+$edit+"&event_id="+$id+"&title="+$title+"&info="+$info+"&start="+$start+"&finish="+$finish,
+					async : false,
+					success : function(result){
+						var jsonData = JSON.parse(JSON.stringify(result));
+						//alert(JSON.stringify(result));
+						if(jsonData.code == 0){
+							alert("sửa sự kiện thành công");
+							window.location = "?page=editevent";
+						}
+						else{
+							alert(jsonData.data);
+						}
+					},
+					error : function(err){
+						alert(JSON.stringify(err));
+					}
+				});
+			});       
+		}
+    });
+    </script>
+	</div>
+</body>

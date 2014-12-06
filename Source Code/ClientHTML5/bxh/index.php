@@ -8,7 +8,96 @@
 <link rel="stylesheet" type="text/css" href="../add-in/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="../CSS/font/CODE Light.otf" />
 </head>
-
+<script src="../Javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
+<script type='text/javascript'>
+	$(document).ready(function(){
+		topRick();
+		function topRick(){
+			var $stt = 1;
+			$.ajax({
+				url : "http://localhost:8080/rest/index.php?api=toprick",
+				type : "post",
+				dataType : "json",
+				data : null,
+				async : false,
+				success : function(result){
+					//alert(JSON.stringify(result));
+					var jsonData = JSON.parse(JSON.stringify(result));
+					for(var i=0; i<jsonData.data.length; i++){
+						var datas = jsonData.data[i];
+						if(datas.user_level != 1){
+							if($stt == 1){
+								$("#richlist").append(
+									"<div class='row1'>"+
+										"<div class='stt' ><span class='glyphicon glyphicon-flag'>"+$stt+"</span></div>"+
+										"<div class='name'>"+datas.user_name+"</div>"+
+										"<div class='point'>"+datas.user_coin+"</div>"+
+									"</div>"
+								);
+							}
+							else{
+								$("#richlist").append(
+										"<div class='row1'>"+
+										"<div class='stt'>"+$stt+"</div>"+
+										"<div class='name'>"+datas.user_name+"</div>"+
+										"<div class='point'>"+datas.user_coin+"</div>"+
+									"</div>"
+								);
+							}
+						$stt++;
+						}
+					}
+				},
+				error : function(err){
+					alert(JSON.stringify(err));
+				}
+			});
+		}
+		//top rank
+		topRank();
+		function topRank(){
+			var $stt = 1;
+			$.ajax({
+				url : "http://localhost:8080/rest/index.php?api=toprank",
+				type : "post",
+				dataType : "json",
+				data : null,
+				async : false,
+				success : function(result){
+					//alert(JSON.stringify(result));
+					var jsonData = JSON.parse(JSON.stringify(result));
+					for(var i=0; i<jsonData.data.length; i++){
+						var datas = jsonData.data[i];
+						if(datas.user_level != 1){
+							if($stt == 1){
+								$("#ranklist").append(
+									"<div class='row1'>"+
+										"<div class='stt' ><span class='glyphicon glyphicon-flag'>"+$stt+"</span></div>"+
+										"<div class='name'>"+datas.user_name+"</div>"+
+										"<div class='point'>"+datas.user_win+"</div>"+
+									"</div>"
+								);
+							}
+							else{
+								$("#ranklist").append(
+										"<div class='row1'>"+
+										"<div class='stt'>"+$stt+"</div>"+
+										"<div class='name'>"+datas.user_name+"</div>"+
+										"<div class='point'>"+datas.user_win+"</div>"+
+									"</div>"
+								);
+							}
+						$stt++;
+						}
+					}
+				},
+				error : function(err){
+					alert(JSON.stringify(err));
+				}
+			});
+		}
+	});
+</script>
 <body>
 <?php require('../layout/header.php');?>
 <div id="wrapper">
@@ -20,109 +109,17 @@
         <button id='rank' type="button" class="btn btn-warning">Top Rank</button>
       </div>
       <div id="list">
-        <div id="ranklist">
+        <div id="richlist">
           <div class="row1">
             <div class="stt">Hạng</div>
             <div class="name">Tên người chơi</div>
             <div class="point">Điểm</div>
           </div>
-          <div class="row1">
-            <div class="stt"><span class="glyphicon glyphicon-flag"></span></div>
-            <div class="name">phucht</div>
-            <div class="point">31232</div>
-          </div>
-          <div class="row1">
-            <div class="stt">2</div>
-            <div class="name">nhatphaocau</div>
-            <div class="point">29182</div>
-          </div>
-          <div class="row1">
-            <div class="stt">3</div>
-            <div class="name">nguyennt</div>
-            <div class="point">29111</div>
-          </div>
-          <div class="row1">
-            <div class="stt">4</div>
-            <div class="name">ngakorean</div>
-            <div class="point">29006</div>
-          </div>
-          <div class="row1">
-            <div class="stt">5</div>
-            <div class="name">leona12</div>
-            <div class="point">27123</div>
-          </div>
-          <div class="row1">
-            <div class="stt">6</div>
-            <div class="name">michelscofield</div>
-            <div class="point">23565</div>
-          </div>
-          <div class="row1">
-            <div class="stt">7</div>
-            <div class="name">davidtrezege</div>
-            <div class="point">21322</div>
-          </div>
-          <div class="row1">
-            <div class="stt">8</div>
-            <div class="name">victorhugo143</div>
-            <div class="point">18923</div>
-          </div>
-          
-          
         </div>
-        <div id="richlist">
-         <div class="row1">
-            <div class="stt">Hạng</div>
-            <div class="name">Tên người chơi</div>
-            <div class="point">Tiền</div>
-          </div>
-          <div class="row1">
-            <div class="stt"><span class="glyphicon glyphicon-usd"></span></div>
-            <div class="name">phucht</div>
-            <div class="point">31232</div>
-          </div>
-          <div class="row1">
-            <div class="stt">2</div>
-            <div class="name">nhatphaocau</div>
-            <div class="point">29182</div>
-          </div>
-          <div class="row1">
-            <div class="stt">3</div>
-            <div class="name">nguyennt</div>
-            <div class="point">29111</div>
-          </div>
-          <div class="row1">
-            <div class="stt">4</div>
-            <div class="name">ngakorean</div>
-            <div class="point">29006</div>
-          </div>
-          <div class="row1">
-            <div class="stt">5</div>
-            <div class="name">leona12</div>
-            <div class="point">27123</div>
-          </div>
-          <div class="row1">
-            <div class="stt">6</div>
-            <div class="name">michelscofield</div>
-            <div class="point">23565</div>
-          </div>
-          <div class="row1">
-            <div class="stt">7</div>
-            <div class="name">davidtrezege</div>
-            <div class="point">21322</div>
-          </div>
-          <div class="row1">
-            <div class="stt">8</div>
-            <div class="name">victorhugo143</div>
-            <div class="point">18923</div>
-          </div>	
-        
-        
+        <div id="ranklist">
+         
         </div><a href="/cotuong"><button class="btn btn-danger" type="button" style="width:300px; height:50px; text-align:center; margin:10px 200px;;"><span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-chevron-left"></span> Quay về trang chủ</button></a>
-        
         </div>
-    
-     	
-           
       </div>
     </div>
   

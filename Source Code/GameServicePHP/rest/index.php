@@ -3,16 +3,12 @@
 	require_once 'library/config.php';
 	require_once 'library/database.php';
 	require_once 'library/model.php';
-	require_once 'library/login_model.php';
-	require_once 'library/register_model.php';
-	require_once 'library/forgot_model.php';
+	require_once 'library/user_model.php';
 	require_once 'library/napxu_model.php';
-	require_once 'library/changepass_model.php';
 	require_once 'library/friend_model.php';
-	require_once 'library/gopy_model.php';
+	require_once 'library/feedback_model.php';
+	require_once 'library/event_model.php';
 	
-	
-	$array = array();
 	$array = $_REQUEST;
 	
 	//$array1 = file_get_contents("php://input");
@@ -36,27 +32,33 @@
 	else if(!empty($array['api']) && $array['api'] == "friend"){
 		include 'friend.php';
 	}
-	else if(!empty($array['api']) && $array['api'] == "friendrequest"){
-		include 'friendrequest.php';
-	}
 	else if(!empty($array['api']) && $array['api'] == "forgot"){
 		include 'forgot.php';
 	}
-	else if(!empty($array['api']) && $array['api'] == "changepass"){
-		include 'changepass.php';
+	else if(!empty($array['api']) && $array['api'] == "changeinfo"){
+		include 'changeinfo.php';
 	}
 	else if(!empty($array['api']) && $array['api'] == "napxu"){
 		include 'napxu.php';
 	}
-	else if(!empty($array['api']) && $array['api'] == "gopy"){
-		include 'gopy.php';
+	else if(!empty($array['api']) && $array['api'] == "user"){
+		include 'user.php';
+	}
+	else if(!empty($array['api']) && $array['api'] == "event"){
+		include 'event.php';
+	}
+	else if(!empty($array['api']) && $array['api'] == "feedback"){
+		include 'feedback.php';
 	}
 	else if(!empty($array['api']) && $array['api'] == "logout"){
 		include 'logout.php';
 	}
 	else{
 		$model = new model();
-		$model->deliver_response(1, "sai API", NULL);
+		$response['code'] = 1;
+		$response['status'] = $model::$api_response_code[ $response['code'] ]['HTTP Response'];
+		$response['data'] = $model::$api_response_code[ $response['code'] ]['Message'];
+		$model->deliver_response($response);
 	}
 	
 ?>

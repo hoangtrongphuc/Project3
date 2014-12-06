@@ -1,0 +1,393 @@
+﻿<html>
+<header>
+	<link href="style/css/home.css" rel="stylesheet" type="text/css" />
+</header>
+
+
+<body>
+	<div id="user">
+		<div class="title">Danh sách tài khoản</div>
+		<div class="title" style="width: 300px; margin-left: 650px;">
+			<input type="text"
+				style="padding: 0px 2px; padding-bottom: 2px; padding-top: 6px;"
+				id="search_name" name="search" size="30"> <input
+				type="submit" id="search"
+				style="padding: 0px 2px; padding-bottom: 2px; padding-top: 6px;"
+				value="Tìm kiếm"></input>
+		</div>
+		<div id='test'></div>
+		<div class="list">
+			<table class='list_user' border="1" cellspacing="0" cellpadding="0"
+				width="1200px">
+				<thead>
+					<tr>
+						<th width="50" height="30">STT</th>
+						<th width="120">Tên đăng nhập</th>
+						<th width="200">Tên đầy đủ</th>
+						<th width="80">Giới tính</th>
+						<th width="100">Địa chỉ</th>
+						<th width="110">Số điện thoại</th>
+						<th width="100">Email</th>
+						<th width="80">Xu</th>
+						<th width="120">Level</th>
+						<th width="80">Số trận thắng</th>
+						<th width="80">Số trận thua</th>
+						<th width="120">Trạng thái</th>
+						<th width="120">Ban/Mở tài khoản</th>
+						<th width="50">Thưởng xu</th>
+						<th width="40">Xóa</th>
+					</tr>
+				</thead>
+				<tbody id="user_data">
+
+				</tbody>
+			</table>
+		</div>
+		<div class='listpage' id='list_page'></div>
+	</div>
+	<style type='text/css'>
+		a.pagenumber{
+			text-decoration:none;
+			padding:0px 10px;
+			border:1px solid #CCC;
+			border-radius:3px;
+			margin-right:3px;
+		}
+		span.pagenumber{
+			color:#F00;
+			font-weight:bold;
+		}
+	</style>
+	<script type="text/javascript">
+				//var config = {
+				//		"BASEURL": "http://localhost:8080/",
+				//		"version":  "0.0.1"
+				//}
+				//ussage:
+				// alert(config.BASEURL);
+    			$(document).ready(function(){
+    				function getUrlVars() {
+    	         	    var vars = {};
+    	         	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+    	         	        vars[key] = value;
+    	         	    });
+    	         	    return vars;
+    	         	}
+            		loadContent();
+            		function loadContent(){
+            			$('#user_data').html("");
+            			var $list = 1;
+            			if(getUrlVars()['start'] == undefined){
+                			var $page = 0;
+            			}
+            			else{
+            				$page = getUrlVars()['start'];
+            			}
+    	        		$.ajax({
+    	            		url : "http://localhost:8080/rest/admin/index.php?api=user",
+    	            		type : "post",
+    	            		dataType : "json",
+    	            		data: "listuser="+$list+"&page_number="+$page,
+    	            		async : false,
+    	            		success: function(e){
+    	            			//alert(JSON.stringify(e));
+    	            			if(e.code == 0){
+	    		            		var jsonData = JSON.parse(JSON.stringify(e));
+	    		            		for(var i=0 ; i<jsonData.data.length ; i++){
+	    			            		var datas = jsonData.data[i];
+	    			            		if(datas.user_gender == 1){
+	    			            			$user_gender = "Nam";
+	    			            		}
+	    			            		else{
+	    			            			$user_gender = "Nữ";
+	    			            		}
+	    			            		if(datas.user_level == 1){
+	    			            			$user_level = "Admin";
+	    			            		}
+	    			            		else{
+	    			            			$user_level = "Member";
+	    			            		}
+	    			            		if(datas.user_status == 1){
+	    			            			$user_status = "ON";
+	    			            		}
+	    			            		else{
+	    			            			$user_status = "OFF";
+	    			            		}
+	    			            		if(datas.user_ban_mo == 1){
+	    				            		$user_ban_mo = "ban";
+	    			            		}
+	    			            		else{
+	    			            			$user_ban_mo = "hoạt động";
+	    			            		}
+	    			            		$("#user_data").append(	 
+	    					            		"<tr id='" + datas.user_ID + "'>"+
+	    					            			"<th>"+$list+"</th>"+
+	    					            			"<th width='120px' align='center'>"+datas.user_name+"</th>"+
+	    					            			"<th width='120px' align='center'>"+datas.user_fullName+"</th>"+
+	    					            			"<th>"+$user_gender+"</th>"+
+	    					            			"<th>"+datas.user_address+"</th>"+
+	    					            			"<th>"+datas.user_tel+"</th>"+
+	    					            			"<th>"+datas.user_email+"</th>"+
+	    					            			"<th class='coin'>"+datas.user_coin+"</th>"+
+	    					            			"<th>"+$user_level+"</th>"+
+	    					            			"<th>"+datas.user_win+"</th>"+
+	    					            			"<th>"+datas.user_lose+"</th>"+
+	    					            			"<th>"+$user_status+"</th>"+
+	    					            			"<th class='mo_ban'><a class='ban_mo' name='"+datas.user_ID+$user_ban_mo+"' href='javascript:void(0)'>"+$user_ban_mo+"</a></th>"+
+	    					            			"<th><button name='"+datas.user_ID+"' class='thuongxu'>"+"thưởng xu"+"</button></th>"+
+	    					            			"<th align='center' ><a class='delete' name='"+datas.user_ID+"' href='javascript:void(0)'><img src='./image/icon/delete.png' height='20'/></a></th>"+
+	    					            		"</tr>");
+	    								$list ++;
+	    				            }
+	    		            		if(e.totalpage > 1){
+	    	                			var current = parseInt(e.start/e.limit)+1;
+	    	                			if(current != 1){
+	    	                				newstart = parseInt(e.start) - parseInt(e.limit);
+	    	            					$(".listpage").append("<a class='pagenumber' name='"+newstart+"' href='javascript:void(0)'>Prev</a>");
+	    	            				}
+	    	                			for(var i=1; i <= e.totalpage; i++){
+	    	                				newstart = (i-1)*e.limit;
+	    	                				if(i == current)
+	    	                					$(".listpage").append("<span class='pagenumber'>"+i+"</span>");
+	    	                				else{
+	    	                					$(".listpage").append("<a class='pagenumber' name='"+newstart+"' href='javascript:void(0)'>"+i+"</a>");
+	    	                				}
+	    	                			}
+	    	                			if(current != e.totalpage){
+	    	                				newstart = parseInt(e.start) + parseInt(e.limit);
+	    	            					$(".listpage").append("<a class='pagenumber' name='"+newstart+"' href='javascript:void(0)'>Next</a>");
+	    	                			}
+	    	                		}
+	    	                		eventPage();
+    	            			}
+    	            			else{
+    	            				$("#user_data").html("<tr><th colspan='15' rowspan='0'>Không có dữ liệu</th></tr>");
+    	            			}
+    			            	
+    	            		},
+                			error : function(err){
+                				var error = JSON.parse(JSON.stringify(err));
+                				//alert(JSON.stringify(err));
+                			}
+    	            	});
+            		}
+            		eventPage();
+            		function eventPage(){
+            			$(".pagenumber").click(function(){
+                			var $num = $(this).attr("name");
+                			document.location.href='?page=listuser&start='+$num;
+            			});
+            		};
+	        		$("#search").click(handleSearch);
+	        		$('#search_name').keyup(function(e){
+	        			if (e.keyCode == 13)
+	        				handleSearch();
+	        		});
+	        		function handleSearch(){
+            			var $name = $("#search_name").val();
+            			var $abc = 1;
+            			var $list = 1;
+            			if($name != ""){
+	            			$.ajax({
+	                			url : "http://localhost:8080/rest/admin/index.php?api=user",
+	                			type : "post",
+	                			dataType : "json",
+	                			data : "search="+$abc+"&user_name="+$name,
+	                			async : false,
+	                			success : function(result){
+		                			//var jsonData = JSON.parse(JSON.stringify(result));
+		                			//alert(JSON.stringify(result));
+		                			if(result.code == 0 && result.data != ""){
+			                			$("#user_data").html("");
+			                			var jsonData = JSON.parse(JSON.stringify(result));
+					            		for(var i=0 ; i<jsonData.data.length ; i++){
+						            		var datas = jsonData.data[i];
+						            		if(datas.user_gender == 1){
+						            			$user_gender = "Nam";
+						            		}
+						            		else{
+						            			$user_gender = "Nữ";
+						            		}
+						            		if(datas.user_level == 1){
+						            			$user_level = "Admin";
+						            		}
+						            		else{
+						            			$user_level = "Member";
+						            		}
+						            		if(datas.user_status == 1){
+						            			$user_status = "ON";
+						            		}
+						            		else{
+						            			$user_status = "OFF";
+						            		}
+						            		if(datas.user_ban_mo == 1){
+							            		$user_ban_mo = "ban";
+						            		}
+						            		else{
+						            			$user_ban_mo = "hoạt động";
+						            		}
+						            		$("#user_data").append(	 
+								            		"<tr id='" + datas.user_ID + "'>"+
+								            			"<th>"+$list+"</th>"+
+								            			"<th width='120px' align='center'>"+datas.user_name+"</th>"+
+								            			"<th width='120px' align='center'>"+datas.user_fullName+"</th>"+
+								            			"<th>"+$user_gender+"</th>"+
+								            			"<th>"+datas.user_address+"</th>"+
+								            			"<th>"+datas.user_tel+"</th>"+
+								            			"<th>"+datas.user_email+"</th>"+
+								            			"<th class='coin'>"+datas.user_coin+"</th>"+
+								            			"<th>"+$user_level+"</th>"+
+								            			"<th>"+datas.user_win+"</th>"+
+								            			"<th>"+datas.user_lose+"</th>"+
+								            			"<th>"+$user_status+"</th>"+
+								            			"<th class='mo_ban'><a class='ban_mo' name='"+datas.user_ID+$user_ban_mo+"' href='javascript:void(0)'>"+$user_ban_mo+"</a></th>"+
+								            			"<th><button name='"+datas.user_ID+"' class='thuongxu'>"+"thưởng xu"+"</button></th>"+
+								            			"<th align='center' ><a class='delete' name='"+datas.user_ID+"' href='javascript:void(0)'><img src='./image/icon/delete.png' height='20'/></a></th>"+
+								            		"</tr>");
+											$list ++;
+							            }
+					            		initEvent();
+		                			}else{
+		                				//alert("không tìm thấy kết quả");
+		                				//window.location = "?page=listuser";
+		                				//$(".list_user tbody").remove();
+		                				$("#user_data").html("<tr><th colspan='15' rowspan='0'>Không tìm thấy kết quả</th></tr>");
+		                			}
+		                    	},
+		                		error : function(err){
+		                			var error = JSON.parse(JSON.stringify(err));
+		                			alert(error);
+		                		}
+	                		});
+            			}else{
+                			alert("bạn chưa nhập dữ liệu");
+                			//alert('load content');
+                			//loadContent();
+            			}
+                	};
+	        		
+	        		///init event
+	        		initEvent();
+	        		function initEvent(){
+	        			$(".delete").click(function(){
+		        			if(confirm("bạn có chắc chắn xóa không?")){
+				        		var $user_id = $(this).attr("name");
+				        		var $delete_user = 1;
+				        		$(this).parent().parent().fadeOut("show");
+		            			$.ajax({
+		                			url : "http://localhost:8080/rest/admin/index.php?api=user",
+		                			type : "post",
+		                			dataType : "json",
+		                			data : "deleteuser="+$delete_user+"&user_id="+$user_id,
+		                			async : false,
+		                			success : function(result){
+			                			var jsonData = JSON.parse(JSON.stringify(result));
+			                			
+		                    		},
+		                			error : function(err){
+		                				var error = JSON.parse(JSON.stringify(err));
+		                				alert(error);
+		                			}
+		                		});
+		        			}
+	            		});
+	            		$(".ban_mo").click(function(){
+	            			$self = $(this);
+	                		var $id_ban_mo = $(this).attr("name");
+	                		
+	                		//lấy id trong xâu
+	                		var $id = $id_ban_mo.match(/\d+/)[0];
+	                		//lấy xâu còn lại
+	                		var $tmp = $id_ban_mo.replace($id,"");
+	                		var $abc = 1;
+	                		if($tmp=="ban"){
+	                    		
+	                    		if(confirm("bạn có chắc chắn muốn mở tài khoản này không?")){
+		                    		$.ajax({
+		                    			url : "http://localhost:8080/rest/admin/index.php?api=user",
+		                    			type : "post",
+		                    			dataType : "json",
+		                    			data : "mouser="+$abc+"&user_id="+$id,
+		                    			async : false,
+		                    			success : function(result){
+		    	                			var jsonData = JSON.parse(JSON.stringify(result));
+		    	                			//alert(JSON.stringify(result));
+		    	                			//window.location = "?page=listuser";
+		    	                			$self.attr('name',$id + 'hoạt động');
+		    	                			$self.html("hoạt động");
+		    	                			console.log($self);
+		                        		},
+		                    			error : function(err){
+		                    				var error = JSON.parse(JSON.stringify(err));
+		                    				alert(error);
+		                    			}
+		                    		});
+	                    		}
+	                		}
+	                		else{
+
+	                			if(confirm("bạn có chắc chắn muốn ban tài khoản này không?")){
+		                			$.ajax({
+		                    			url : "http://localhost:8080/rest/admin/index.php?api=user",
+		                    			type : "post",
+		                    			dataType : "json",
+		                    			data : "banuser="+$abc+"&user_id="+$id,
+		                    			async : false,
+		                    			success : function(result){
+		    	                			var jsonData = JSON.parse(JSON.stringify(result));
+		    	                			//alert(JSON.stringify(result));
+		    	                			//window.location = "?page=listuser";
+		    	                			$self.attr('name',$id+'ban');
+		    	                			$self.html("ban");
+		    	                			console.log($self);
+		                        		},
+		                    			error : function(err){
+		                    				var error = JSON.parse(JSON.stringify(err));
+		                    				alert(error);
+		                    			}
+		                    		});
+	                			}
+	                		}
+	                	});
+	                	$(".thuongxu").click(function(){
+	                    	var so_xu = prompt("Số xu thưởng","0");
+							var $id = $(this).attr("name");
+							var $abc = 1;
+	                    	if(so_xu > 0 && !isNaN(so_xu)){
+	                    		$.ajax({
+	                    			url : "http://localhost:8080/rest/admin/index.php?api=user",
+	                    			type : "post",
+	                    			dataType : "json",
+	                    			data : "thuongxu="+$abc+"&user_id="+$id+"&so_xu="+so_xu,
+	                    			async : false,
+	                    			success : function(result){
+	    	                			var jsonData = JSON.parse(JSON.stringify(result));
+	    	                			//alert(JSON.stringify(result));
+	    	                			if(result.code == 0){
+	    	                				//window.location = "?page=listuser";
+	    	                				//debugger;
+	    	                				var ele = $('#user_data').children('[id="'+ $id + '"]').children('.coin');
+	    	                				ele.html(result.data.user_coin);
+	    	                				
+	    	                				//tu du lieu
+	    	                				//ele.html(diem);
+	    	                			}
+	    	                			else{
+	        	                			alert(result.data);
+	    	                			}
+	                        		},
+	                    			error : function(err){
+	                    				var error = JSON.parse(JSON.stringify(err));
+	                    				alert(error);
+	                    			}
+	                    		});
+	                    	}
+	                    	else{
+	                        	alert('không hợp lệ');
+	                    	}
+	        			});
+	        		}
+    			});
+    	</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+#event{
+	clear: left;
+	height: 400px;
+	width: 560px;
+	background: rgb(54, 25, 25);
+	background: rgba(0, 0, 0, .8);
+	box-shadow: 0 2px 10px #000;
+	color: white;
+	border-radius: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+th{
+    font-size: 16pt;
+    padding: 0px;
+}
+td{
+    padding: 10px 20px 0px 0px;
+	font-size: 13pt;
+}
+td #error{
+    color: red;
+}
+input{
+	font-family: "TimeNewRoman";
+	font-size: 12pt;
+}
+input[name="error"]{
+    border: 0px;
+}
+input[type="text"]{
+    height: 25px;
+}
+input[type="submit"]{
+    width: 120px;
+    height: 30px;
+    font-weight: bold;
+}
+textarea{
+    width: 317px;
+    font: 12pt 'Times New Roman';
+}

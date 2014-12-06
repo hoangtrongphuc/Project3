@@ -1,0 +1,184 @@
+<html>
+    <header>
+        <link href="./style/css/home.css" rel="stylesheet" type="text/css"/>
+    </header>
+    <body>
+        <div id="user">
+			<div class="title">Danh sách giao dịch</div>
+			<div class="title" style="width:300px;margin-left:650px;">
+				<input type="text" style="padding:0px 2px;padding-bottom:2px;padding-top: 6px;" id="search_trade" name="search_trade" size="30">
+				<input type="submit" id="trade_search" style="padding:0px 2px;padding-bottom:2px;padding-top: 6px;" value="Tìm kiếm"></input>
+			</div>
+			<div class="list">
+					<table class='trade' border="1" cellspacing = "0" cellpadding = "0" width="1200px">
+						<thead>
+							<tr>
+								<th width='50' height='30'>STT</th>
+								<th width='120'>Tên tài khoản</th>
+								<th width='200'>Nhà cung cấp</th>
+								<th width='80'>Mã Serial</th>
+								<th width='100'>Mã Code</th>
+								<th width='100'>Số xu nạp</th>
+								<th width='100'>Ngày nạp</th>
+							</tr>
+						</thead>
+						<tbody id='event_trade'>
+						
+						</tbody>
+					</table>
+			</div>
+			<div class='listpage' id='list_page'></div>
+		</div>
+		<style type='text/css'>
+		a.pagenumber{
+			text-decoration:none;
+			padding:0px 10px;
+			border:1px solid #CCC;
+			border-radius:3px;
+			margin-right:3px;
+		}
+		span.pagenumber{
+			color:#F00;
+			font-weight:bold;
+		}
+	</style>
+		<script type="text/javascript">
+    	$(document).ready(function(){
+    		 function getUrlVars() {
+         	    var vars = {};
+         	    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+         	        vars[key] = value;
+         	    });
+         	    return vars;
+         	}
+    		
+    		loadTrade();
+    		function loadTrade(){
+    			$("#event_trade").html("");
+    			var $list = 1;
+    			if(getUrlVars()['start'] == undefined){
+        			var $page = 0;
+    			}
+    			else{
+    				$page = getUrlVars()['start'];
+    			}
+        		$.ajax({
+            		url : "http://localhost:8080/rest/admin/index.php?api=trade",
+            		type : "post",
+            		dataType : "json",
+            		data: "listtrade="+$list+"&page_number="+$page,
+            		async : false,
+            		success: function(e){
+            			//alert(JSON.stringify(e));
+            			if(e.code == 0){
+	                		var jsonData = JSON.parse(JSON.stringify(e));
+	                		for(var i=0 ; i<jsonData.data.length ; i++){
+	    	            		var datas = jsonData.data[i];
+	    	            		$("#event_trade").append(	 
+	    			            		"<tr>"+
+	    			            			"<th>"+$list+"</th>"+
+	    			            			"<th width='120px' align='center'>"+datas.user_name+"</th>"+
+	    			            			"<th width='120px' align='center'>"+datas.trade_provider+"</th>"+
+	    			            			"<th>"+datas.trade_serial+"</th>"+
+	    			            			"<th>"+datas.trade_code+"</th>"+
+	    			            			"<th>"+datas.trade_coin+"</th>"+
+	    			            			"<th>"+datas.trade_date+"</th>"+
+	    			            		"</tr>");
+	    						$list ++;
+	    		            }
+	                		
+	                		if(e.totalpage > 1){
+	                			var current = parseInt(e.start/e.limit)+1;
+	                			if(current != 1){
+	                				newstart = parseInt(e.start) - parseInt(e.limit);
+	            					$(".listpage").append("<a class='pagenumber' name='"+newstart+"' href='javascript:void(0)'>Prev</a>");
+	            				}
+	                			for(var i=1; i <= e.totalpage; i++){
+	                				newstart = (i-1)*e.limit;
+	                				if(i == current)
+	                					$(".listpage").append("<span class='pagenumber'>"+i+"</span>");
+	                				else{
+	                					$(".listpage").append("<a class='pagenumber' name='"+newstart+"' href='javascript:void(0)'>"+i+"</a>");
+	                				}
+	                			}
+	                			if(current != e.totalpage){
+	                				newstart = parseInt(e.start) + parseInt(e.limit);
+	            					$(".listpage").append("<a class='pagenumber' name='"+newstart+"' href='javascript:void(0)'>Next</a>");
+	                			}
+	                		}
+	                		eventPage();
+            			}
+            			else{
+            				$("#event_trade").html("<tr><th colspan='7' rowspan='0'>Không có dữ liệu</th></tr>");
+            			}
+            		},
+        			error : function(err){
+        				var error = JSON.parse(JSON.stringify(err));
+        				//alert(JSON.stringify(err));
+        			}
+            	});
+    		}
+    		eventPage();
+    		function eventPage(){
+    			$(".pagenumber").click(function(){
+        			var $num = $(this).attr("name");
+        			document.location.href='?page=trade&start='+$num;
+    			});
+    		};
+    		$("#trade_search").click(eventSearchTrade);
+    		$("#search_trade").keyup(function(e){
+    			if(e.keyCode == 13)
+    				eventSearchTrade();
+    		});
+    		function eventSearchTrade(){
+    			$("#user").children(".listpage").html("");
+       			var $name = $("#search_trade").val();
+       			var $list = 1
+       			if($name != ""){
+   	    			$.ajax({
+   	            		url : "http://localhost:8080/rest/admin/index.php?api=trade",
+   	            		type : "post",
+   	            		dataType : "json",
+   	            		data: "searchtrade="+$list+"&user_name="+$name,
+   	            		async : false,
+   	            		success: function(e){
+   	            			//var dem = 0;
+   	                		//alert(JSON.stringify(e));
+   	                		if(e.code == 0 && e.data != ""){
+   		                		$("#event_trade").html("");
+   		                		var jsonData = JSON.parse(JSON.stringify(e));
+   		                		for(var i=0 ; i<jsonData.data.length ; i++){
+   		    	            		var datas = jsonData.data[i];
+   		    	            		$("#event_trade").append( 
+   		    			            		"<tr>"+
+   		    			            			"<th>"+$list+"</th>"+
+   		    			            			"<th width='120px' align='center'>"+datas.user_name+"</th>"+
+   		    			            			"<th width='120px' align='center'>"+datas.trade_provider+"</th>"+
+   		    			            			"<th>"+datas.trade_serial+"</th>"+
+   		    			            			"<th>"+datas.trade_code+"</th>"+
+   		    			            			"<th>"+datas.trade_coin+"</th>"+
+   		    			            			"<th>"+datas.trade_date+"</th>"+
+   		    			            		"</tr>");
+   		    						$list ++;
+   		    		            }
+   	                		}else{
+   	                			//alert("không tìm thấy kết quả");
+   	                			$("#event_trade").html("<tr><th colspan='7' rowspan='0'>Không tìm thấy kết quả</th></tr>");
+   	                		}
+   	                		
+   	            		},
+   	        			error : function(err){
+   	        				var error = JSON.parse(JSON.stringify(err));
+   	        				alert(error);
+   	        			}
+   	        		});
+       			}
+       			else{
+       				alert("bạn chưa nhập dữ liệu");
+       			}
+    		}
+    		
+    	});
+    </script>
+    </body>
+</html>

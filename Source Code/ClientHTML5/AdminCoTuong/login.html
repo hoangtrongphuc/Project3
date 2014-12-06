@@ -1,0 +1,88 @@
+
+<html>
+    <head>
+        <title>Đăng nhập</title>
+        <meta charset="utf-8"/>
+        <link href="style/css/login.css" rel="stylesheet" type="text/css"/>
+        <script src="style/js/jquery-1.11.1.min.js" type="text/javascript"></script>
+        <script src="style/js/md5.js" type="text/javascript"></script>
+    </head>
+    <body>
+		<div id="hheader">
+            <div class = "logo">
+                QUẢN TRỊ WEBGAME CỜ TƯỚNG
+            </div>
+        </div>
+        <div id="login">
+            <br/><br/>
+            <form action="javascript:void(0)" method="post">
+                <table>
+                    <tr>
+                        <th colspan="2">
+                            ĐĂNG NHẬP TRANG QUẢN TRỊ
+                            <br/><br/>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="error"><br/></td>
+                    </tr>
+                    <tr>
+                        <td>Tên đăng nhập:</td>
+                        <td><input type="text" name="name_login" id="name_admin" size="22"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br/></td>
+                    </tr>
+                    <tr>
+                        <td>Mật khẩu:</td>
+                        <td><input type="password" name="pass" id="pass_admin" size="22"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br/><center><input type="submit" name="login" 
+                            id="login_submit" value="Đăng nhập"/></center></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                login();
+                function login(){
+                	$("#login_submit").click(function() {
+                        var name = $("#name_admin").val();
+                        var pass = $("#pass_admin").val();
+                        
+                        if (name == "" || pass == "") {
+                            $(".error").html("Yêu cầu nhập đầy đủ thông tin!");
+                            return false;
+                        } else {
+                        	pass = CryptoJS.MD5(pass);
+                            $.ajax({
+                                url : "http://localhost:8080/rest/admin/index.php?api=login",
+                                type : "post",
+                                dataType : "json",
+                                data : "username=" + name + "&pass=" + pass,
+                                async : false,
+                                success: function(result) {
+                                    //alert(JSON.stringify(result));
+                                    if(result.code == 0 ){
+	                                    $(".error").html("Đăng nhập thành công. Đang tải dữ liệu. Xin vui lòng đợi trong ít phút!");
+	                                    setTimeout(function(){
+	                                    	window.location = "index.html";
+	                                    }, 2000);
+                                    }
+                                    else{
+                                    	alert(result.data);
+                                    }
+                                },
+                                error : function(err){
+                                	 alert(JSON.stringify(err));
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

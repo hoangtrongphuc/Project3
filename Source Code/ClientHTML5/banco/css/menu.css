@@ -1,0 +1,11 @@
+#mainnav {
+  background: #FF6633;  height: 60px;  line-height: 60px;  width: 950px;
+  margin: 0 auto 30px auto;  border: 1px solid #A2D2EA;  text-align: center;
+  /* Fix cho IE */ }  
+#mainnav ul {
+  margin: 0;  padding: 0;  list-style: none;}
+#mainnav ul li {  margin: 0;  padding: 0;  display: inline; }
+#mainnav li a {  color: #FFF;  font-weight: bold;  padding: 0 10px; font-family:Georgia;
+ border-right: 1px solid #A2D2EA;  text-transform: uppercase;  text-decoration: none;}
+#mainnav li a:hover,#mainnav li a:active,#mainnav li a:focus {  color: #CCCC33;}
+#mainnav li a.active {  color: #CCFF00; }  

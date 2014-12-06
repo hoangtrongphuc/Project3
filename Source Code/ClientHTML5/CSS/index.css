@@ -1,4 +1,4 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 /* CSS Document */
 *{
 	margin:0px;
@@ -14,6 +14,8 @@ body{
 	 background-repeat:no-repeat;
 	 background-attachment:fixed;
 	 background-size:100%;
+	 
+	
 	}
 
 
@@ -31,7 +33,7 @@ body{
 	} 
 	#header{
 		width:1280px;
-		height:40px;
+		height:90px;
 		margin:0px auto;
 		box-shadow:inset 5px #666666;
 		
@@ -101,18 +103,17 @@ h3{
 }
 #wrapper{
 
-	background: url(../images/bgr-main.jpg);
 	background-attachment:fixed;
 	background-size:100%;
 	margin: 0 auto;
-	width: 980px;
-	height:980px;
+	max-width: 980px;
+	max-height:500px;
 	font-family:"Comic Sans MS", cursive;
 	font-size:14px;
 	text-align: left;
 	position: relative;
 	overflow: hidden;
-	border-radius: 10px;
+	
 
 }
 #footer{
@@ -127,37 +128,48 @@ h3{
 	list-style-type:none;
 }
 
-
 #login
 { 	
-	 float:left;
-	 margin:20px; 
-     width: 300px;
-     height: 350px;
-	 padding-left:20px;
-     
-	 border:solid 4px #F00;
-} 
-#or{
-	 width: 60px;
-     height: 350px;
-	float:left;
-	text-align:center;
-	padding:150px 20px 150px 10px;
-	font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
-	font-size:36px;
-	font-weight:bolder;
-}
-#signin
-{ 	
-	 width: 400px;
+	overflow:scroll;
+	 width: 375px;
 	 height: 350px;
 	 padding-right:20px;
 	 float:left;
-	 border:solid 4px #F00;
+	 background:#FFCC66;
 	 margin: 20px;
 	 padding-left:20px;
 	 overflow:hidden;
+	 border-radius:0px 0 0 58px;
+	-moz-border-radius:18px 18px 18px 18px;
+	-webkit-border-radius:18px 18px 18px 18px;
+	-moz-box-shadow: 1px 1px 5px #999;
+	-webkit-box-shadow: 1px 1px 5px #999;
+	box-shadow: 1px 1px 5px #999;
+	-webkit-box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
+	box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
+} 
+
+#signin
+{ 	
+	overflow:scroll;
+	 width: 375px;
+	 height: 350px;
+	 padding-right:20px;
+	 float:right;
+	 background:#FFFF99;
+	 margin: 20px;
+	 padding-left:20px;
+	 overflow:hidden;
+	 border-radius:0px 0 0 58px;
+	-moz-border-radius:18px 18px 18px 18px;
+	-webkit-border-radius:18px 18px 18px 18px;
+	-moz-box-shadow: 1px 1px 5px #999;
+	-webkit-box-shadow: 1px 1px 5px #999;
+	box-shadow: 1px 1px 5px #999;
+	-webkit-box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
+	box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
 } 
 #intro
 { 
@@ -176,8 +188,10 @@ h3{
 	margin:0px 10px 5px 10px;
 	font-family:"Comic Sans MS", cursive;
 }
-#username1,#pass1,#repass{
-	margin:10px;
+#username1,#pass1,#repass,#email{
+	margin:5px 10px;
+	width:230px;
+	height:25px;
 }
 
 #content {
@@ -416,4 +430,21 @@ float:left;
 #login a{
 	text-decoration:none;
 	list-style-type:none;
+}
+#marquee{
+	float:left;
+	color:white;
+	width:880px;
+	height:30px;
+	margin-left:200px;
+	margin-top:10px;
+}
+#login:hover,#signin:hover{
+	-webkit-box-shadow: 0px 1px 1px #FFF inset, 0 0 0px 2px #555555;
+	-moz-box-shadow: 0px 1px 1px #FFF inset, 0 0 0px 2px #555555;
+	box-shadow: 0px 1px 1px #FFF inset, 0 0 0px 2px #555555;
+}
+#submit-login
+{
+	transition:0.5s ease all;
 }
