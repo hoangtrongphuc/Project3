@@ -66,7 +66,7 @@ $(document).ready(function() {
     				success : function(result){ // Nhận kết quả trả về từ PHP	
     					//alert(JSON.stringify(result));
     					if(result.code == 0){
-    						var tokenkey = result.data.tokenkey;
+    						//var tokenkey = result.data.tokenkey;
 							 window.location.href = "http://localhost:8080/cotuong/banco";
     					}
     					else{

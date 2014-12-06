@@ -92,7 +92,12 @@
                     width: 300,
                     modal: true
                 });
-				
+                $("#requestsDialog").dialog({
+                    autoOpen: false,
+                    title: "Yêu cầu kết bạn",
+                    modal: true,
+                    width: 400
+                });
 				$("#addCoinDialog").dialog({
                     autoOpen: false, 
                     buttons: {
@@ -477,7 +482,7 @@
             <div id="roomDiv">
                 <div id="leftBoardDiv">
                     <div id="user1Div"></div>
-                    <div id="timerDiv"></div>
+                    <div id="timerDiv" class="timer"></div>
                     <div id ="user2Div"></div>
                 </div>
                 <div id="chessBoardDiv"></div>
@@ -503,6 +508,11 @@
                 <label>Password: </label>
                 <input type="text" id="pass">
             </form>
+        </div>
+        <div id="requestsDialog">
+            <table id="requestsTable">
+                
+            </table>
         </div>
 		
 				

@@ -5,8 +5,9 @@ var controller = (function () {
         myColor,// bằng 0 hoặc 8
         username = getCookie('cookie_username'),//tên người chơi
         token = getCookie('cookie_tokenkey'),
-        myid,
-        otherid,
+        myName,
+        otherName,
+        nRequest,
         roomInfo,
         haveRoom = false,
         ownRoom,
@@ -795,11 +796,13 @@ var controller = (function () {
 	function onLeaveOutRoom(){
         console.log("leaveOutRoom");
         showMessage("Đối thủ vừa thoát ra");
+        counting = false;
     }
 	function onLeave(){
         console.log("leave");
         gameStart = false;
         haveRoom = false;
+        counting = false;
         document.location.hash = "#listRoomDiv";
     }
 	
@@ -807,6 +810,7 @@ var controller = (function () {
         console.log("delete");
         gameStart = false;
         haveRoom = false;
+        counting = false;
 		showMessage("Phòng chơi đã bị hủy !");
         document.location.hash = "#listRoomDiv";
     }
@@ -870,48 +874,70 @@ var controller = (function () {
             default : showMessage("Mã lỗi không đúng. "); break;
         }
     }
-    function onRoomInfo(data){
-        console.log("onRoomInfo");
+    function onRoomInfor(data){
+        console.log("onRoomInfor");
         roomInfo = data;
-        var html = "<b>Mã phòng chơi</b>"+roomInfo.ID+
-                "<br/><b>Tên phòng chơi</b>"+roomInfo.name+
-                "<br/><b>Số trận</b>"+roomInfo.match+
-                "<br/><b>Số tiền cược</b>"+roomInfo.coin;
+        var html = "<b>Mã phòng chơi: </b>"+roomInfo.ID+
+                "<br/><b>Tên phòng chơi: </b>"+roomInfo.name+
+                "<br/><b>Số trận: </b>"+roomInfo.countMatch+
+                "<br/><b>Số tiền cược: </b>"+roomInfo.coin;
         $("#roomInfoDiv").html(html);
-        
-        if(roomInfo.players[0].username === username){
-            myid = roomInfo.players[0].userId;
-            otherid = roomInfo.players[1].userId;
-        }else{
-            myid = roomInfo.players[1].userId;
-            otherid = roomInfo.players[0].userId;
-    }
-        $.getJSON(restURL+"?api=user&getuser=1&user_id="+myid, function(data){
-           var html = '';
-           html += "<img src=\""+data.user_avatar+"\" class=\"avatar\"\><br\>";
-           +data.user_fullName+"<br\>"
-           +"Cấp bậc: "+data.user_level+"  Xu: "+data.user_coin;
-           $("#user2").html(html);
-        });
-        //hỏi thông tin khách
-        if(otherid !== undefined){
-            $.getJSON(restURL + "?api=user&getuser=1&user_id=" + otherid, function (data) {
+        var nPlayer = roomInfo.players.length;
+        console.log("nPlayer="+nPlayer);
+        if(nPlayer<2){
+            myName = roomInfo.players[0].username;
+            console.log("myName="+myName);
+            $.getJSON(restURL + "?api=user&getuser=1&username=" + myName, function (data2) {
+                var data3 = data2.data;
+                console.log("ondata: "+data3.user_level);
+                
                 var html = '';
-                html += "<img src=\"" + data.user_avatar + "\" class=\"avatar\"\><br\>";
-                +data.user_fullName + "<br\>"
-                        + "Cấp bậc: " + data.user_level + "  Xu: " + data.user_coin + "<br/>";
-                $("#user1").html(html);
-                //hiện nút kết bạn nếu chưa là bạn bè
-                $.getJSON(restURL + "?api=friend&ktfriend=1&user_id=" + myid + "&friend_id=" + otherid, function (data) {
-                    if (data.status === 0) {
-                        //đã là bạn bè
-
-                    } else {
-                        //chưa là bạn bè
-                        document.getElementById("user1").appendChild(friendRequestButton);
-                    }
-                });
+                html += "<img src=\"" + data3.user_avatar + "\" class=\"avatar\"\><br\>"
+                +data3.user_name + "<br\>"
+                        + "Số trận thắng: " + data3.user_win + "<br\>Số trận thua: "+data3.user_lose+"<br\>Xu: " + data3.user_coin;
+                $("#user2Div").html(html);
             });
+            $("#user1Div").html("");
+        } else {
+            if (roomInfo.players[0].username === username) {
+                myName = roomInfo.players[0].username;
+                otherName = roomInfo.players[1].username;
+            } else {
+                myName = roomInfo.players[1].username;
+                otherName = roomInfo.players[0].username;
+            }
+            console.log("myName="+myName+" otherName="+otherName);
+            $.getJSON(restURL + "?api=user&getuser=1&username=" + myName, function (data2) {
+                var data3 = data2.data;
+                var html = '';
+                html += "<img src=\"" + data3.user_avatar + "\" class=\"avatar\"\><br\>"
+                +data3.user_name + "<br\>"
+                        + "Số trận thắng: " + data3.user_win + "<br\>Số trận thua: "+data3.user_lose+"<br\>Xu: " + data3.user_coin;
+                $("#user2Div").html(html);
+            });
+            //hỏi thông tin khách
+            if (otherName !== undefined) {
+                $.getJSON(restURL + "?api=user&getuser=1&username=" + otherName, function (data2) {
+                    var data3 = data2.data;
+                    var html = '';
+                    html += "<img src=\"" + data3.user_avatar + "\" class=\"avatar\"\><br\>"
+                    +data3.user_name + "<br\>"
+                            + "Số trận thắng: " + data3.user_win + "<br\>Số trận thua: "+data3.user_lose+"<br\>Xu: " + data3.user_coin;
+                    $("#user1Div").html(html);
+                    //hiện nút kết bạn nếu chưa là bạn bè
+                    $.getJSON(restURL + "?api=friend&ktfriend=1&username1=" + myName + "&username2=" + otherName,
+                                            function (data2) {
+                        if (data2.code === 0) {
+                            //đã là bạn bè
+
+                        } else {
+                            //chưa là bạn bè
+                            document.getElementById("user1Div").appendChild(friendRequestButton);
+                        }
+                    });
+                });
+            }
+            
         }
         checkFriendRequest();
     }
@@ -968,32 +994,37 @@ var controller = (function () {
         counting = false;
     }
     function sendFriendRequest(){
-        $.getJSON(restURL+"?api=friend&friendrequest=1&user_id_1="+myid+"&user_id_2="+otherid, function(data){
+        $.getJSON(restURL+"?api=friend&friendrequest=1&username1="+myName+"&username2="+otherName, function(data){
             if(data.code === 0){
                 showMessage("Đã gửi yêu cầu kết bạn");
+                $("#friendButton").remove();
             }else{
                 showMessage("Có lỗi xảy ra");
+                $("#friendButton").remove();
             }
         });
     }
     function checkFriendRequest(){
-        $.getJSON(restURL+"?api=friend&getfriendrequest=1&user_id_2="+myid, function(data){
+        console.log("checkFriendRequest");
+        $.getJSON(restURL+"?api=friend&getfriendrequest=1&username2="+myName, function(data){
             if(data.code===0){
+                console.log(JSON.stringify(data));
                 var requests = data.data;
                 $("#requestsTable").html("");
+                nRequest = requests.length;
+                console.log("nRequest="+nRequest);
                 if(requests.length>0){
                     for(var i = 0; i<requests.length; i++){
-                        $.getJSON(restURL+"?api=user&getuser=1&user_id="+requests[i].user_id, function(userinfo){
-                            var row = "<tr id=\"friendRequest"+i+"\"><td>"+userinfo.user_fullName+"</td>"+
-                                    "<td><button onclick=\"controller.acceptFriend("+userinfo.user_id+")\">Chấp nhận</button></td>"+
-                                    "<td><button onclick=\"controller.rejectFriend("+userinfo.user_id+")\">Hủy yêu cầu</button></td></tr>";
+                            var row = "<tr id=\"friendRequest"+requests[i].user_name+"\"><td>"+requests[i].user_name+"</td>"+
+                                    "<td><button onclick=\"controller.acceptFriend('"+requests[i].user_name+"')\">Chấp nhận</button></td>"+
+                                    "<td><button onclick=\"controller.rejectFriend('"+requests[i].user_name+"')\">Hủy yêu cầu</button></td></tr>";
                             $("#requestsTable").append(row);
-                        });
                     }
+                    $("#requestsDialog").dialog("open");
                 }
             }
         });
-        setTimeout(checkFriendRequest, 30000);
+        setTimeout(checkFriendRequest, 20000);
     }
 //===========END - Các hàm phát sự kiện lên server======================
     function resize() {
@@ -1152,6 +1183,7 @@ var controller = (function () {
             friendRequestButton.innerHTML = "Kết bạn";
             friendRequestButton.onclick = sendFriendRequest;
             friendRequestButton.className = "buttonGreen";
+            friendRequestButton.id="friendButton";
             
             boardCanvas = document.createElement("canvas");
             boardCanvas.height = boardHeight;
@@ -1196,7 +1228,7 @@ var controller = (function () {
             socket.on('winRoomGU', onWinRoomGU);
 			socket.on('equalRoom', onEqualRoom);
             socket.on('logging', onLogging);
-            socket.on('roomInfo', onRoomInfo);
+            socket.on('roomInfor', onRoomInfor);
             socket.on('err', onErr);
             socket.on('roomList', onRoomList);
             socket.on('chatmessage', onChatMessage);
@@ -1274,17 +1306,36 @@ var controller = (function () {
         searchRoom: function(s){
             console.log("SearchRoom "+s);
         },
-        acceptFriend: function(id){
-            $.getJSON(restURL+"?api=friend&friends=1&user_id="+myid+"&friend_id="+id+"&status=1", function(){
-                
+        acceptFriend: function(name){
+            console.log("AcceptFriend: "+name);
+            $.getJSON(restURL+"?api=friend&friends=1&username1="+name+"&username2="+myName+"&status=1", function(data){
+                console.log("code="+data.code);
             });
-            $("#friendRequest"+id).remove();
+            $("#friendRequest"+name).remove();
+            console.log("name="+name+" : "+" otherName="+otherName);
+            if(otherName === name){
+                $("#friendButton").remove();
+            }
+            nRequest--;
+            console.log("nrequest="+nRequest);
+            if(nRequest===0){
+                $("#requestsDialog").dialog("close");
+            }
         },
-        rejectFriend: function(id){
-            $.getJSON(restURL+"?api=friend&friends=1&user_id="+myid+"&friend_id="+id+"&status=2", function(){
+        rejectFriend: function(name){
+            console.log("rejectFriend: "+name);
+            $.getJSON(restURL+"?api=friend&friends=1&username1="+name+"&username2="+name+"&status=2", function(){
                 
             });
-            $("#friendRequest"+id).remove();
+            $("#friendRequest"+name).remove();
+            $("#friendButton").remove();
+            if(otherName === name){
+                $("#friendButton").remove();
+            }
+            nRequest--;
+            if(nRequest===0){
+                $("#requestsDialog").dialog("close");
+            }
         }
     };
 }());
