@@ -1,65 +1,84 @@
 // JavaScript Document
-function bigger()
-{
-setTimeout(function zxc()
-{
-$('#submit-login').css({
-'transform':'scale(1.15)',
-'font-size':'20px'
-});
-smaller();
-},200);
-};	
 
-function smaller(){
+$(document).ready(function() {
+	function bigger()
+	{
 	setTimeout(function zxc()
-{
-$('#submit-login').css({
-'transform':'scale(1.05)',
-'font-size':'20px'
-});
-bigger();
-},300);
-};
-
-bigger();
-$(document).ready(function(e) {
-	$('#submit-signin').hover(function(e){
-
-		
-		
+	{
+	$('#submit-login').css({
+	'transform':'scale(1.15)',
+	'font-size':'20px'
 	});
+	smaller();
+	},200);
+	};	
 
-    $('#submit-login').click(function(e) {
-		//alert('đasa');
-        name = $('#username').val();
-	//	pass = window.md5($('#pass').val());
-		pass = $('#pass').val();
-		//alert(pass);
-		$.ajax({
-				"url"	: "http://192.168.1.51:8080/rest/index.php?api=login", // Nơi nhận dữ liệu
-				"type"  : "post", // Phương thức truyền dữ liệu
-				"data"  : "&username="+name+"&pass="+pass, // Dữ liệu cần truyền sang PHP
-				"async" : false,
-				success : function(result){ // Nhận kết quả trả về từ PHP				
-					alert(result);
-					if(result == 1){
-						alert('1');
-						//$('#error-pass').html(".");					
-						return false;
-					}else if(result == 2){
-						alert('2');
-						//$('#error-repass').html(".");
-						return false;
-					}
-					
-					else{
-						
-						
-					}
-				}
-		});
-		
-    });
-	$('#submit-login').animate({left:20},50);
+	function smaller(){
+		setTimeout(function zxc()
+	{
+	$('#submit-login').css({
+	'transform':'scale(1.05)',
+	'font-size':'20px'
+	});
+	bigger();
+	},300);
+	};
+
+	bigger();
+	//lấy gói tokenkey
+	
+	function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ')
+                c = c.substring(1);
+            if (c.indexOf(name) !== -1)
+                return c.substring(name.length, c.length);
+        }
+        return "";
+    }
+    login();
+    function login(){
+    	$('#submit-login').click(function() {
+    		var tokenkey = getCookie("cookie_tokenkey");
+            var $name = $('#username').val();
+    		//pass = window.md5($('#pass').val());
+    		var $pass = $('#pass').val();
+    		if($name == "" || $pass == ""){
+    			alert("bạn chưa nhập dữ liệu!!!");
+    		}
+    		else{
+    			var $pass = CryptoJS.MD5($pass);
+    			//thêm bit muối
+    			$pass = String($pass);
+    			$pass = $pass.charAt(0)+$pass;
+    			var str = $name+$pass+tokenkey;
+    			
+    			var $signal = CryptoJS.MD5(str);
+    			$.ajax({
+    				url	: "http://localhost:8080/rest/index.php?api=login", // Nơi nhận dữ liệu
+    				type  : "post", // Phương thức truyền dữ liệu
+    				dataType : "json",
+    				data  : "username="+$name+"&pass="+$pass+"&signal="+$signal, // Dữ liệu cần truyền sang PHP
+    				async:false,
+    				success : function(result){ // Nhận kết quả trả về từ PHP	
+    					//alert(JSON.stringify(result));
+    					if(result.code == 0){
+    						//var tokenkey = result.data.tokenkey;
+							 window.location.href = "http://localhost:8080/cotuong/banco";
+    					}
+    					else{
+    						alert(result.data);
+    					}
+    				},
+    				error: function(error){
+    					alert(JSON.stringify(error));
+    			    }
+    			});
+    		}
+        });
+    }
+    
 });

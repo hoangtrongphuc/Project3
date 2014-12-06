@@ -1,54 +1,5 @@
 // JavaScript Document
 $(document).ready(function(e) {
-	
-	$('#submit-signup').click(function(e) {
-	//alert("dsadsa");
-	name = $('#username1').val();	
-	pass = $('#pass1').val();
-	repass = $('#repass').val();
-		//alert("name");
-   if(name == '' || pass == '' || repass == ''){
-	   $('#error-all').html("Bạn cần nhập đầy đủ thông tin");
-			//return false;
-   }else{
-	    $('#error-all').html(" ");
-			//alert('sau eror');
-			if(name.length <6 || name.length >32){
-				
-				alert('loi tai khoan');
-			}
-			else if(pass.length <6 || pass.length >32 ){
-				$('#error-user').show();
-				alert('mat khau quan ngan hoacj qua dai');
-			}
-			else if(pass != repass){
-				$('#error-user').show();
-				alert('loi mat khau khong khop');
-			}
-			
-		/*$.ajax({
-				"url"	: "<?php echo 'untitled/process-signup.php';?>", // Nơi nhận dữ liệu
-				"type"  : "post", // Phương thức truyền dữ liệu
-				"data"  : "&name="+name+"&pass="+pass+"&repass="+repass, // Dữ liệu cần truyền sang PHP
-				"async" : false,
-				success : function(result){ // Nhận kết quả trả về từ PHP				
-					alert(result);
-					if(result == 1){
-						$('#error-pass').html(".");					
-						return false;
-					}else if(result == 2){
-						$('#error-repass').html(".");
-						return false;
-					}
-					
-					else{
-						
-						
-					}
-				}
-		});
-	   */}
-});
 	$('input[name=user]').keyup(function(e) {
 		//alert('dasdsa');
         name = $('#username1').val();
@@ -88,37 +39,71 @@ $(document).ready(function(e) {
 			}
 		
     });
-	
-	 $('#submit-signup').click(function(e) {
-		//alert('đasa');
-        name = $('#username1').val();
-	//	pass = window.md5($('#pass').val());
-		pass = $('#pass1').val();
-		repass = $('#repass').val();
-		//alert(pass);
-		$.ajax({
-				"url"	: "http://192.168.1.51:8080/rest/index.php?api=register", // Nơi nhận dữ liệu
-				"type"  : "post", // Phương thức truyền dữ liệu
-				"data"  : "&user_name="+name+"&user_pass="+pass+"&user_email="+repass, // Dữ liệu cần truyền sang PHP
-				"async" : false,
-				success : function(result){ // Nhận kết quả trả về từ PHP				
-					alert(result);
-					if(result == 1){
-						alert('1');
-						//$('#error-pass').html(".");					
-						return false;
-					}else if(result == 2){
-						alert('2');
-						//$('#error-repass').html(".");
+	function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ')
+                c = c.substring(1);
+            if (c.indexOf(name) !== -1)
+                return c.substring(name.length, c.length);
+        }
+        return "";
+    }
+	register();
+	function register(){
+		$('#submit-signup').click(function(e) {
+			var tokenkey1 = getCookie("cookie_tokenkey");
+			alert("dsadsa");
+			var name = $('#username1').val();	
+			var pass = $('#pass1').val();
+			var repass = $('#repass').val();
+			var email = $('#email').val();
+				//alert("name");
+		    if(name == '' || pass == '' || repass == ''){
+			   $('#error-all').html("Bạn cần nhập đầy đủ thông tin");
+					//return false;
+		    }else{
+			    	$('#error-all').html(" ");
+					//alert('sau eror');
+					if(name.length <6 || name.length >32){
+						
+						alert('loi tai khoan');
 						return false;
 					}
+					else if(pass.length <6 || pass.length >32 ){
+						$('#error-user').show();
+						alert('mat khau quan ngan hoacj qua dai');
+						return false;
+					}
+					else if(pass != repass){
+						$('#error-user').show();
+						alert('loi mat khau khong khop');
+						return false
+					}
+						pass = CryptoJS.MD5(pass);
+						// muối thêm bit muối vào pass
+						pass= String(pass);
+						var newpass = pass.charAt(0)+pass;
+						var str = name+newpass+tokenkey1;
+						var signal = CryptoJS.MD5(str);
+						
+						alert(newpass);
+						$.ajax({
+							url	: "http://localhost:8080/rest/index.php?api=register", // Nơi nhận dữ liệu
+							type  : "post", // Phương thức truyền dữ liệu
+							data  : "user_name="+name+"&user_pass="+newpass+"&user_email="+email+"&signal="+signal, // Dữ liệu cần truyền sang PHP
+							async : false,
+							success : function(result){ // Nhận kết quả trả về từ PHP				
+								alert(JSON.stringify(result));
+							},
+							error : function(err){
+								alert(JSON.stringify(err));
+							}
+						});
 					
-					else{
-						
-						
-					}
-				}
-		});
-		
-    });
+			   }
+			});
+	}
 });

@@ -1,4 +1,10 @@
 <?php
 $model = new model();
+
+$data = array();
 $data = $model->topRank();
-$model->deliver_response(0, "thành công", $data);
+
+$response['code'] = 0;
+$response['status'] = $model::$api_response_code[ $response['code'] ]['HTTP Response'];
+$response['data'] = $data;
+$model->deliver_response($response);

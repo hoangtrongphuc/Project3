@@ -5,8 +5,12 @@ var controller = (function () {
         myColor,// bằng 0 hoặc 8
         username = getCookie('cookie_username'),//tên người chơi
         token = getCookie('cookie_tokenkey'),
+        myName,
+        otherName,
+        nRequest,
         roomInfo,
         haveRoom = false,
+        ownRoom,
         roomList=[],
         gameStart = false,
         focusedValidMove=[],
@@ -18,12 +22,16 @@ var controller = (function () {
         animateCanvas,
         socket,
         connectURL = "localhost:8888",
+        restURL = "http://localhost:8080/rest/index.php",
         giveUpButton,
         leaveRoomButton,
         readyButton,
         nextButton,
         closeRoomButton,
-        timer,
+        friendRequestButton,
+        maxCounter = 180,//3 minute
+        counter,//count from maxCounter to zero
+        counting,//bool
         pieceCanvas = [],
         boardCanvas,
         pieceImgs=[[],[]],
@@ -541,6 +549,38 @@ var controller = (function () {
         setTimeout(hideCheckWarning, 700);
     }
 
+    function startCounter(){
+        function countDown(){
+            console.log("countDown");
+            if(!counting){
+                $("#timerDiv").html("0");
+                return;
+            }
+            counter--;
+            $("#timerDiv").html(counter.toString());
+            if(counter===0){
+                var validMove=[], i;
+                for(i=0; i<90; i++){
+                    if((board[i]!==0) && ((board[i]&8)===myColor)){
+                        validMoveGen(i, validMove, validMove);
+                    }
+                }
+                if(validMoveGen.length !== 0){
+                    move(validMove[0], validMove[1]);
+                }
+                counting = 0;
+            }else{
+                setTimeout(countDown, 1000);
+            }
+        }
+        console.log("startCounter");
+        counting = true;
+        counter = maxCounter;
+        //$("timerDiv").html("");
+        //$("timerDiv").toggleClass("timer");
+        countDown();
+    }
+
     function imageLoaded(){
         imageCount++;
         if(imageCount>=21){
@@ -647,20 +687,15 @@ var controller = (function () {
         for(var i = 0; i< 90; i++){
             board[i] = 0;
         }
-//        for( var j in ob.board){
-//            var i = ob.board[j];
-//            if(myColor===0){//quân đen, phải xoay ngược bàn
-//                board[90-i.cid] = i.pid;
-//            }else{//quân đỏ, không cần xoay bàn
-//                board[i.cid] = i.pid;
-//            }
-//        }
         if(myColor===8){
             board = ob.board;
         }else{
             for(var i = 0; i<90; i++){
                 board[89-i] = ob.board[i];
             }
+        }
+        if(turn===myColor){
+            startCounter();
         }
         drawBoard();
     }
@@ -674,13 +709,15 @@ var controller = (function () {
         var move = data;
         if(myColor===0){
             moveAnimatedly(89-move.id1, 89-move.id2);
-            console.log("onOpMove: "+89-move.id1+":"+89-move.id2);
+            console.log("onOpMove: "+(89-move.id1)+":"+(89-move.id2));
         }else{
             moveAnimatedly(move.id1, move.id2);
             console.log("onOpMove: "+move.id1+":"+move.id2);
         }
+        startCounter();
     }
     function onCheck(){
+        console.log("checked");
         showCheckWarning();
     }
     function onLose(){
@@ -689,8 +726,7 @@ var controller = (function () {
         showMessage("Bạn đã thua ván này!");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-		reset();
-        controlDiv.appendChild(readyButton);
+        controlDiv.appendChild(nextButton);
     }
     function onWin(){
         console.log("onWin");
@@ -698,8 +734,7 @@ var controller = (function () {
         showMessage("Chúc mừng! Bạn đã thắng ván này.");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-		reset();
-        controlDiv.appendChild(readyButton);
+        controlDiv.appendChild(nextButton);
     }
     function onLoseRoom(){
         console.log("onLoseRoom");
@@ -725,8 +760,7 @@ var controller = (function () {
         showMessage("Rất tiếc khi bạn đã từ bỏ ván chơi này");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-		reset();
-        controlDiv.appendChild(readyButton);
+        controlDiv.appendChild(nextButton);
     }
     function onWinGU(){
         console.log("onWinGU");
@@ -734,8 +768,7 @@ var controller = (function () {
         showMessage("Đối thủ xin thua. Bạn đã thắng ván này!");
         controlDiv.innerHTML='';
         controlDiv.appendChild(leaveRoomButton);
-		reset();
-        controlDiv.appendChild(readyButton);
+        controlDiv.appendChild(nextButton);
     }
     function onLoseRoomGU(){
         console.log("onLoseRoomGU");
@@ -763,11 +796,13 @@ var controller = (function () {
 	function onLeaveOutRoom(){
         console.log("leaveOutRoom");
         showMessage("Đối thủ vừa thoát ra");
+        counting = false;
     }
 	function onLeave(){
         console.log("leave");
         gameStart = false;
         haveRoom = false;
+        counting = false;
         document.location.hash = "#listRoomDiv";
     }
 	
@@ -775,6 +810,7 @@ var controller = (function () {
         console.log("delete");
         gameStart = false;
         haveRoom = false;
+        counting = false;
 		showMessage("Phòng chơi đã bị hủy !");
         document.location.hash = "#listRoomDiv";
     }
@@ -838,15 +874,72 @@ var controller = (function () {
             default : showMessage("Mã lỗi không đúng. "); break;
         }
     }
-    function onRoomInfo(data){
-        console.log("onRoomInfo");
+    function onRoomInfor(data){
+        console.log("onRoomInfor");
         roomInfo = data;
-        console.log("onRoomInfo: "+roomInfo.ID);
-        var html = "<b>Mã phòng chơi</b>"+roomInfo.ID+
-                "<br/><b>Tên phòng chơi</b>"+roomInfo.name+
-                "<br/><b>Số trận</b>"+roomInfo.match+
-                "<br/><b>Số tiền cược</b>"+roomInfo.coin;
+        var html = "<b>Mã phòng chơi: </b>"+roomInfo.ID+
+                "<br/><b>Tên phòng chơi: </b>"+roomInfo.name+
+                "<br/><b>Số trận: </b>"+roomInfo.countMatch+
+                "<br/><b>Số tiền cược: </b>"+roomInfo.coin;
         $("#roomInfoDiv").html(html);
+        var nPlayer = roomInfo.players.length;
+        console.log("nPlayer="+nPlayer);
+        if(nPlayer<2){
+            myName = roomInfo.players[0].username;
+            console.log("myName="+myName);
+            $.getJSON(restURL + "?api=user&getuser=1&username=" + myName, function (data2) {
+                var data3 = data2.data;
+                console.log("ondata: "+data3.user_level);
+                
+                var html = '';
+                html += "<img src=\"" + data3.user_avatar + "\" class=\"avatar\"\><br\>"
+                +data3.user_name + "<br\>"
+                        + "Số trận thắng: " + data3.user_win + "<br\>Số trận thua: "+data3.user_lose+"<br\>Xu: " + data3.user_coin;
+                $("#user2Div").html(html);
+            });
+            $("#user1Div").html("");
+        } else {
+            if (roomInfo.players[0].username === username) {
+                myName = roomInfo.players[0].username;
+                otherName = roomInfo.players[1].username;
+            } else {
+                myName = roomInfo.players[1].username;
+                otherName = roomInfo.players[0].username;
+            }
+            console.log("myName="+myName+" otherName="+otherName);
+            $.getJSON(restURL + "?api=user&getuser=1&username=" + myName, function (data2) {
+                var data3 = data2.data;
+                var html = '';
+                html += "<img src=\"" + data3.user_avatar + "\" class=\"avatar\"\><br\>"
+                +data3.user_name + "<br\>"
+                        + "Số trận thắng: " + data3.user_win + "<br\>Số trận thua: "+data3.user_lose+"<br\>Xu: " + data3.user_coin;
+                $("#user2Div").html(html);
+            });
+            //hỏi thông tin khách
+            if (otherName !== undefined) {
+                $.getJSON(restURL + "?api=user&getuser=1&username=" + otherName, function (data2) {
+                    var data3 = data2.data;
+                    var html = '';
+                    html += "<img src=\"" + data3.user_avatar + "\" class=\"avatar\"\><br\>"
+                    +data3.user_name + "<br\>"
+                            + "Số trận thắng: " + data3.user_win + "<br\>Số trận thua: "+data3.user_lose+"<br\>Xu: " + data3.user_coin;
+                    $("#user1Div").html(html);
+                    //hiện nút kết bạn nếu chưa là bạn bè
+                    $.getJSON(restURL + "?api=friend&ktfriend=1&username1=" + myName + "&username2=" + otherName,
+                                            function (data2) {
+                        if (data2.code === 0) {
+                            //đã là bạn bè
+
+                        } else {
+                            //chưa là bạn bè
+                            document.getElementById("user1Div").appendChild(friendRequestButton);
+                        }
+                    });
+                });
+            }
+            
+        }
+        checkFriendRequest();
     }
     function onLogging(){
         
@@ -854,12 +947,14 @@ var controller = (function () {
     function onAdded(){
         console.log("onAdded");
         haveRoom = true;
+        ownRoom = true;
         reset();
         document.location.hash="#roomDiv";
     }
     function onJoined(){
         console.log("onJoined");
         haveRoom = true;
+        ownRoom = false;
         reset();
         document.location.hash="#roomDiv";
     }
@@ -871,7 +966,7 @@ var controller = (function () {
         console.log("onChatMessage");
     }
     function onChatRoomMessage(s){
-        var m = JSON.parse(JSON.stringify( s));
+        var m = s;
         console.log("onChatRoomMessage: "+m.username+" "+m.message);
         $("#messagesDiv").append("<b>"+m.username+":</b> "+m.message+"<br/>");
     }
@@ -896,6 +991,40 @@ var controller = (function () {
         ob.id2 = id2;
         console.log("move: "+ob.id1+" "+ob.id2);
         socket.emit('move', ob);
+        counting = false;
+    }
+    function sendFriendRequest(){
+        $.getJSON(restURL+"?api=friend&friendrequest=1&username1="+myName+"&username2="+otherName, function(data){
+            if(data.code === 0){
+                showMessage("Đã gửi yêu cầu kết bạn");
+                $("#friendButton").remove();
+            }else{
+                showMessage("Có lỗi xảy ra");
+                $("#friendButton").remove();
+            }
+        });
+    }
+    function checkFriendRequest(){
+        console.log("checkFriendRequest");
+        $.getJSON(restURL+"?api=friend&getfriendrequest=1&username2="+myName, function(data){
+            if(data.code===0){
+                console.log(JSON.stringify(data));
+                var requests = data.data;
+                $("#requestsTable").html("");
+                nRequest = requests.length;
+                console.log("nRequest="+nRequest);
+                if(requests.length>0){
+                    for(var i = 0; i<requests.length; i++){
+                            var row = "<tr id=\"friendRequest"+requests[i].user_name+"\"><td>"+requests[i].user_name+"</td>"+
+                                    "<td><button onclick=\"controller.acceptFriend('"+requests[i].user_name+"')\">Chấp nhận</button></td>"+
+                                    "<td><button onclick=\"controller.rejectFriend('"+requests[i].user_name+"')\">Hủy yêu cầu</button></td></tr>";
+                            $("#requestsTable").append(row);
+                    }
+                    $("#requestsDialog").dialog("open");
+                }
+            }
+        });
+        setTimeout(checkFriendRequest, 20000);
     }
 //===========END - Các hàm phát sự kiện lên server======================
     function resize() {
@@ -922,14 +1051,6 @@ var controller = (function () {
     return {
         onHashChange: function () {
             console.log("onHashChange");
-//            if (document.location.hash === "#roomDiv") {
-//                document.getElementById("listRoomDiv").style.display = "none";
-//                document.getElementById("roomDiv").style.display = "block";
-//                reset();
-//            } else {
-//                document.getElementById("listRoomDiv").style.display = "block";
-//                document.getElementById("roomDiv").style.display = "none";  
-//            }
               if(haveRoom === true){
                   document.location.hash = "#roomDiv";
                 document.getElementById("listRoomDiv").style.display = "none";
@@ -1058,6 +1179,12 @@ var controller = (function () {
             closeRoomButton.onclick = closeRoom;
             closeRoomButton.className = "buttonRed";
                     
+            friendRequestButton = document.createElement("button");
+            friendRequestButton.innerHTML = "Kết bạn";
+            friendRequestButton.onclick = sendFriendRequest;
+            friendRequestButton.className = "buttonGreen";
+            friendRequestButton.id="friendButton";
+            
             boardCanvas = document.createElement("canvas");
             boardCanvas.height = boardHeight;
             boardCanvas.width = boardWidth;
@@ -1101,7 +1228,7 @@ var controller = (function () {
             socket.on('winRoomGU', onWinRoomGU);
 			socket.on('equalRoom', onEqualRoom);
             socket.on('logging', onLogging);
-            socket.on('roomInfo', onRoomInfo);
+            socket.on('roomInfor', onRoomInfor);
             socket.on('err', onErr);
             socket.on('roomList', onRoomList);
             socket.on('chatmessage', onChatMessage);
@@ -1149,7 +1276,7 @@ var controller = (function () {
                 gameStart = false;
                 controlDiv.innerHTML='';
                 controlDiv.appendChild(leaveRoomButton);
-                controlDiv.appendChild(readyButton);
+                controlDiv.appendChild(nextButton);
                 socket.emit('giveUp','');
             }
         },
@@ -1178,6 +1305,37 @@ var controller = (function () {
         },
         searchRoom: function(s){
             console.log("SearchRoom "+s);
+        },
+        acceptFriend: function(name){
+            console.log("AcceptFriend: "+name);
+            $.getJSON(restURL+"?api=friend&friends=1&username1="+name+"&username2="+myName+"&status=1", function(data){
+                console.log("code="+data.code);
+            });
+            $("#friendRequest"+name).remove();
+            console.log("name="+name+" : "+" otherName="+otherName);
+            if(otherName === name){
+                $("#friendButton").remove();
+            }
+            nRequest--;
+            console.log("nrequest="+nRequest);
+            if(nRequest===0){
+                $("#requestsDialog").dialog("close");
+            }
+        },
+        rejectFriend: function(name){
+            console.log("rejectFriend: "+name);
+            $.getJSON(restURL+"?api=friend&friends=1&username1="+name+"&username2="+name+"&status=2", function(){
+                
+            });
+            $("#friendRequest"+name).remove();
+            $("#friendButton").remove();
+            if(otherName === name){
+                $("#friendButton").remove();
+            }
+            nRequest--;
+            if(nRequest===0){
+                $("#requestsDialog").dialog("close");
+            }
         }
     };
 }());

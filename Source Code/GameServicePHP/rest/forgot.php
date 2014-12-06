@@ -1,29 +1,62 @@
 <?php
+require_once 'class/sendmail.php';
 $array = $_REQUEST;
-$forgot_model = new forgot_model();
+$user_model = new user_model();
 
 if(!empty($array['user_name']) && !empty($array['user_email'])){
-	$user_name = $array['user_name'];
-	$user_email = $array['user_email'];
-	
-	$ktEmail = $forgot_model->ktEmail($user_name, $user_email);
-	
-	if($ktEmail == true){
-		$forgot_model->deliver_response(0, "lấy lại mật khẩu thành công", $user_name);
-		$pass = rand(100, 10000000);
-		$user_pass = md5($pass);
+	if(preg_match($user_model::$regular_expression['username'], $array['user_name']) && preg_match($user_model::$regular_expression['email'], $array['user_email'])){
+		$user_name = $array['user_name'];
+		$user_email = $array['user_email'];
 		
-		//thực hiện gửi pass mới vào email
+		$ktEmail = $user_model->ktEmail($user_name, $user_email);
 		
-		
-		
-		//cập nhật lại mật khẩu trong database
-		$forgot_model->updatePass($user_name, $user_pass);
+		if($ktEmail == true){
+			
+			$pass = rand(1, 10000000);
+			$user_pass = md5($pass);
+			$newpass1 = substr($user_pass, 0,7);
+			$newpass2 = md5($newpass1);
+			$newpass2 = $newpass1[0].$newpass1;
+			//thực hiện gửi pass mới vào email
+			$sendmail = new sendmail();
+
+			$body = 'Đây là mật khẩu của tài khoản '.$user_name.' của trang web '.urlClient.': '.$newpass2.'. 
+					Hãy đổi mật khẩu ngay để đảm bảo tính bảo mật của tài khoản. Xin chân thành cảm ơn!';
+			
+			$result = $sendmail->smtpmailer($user_email, GUSER, 'Administrator', 'FORGOT PASSWORD', $body);
+			if($result == false){
+				$response['code'] = 16;
+				$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+				$response['data'] = $error;;
+				$user_model->deliver_response($response);
+			}
+			else{
+			//cập nhật lại mật khẩu trong database
+				$user_model->updatePassForGot($user_name, $newpass2);
+				
+				$response['code'] = 0;
+				$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+				$response['data'] = $user_model::$api_response_code[ $response['code'] ]['Message'];
+				$user_model->deliver_response($response);
+			}
+		}
+		else{
+			$response['code'] = 8;
+			$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+			$response['data'] = $user_model::$api_response_code[ $response['code'] ]['Message'];
+			$user_model->deliver_response($response);
+		}
 	}
 	else{
-		$forgot_model->deliver_response(8, "email không tồn tại hoặc không đúng ứng với tài khoản của bạn", $user_name);
+		$response['code'] = 15;
+		$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+		$response['data'] = $user_model::$api_response_code[ $response['code'] ]['Message'];
+		$user_model->deliver_response($response);
 	}
 }
 else{
-	$forgot_model->deliver_response(10, "lỗi hệ thống", NULL);
+	$response['code'] = 11;
+	$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+	$response['data'] = $user_model::$api_response_code[ $response['code'] ]['Message'];
+	$user_model->deliver_response($response);
 }

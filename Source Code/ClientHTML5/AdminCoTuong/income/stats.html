@@ -1,0 +1,141 @@
+<html>
+    <header>
+        <link href="./style/css/home.css" rel="stylesheet" type="text/css"/>
+    </header>
+    <body>
+        <div id="user">
+		<font face="Tahoma">
+			<div class="title">Thống kê dữ liệu</div>
+			<div class="list">
+				<br/><br/>
+					<table border="1" cellspacing = "0" cellpadding = "0" width="700px">
+						<tr>
+							<th width="30" height="30">STT</th>
+							<th width="200">Tiêu chí</th>
+							<th width="200">Thống kê</th>
+						</tr>
+						<tr>
+							<td width="30" align="center">1</td>
+							<td height="30">&nbsp;&nbsp;&nbsp;Số lượng người đang truy cập</td>
+							<td class='user_online' align="center"></td>
+						</tr>
+						<tr>
+							<td width="30" align="center">2</td>
+							<td height="30">&nbsp;&nbsp;&nbsp;Tổng số lượng người chơi</td>
+							<td class='all_user' align="center"></td>
+						</tr>
+						<tr>
+							<td width="30" align="center">3</td>
+							<td height="30">&nbsp;&nbsp;&nbsp;Số lượng tài khoản bị ban</td>
+							<td class='user_ban' align="center"></td>
+						</tr>
+						<tr>
+							<td width="30" align="center">4</td>
+							<td height="30">&nbsp;&nbsp;&nbsp;Số lượng góp ý</td>
+							<td class='count_gopy' align="center"></td>
+						</tr>
+						<tr>
+							<td width="30" align="center">5</td>
+							<td height="30">&nbsp;&nbsp;&nbsp;Số lượng sự kiện</td>
+							<td class='count_event' align="center"></td>
+						</tr>
+					</table>
+			</div>
+		</font>
+		</div>
+		 <script type="text/javascript">
+		$(document).ready(function(){
+			userOnline();
+			function userOnline(){
+				var $online = 1;
+				$.ajax({
+					url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+					type : "post",
+					dataType : "json",
+					data : "useronline="+$online,
+					async : false,
+					success : function(result){
+						//alert(JSON.stringify(result));
+						$(".user_online").append(result.data);
+					},
+					error : function(err){
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+			sumAllUser();
+			function sumAllUser(){
+				var $alluser = 1;
+				$.ajax({
+					url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+					type : "post",
+					dataType : "json",
+					data : "alluser="+$alluser,
+					async : false,
+					success : function(result){
+						//alert(JSON.stringify(result));
+						$(".all_user").append(result.data);
+					},
+					error : function(err){
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+			userBan();
+			function userBan(){
+				var $userban = 1;
+				$.ajax({
+					url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+					type : "post",
+					dataType : "json",
+					data : "userban="+$userban,
+					async : false,
+					success : function(result){
+						//alert(JSON.stringify(result));
+						$(".user_ban").append(result.data);
+					},
+					error : function(err){
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+			countFeedBack();
+			function countFeedBack(){
+				var $countgopy = 1;
+				$.ajax({
+					url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+					type : "post",
+					dataType : "json",
+					data : "thongkefeedback="+$countgopy,
+					async : false,
+					success : function(result){
+						//alert(JSON.stringify(result));
+						$(".count_gopy").append(result.data);
+					},
+					error : function(err){
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+			countEvent();
+			function countEvent(){
+				var $countevent = 1;
+				$.ajax({
+					url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+					type : "post",
+					dataType : "json",
+					data : "thongkeevent="+$countevent,
+					async : false,
+					success : function(result){
+						//alert(JSON.stringify(result));
+						$(".count_event").append(result.data);
+					},
+					error : function(err){
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+		});
+    </script>
+	</body>
+</html>

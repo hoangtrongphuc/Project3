@@ -1,0 +1,61 @@
+#user{
+}
+.title{
+	width: 250px;
+	height: 40px;
+	line-height: 40px;
+	font-size: 14pt;
+	font-family: "Century";
+	background: rgb(54, 25, 25);
+	background: rgba(0, 0, 0, .8);
+	box-shadow: 0 2px 10px #000;
+	color: white;
+	border-radius: 10px;
+	margin-bottom: 10px;
+	float: left;
+}
+
+.list{
+	clear: left;
+	height: 400px;
+	width: 500px;
+	background: rgb(54, 25, 25);
+	background: rgba(0, 0, 0, .8);
+	box-shadow: 0 2px 10px #000;
+	color: white;
+	border-radius: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+select{
+	width: 120px;
+	height: 30px;
+	font-size: 10pt;
+}
+th{
+    font-size: 16pt;
+    padding: 0px;
+}
+td{
+    padding: 10px 20px 0px 0px;
+	font-size: 13pt;
+}
+td #error{
+    color: red;
+}
+input{
+	font-family: "TimeNewRoman";
+	font-size: 12pt;
+}
+input[name="error"]{
+    border: 0px;
+}
+input[type="text"],input[type="password"]{
+    height: 25px;
+}
+input[type="submit"]{
+    width: 80px;
+    height: 30px;
+    font-weight: bold;
+}

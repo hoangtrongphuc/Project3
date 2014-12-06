@@ -1,0 +1,108 @@
+﻿<html>
+    <header>
+        <link href="./style/css/adduser.css" rel="stylesheet" type="text/css"/>
+    </header>
+    <body>
+
+        <div id="user">
+			<div class="list">
+				<form action="" method="post">
+						<table>
+							<tr>
+								<th colspan="2">Thêm mới thành viên</th>
+							</tr>
+							<tr>
+								<td colspan="2">
+									&nbsp;&nbsp;<span id="error"></span>
+								</td>
+							</tr>
+							<tr>
+								<td width="35%">&nbsp;&nbsp;Tên đăng nhập <span style="color: red">*</span>:</td>
+								<td><input type="text" id="name" size="30"/></td>
+							</tr>
+							<tr>
+								<td>&nbsp;&nbsp;Mật khẩu <span style="color: red">*</span>:</td>
+								<td><input type="password" id="pass" size="30" /></td>
+							</tr>
+							<tr>
+								<td>&nbsp;&nbsp;Xác nhận mật khẩu:</td>
+								<td><input type="password" id="repass" size="30"/></td>
+							</tr>
+							<tr>
+								<td>&nbsp;&nbsp;Tên đầy đủ <span style="color: red">*</span>:</td>
+								<td><input type="text" id="fullname" size="30"/></td>
+							</tr>
+							<tr>
+								<td>&nbsp;&nbsp;Giới tính:</td>
+								<td><input type="radio" id="gender" value="1" checked="checked"/> Nam 
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<input type="radio" id="gender" value="0"/> Nữ
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;&nbsp;Số điện thoại <span style="color: red">*</span>:</td>
+								<td><input type="text" id="tel" size="30""/></td>
+							</tr>
+							<tr>
+								<td>&nbsp;&nbsp;Địa chỉ <span style="color: red">*</span>:</td>
+								<td><input type="text" id="address" size="30""/></td>
+							</tr>
+							<tr>
+								<td>&nbsp;&nbsp;Email <span style="color: red">*</span>:</td>
+								<td><input type="text" id="email" size="30""/></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td><input type="submit" id="adduser" name="adduser" value="Thêm mới"/></td>
+							</tr>
+							<tr>
+								<td></td>
+							</tr>
+						</table>
+				</form>
+			</div>
+		</div>
+		<script type="text/javascript">
+    	$(document).ready(function(){
+        	$("#adduser").click(function(){
+            	var $name = $("#name").val();
+            	var $pass = $("#pass").val();
+            	var $repass = $("#repass").val();
+            	var $fullname = $("#fullname").val();
+            	var $gender = $("#gender").val();
+            	var $telephone = $("#tel").val();
+            	var $address = $("#address").val();
+            	var $email = $("#email").val();
+				var $insert = 1;
+				
+            	if($pass != $repass){
+                	return false;
+            	}
+            	//hàm kiểm tra
+				
+
+
+            	//kiểm tra xong
+            	$.ajax({
+                	url : "http://localhost:8080/rest/admin/index.php?api=user",
+                	type : "post",
+                	dataType : "json",
+                	data : "insertuser="+$insert+"&name="+$name+"&pass="+$pass+"&fullname="+$fullname
+                			+"&gender="+$gender+"&telephone="+$telephone+"&address="+$address+"&email="+$email,
+                	async : false,
+                	success : function(e){
+                    	var jsonData = JSON.parse(JSON.stringify(e));
+                    	//alert(JSON.stringify(e));
+                    	if(jsonData.code == 0){
+                        	alert("thêm mới user thành công");
+                    		window.location = "?page=adduser";
+                    	}else{
+							alert(jsonData.data);
+                        }
+                	}
+            	});
+        	});
+        });
+    </script>
+	</body>
+</html>

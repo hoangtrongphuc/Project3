@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Logout</title>
+</head>
+<script src="style/js/jquery-1.11.1.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		logout();
+		function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) === ' ')
+                    c = c.substring(1);
+                if (c.indexOf(name) !== -1)
+                    return c.substring(name.length, c.length);
+            }
+            return "";
+        }
+		function logout(){
+			var id = getCookie("cookie_id");
+			$.ajax({
+				url : "http://localhost:8080/rest/admin/index.php?api=logout",
+				type : "post",
+				dataType : "json",
+				data : "user_id="+id,
+				async : false,
+				success : function(result){
+					if(result.code == 0)
+						window.location = "login.html";
+				},
+				error : function(err){
+					alert(JSON.stringify(err));
+				}
+			});
+		}
+	});
+</script>
+<body>
+
+</body>
+</html>
