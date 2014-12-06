@@ -21,12 +21,12 @@ var sessionManager = new SessionManagement();
 var firstRound = 1;
 var roomList = [];
 var token = [];
-roomList = message.createSampleRooms(12);
+roomList = message.createSampleRooms(10);
 
 io.sockets.on('connection', function (socket) {
+    console.log("+1 connection\n");
 
   socket.on('connectToServer',function(data) {
-    console.log(data.token);
     var sess = new Player(socket.id,data.token,data.username);
 	var check = sessionManager.checkUserSession(sess);
 	if(check == true) 
@@ -477,6 +477,7 @@ io.sockets.on('connection', function (socket) {
 							}
 				}
 				socket.broadcast.to(roomList[k].ID).emit('opMove',{id1 : data.id1, id2 : data.id2});
+			    io.to(roomList[k].ID).emit('boardInfo',{turn : player.username, board : roomList[k].table.board});
 			}
 		}
 });
@@ -605,6 +606,11 @@ socket.on('chatFriend', function(data){
 	var player1  = sessionManager.getSessionByUsername(data.username1);
 	var player2  = sessionManager.getSessionByUsername(data.username2);
 	message.sendEventToAPlayer('chatmessage',{message : data.message, username : data.username1},io,sessionManager.sessions,player2);
+});
+
+socket.on('chatGlobal', function(data){
+    var player  = sessionManager.getSessionById(socket.id);
+	io.sockets.emit('chatMessageGlobal',{message : data.message,username : player.username});
 });
 
   socket.on("disconnect", function() {
