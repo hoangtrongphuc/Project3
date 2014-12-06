@@ -1,58 +1,88 @@
 <?php
-session_start();
-
-$array = $_REQUEST;
-$login_model = new login_model();
+require_once 'class/sendToken.php';
+//$array = $_REQUEST;
+$user_model = new user_model();
 
 if(!empty($array['username']) && !empty($array['pass']) && !empty($array['signal'])){
-
-	$username = $array['username'];
-	$pass = $array['pass'];
-	$signal = $array['signal'];
-	
-	$tokenkey = $_COOKIE['coo_tokenkey'];
-	
-	$tmp_signal = md5($username.$pass.$tokenkey);
-	
-	$checkuser = $login_model->checkUser($username);
-	if($checkuser == false){
-		if($tmp_signal == $signal){
+	if(preg_match($user_model::$regular_expression['username'], $array['username']) && preg_match($user_model::$regular_expression['pass'], $array['pass'])
+			&& preg_match($user_model::$regular_expression['string'], $array['signal'])){
+		$username = $array['username'];
+		$pass = $array['pass'];
+		$signal = $array['signal'];
 		
-			$checklogin = $login_model->checkLogin($username, $pass);
-			if($checklogin == false){
-				$login_model->deliver_response(3,"thất bại",$username);
-			}else{
-				//url của Game Server
-				$url = url;
-				$md5_url = md5($url);
+		//lấy tokenkey đã đc setcookie
+		$tokenkey = $_COOKIE['cookie_tokenkey'];
+		
+		//tạo mã signal để kiểm tra
+		$tmp_signal = md5($username.$pass.$tokenkey);
+		//echo $tmp_signal;
+		//kiểm tra username có bị ban không
+		$checkuser = $user_model->checkUser($username);
+		
+		//thêm bit muối cho pass
+		//$pass = $pass[0].$pass;
+		
+		if($checkuser == false){
+			if($tmp_signal == $signal){
+				//kiểm tra username và pass có hợp lệ không
+				$checkLogin = $user_model->checkLogin($username, $pass);
+				if($checkLogin == false){
+					$response['code'] = 3;
+					$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+					$response['data'] = $user_model::$api_response_code[ $response['code'] ]['Message'];
+					$user_model->deliver_response($response);
+				}else{
+						
+					//tạo cookie				
+					$_COOKIE['cookie_id'] = $checkLogin['user_ID'];
+					$_COOKIE['cookie_username'] = $checkLogin['user_name'];
+					$_COOKIE['cookie_level'] = $checkLogin['user_level'];
+					setcookie("cookie_id", $_COOKIE['cookie_id'], time() + 3600*24, "/");
+					setcookie("cookie_username", $_COOKIE['cookie_username'], time() + 3600*24, "/");
+					setcookie("cookie_level", $_COOKIE['cookie_level'], time() + 3600*24, "/");
 					
-				//tạo sesion					
-				$_SESSION['ses_userid'] = $checklogin['user_id'];
-				$_SESSION['ses_name'] = $checklogin['user_name'];
-				$_SESSION['ses_level'] = $checklogin['user_level'];
+					//tạo token
+// 					$token = $user_model->getToken($pass);
+// 					$data = array(
+// 							'token'=>$token
+// 					);
+					//update status = 1 đang online
+					$user_model->updateStatus($username, '1');
 					
-				$data = array(
-						'url'=>$url,
-						'md5_url'=>$md5_url,
-						'ses_id'=>$_SESSION['ses_id'],
-						'ses_name'=>$_SESSION['ses_name'],
-						'ses_level'=>$_SESSION['ses_level']
-				);
+					$response['code'] = 0;
+					$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+					$response['data'] =  $user_model::$api_response_code[ $response['code'] ]['Message'];
+					$user_model->deliver_response($response);
 					
-				$login_model->deliver_response(0,"thành công",$data);
-				
-				//gửi id username cho Game Server
-							
+					//gửi id username và token cho Game Server
+					
+					$ulti = new ulti();
+					$ulti->sendToken($tokenkey);
+				}
+			}
+			else{
+				$response['code'] = 2;
+				$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+				$response['data'] = $user_model::$api_response_code[ $response['code'] ]['Message'];
+				$user_model->deliver_response($response);
 			}
 		}
 		else{
-			$login_model->deliver_response(2,"sai signal",$username);
+			$response['code'] = 4;
+			$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+			$response['data'] = $user_model::$api_response_code[ $response['code'] ]['Message'];
+			$user_model->deliver_response($response);
 		}
-	}
-	else{
-		$login_model->deliver_response(4, "tài khoản bị ban", $username);
+	}else{
+		$response['code'] = 15;
+		$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+		$response['data'] = $user_model::$api_response_code[ $response['code'] ]['Message'];
+		$user_model->deliver_response($response);
 	}
 }
 else{
-	$login_model->deliver_response(10, "lỗi hệ thống", NULL);
+	$response['code'] = 11;
+	$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+	$response['data'] = $user_model::$api_response_code[ $response['code'] ]['Message'];		
+	$user_model->deliver_response($response);
 }

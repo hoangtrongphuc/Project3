@@ -1,7 +1,8 @@
 <?php
 class friend_model extends model{
 	protected $_friend = "tbl_friends";
-	protected $_friend_request = "tbl_frined_request";
+	protected $_friend_request = "tbl_friend_request";
+	protected $_user = "tbl_user";
 	
 	//kiểm tra danh sách bạn bè
 	public function ktFriend($user_id, $friend_id){
@@ -18,7 +19,7 @@ class friend_model extends model{
 	
 	//lấy danh sách thông tin bạn bè
 	public function listFriends($user_id){
-		$sql = "select * from $this->_friends where user_ID='$user_id'";
+		$sql = "select * from $this->_friend inner join $this->_user on $this->_friend.friend_ID=$this->_user.user_ID where $this->_friend.user_ID='$user_id'";
 		$this->query($sql);
 	
 		return $this->fetchAll();
@@ -26,13 +27,13 @@ class friend_model extends model{
 	
 	//nếu ktFriend = false thực hiện gửi kết bạn
 	public function insertFriendRequest($user_id, $friend_id){
-		$sql = "insert into $this->_friend_request(user_id_1, friend_id_2) values('$user_id','$friend_id')";
+		$sql = "insert into $this->_friend_request(user_id_1, user_id_2) values('$user_id','$friend_id')";
 		$this->query($sql);
 	}
 	
 	//get lấy list FriendRequest
-	public function getFriendRequest($user_id_1){
-		$sql = "select * from $this->_friend_request where user_id_1='$user_id_1'";
+	public function getFriendRequest($user_id_2){
+		$sql = "select $this->_user.user_name from $this->_friend_request inner join $this->_user on $this->_friend_request.user_id_1=$this->_user.user_ID where $this->_friend_request.user_id_2='$user_id_2'";
 		$this->query($sql);
 		
 		return $this->fetchAll();
@@ -55,4 +56,5 @@ class friend_model extends model{
 		$sql = "delete from $this->_friend where user_ID='$user_id'";
 		$this->query($sql);
 	}
+	
 }

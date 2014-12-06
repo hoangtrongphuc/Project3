@@ -2,8 +2,9 @@
 class config{
 	const HOST = "localhost";
 	const USER = "root";
-	const PASS = "";
+	const PASS = "t@tnguyen";
 	const DATABASE = "cotuongonline";
 }
-define("baseurl","http://localhost:8080/rest/");
-define("url","http://localhost:8080/gameServer/");
+define("urlService","http://localhost:8080/rest/");
+define("urlServer","http://localhost:8080/gameServer/");
+define("urlClient","http://localhost:8080/cotuong/");
