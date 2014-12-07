@@ -2,7 +2,7 @@
 class config{
 	const HOST = "localhost";
 	const USER = "root";
-	const PASS = "t@tnguyen";
+	const PASS = "";
 	const DATABASE = "cotuongonline";
 }
 define("urlService","http://localhost:8080/rest/");

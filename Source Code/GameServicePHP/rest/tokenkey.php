@@ -3,14 +3,14 @@ require_once 'class/tokenkey.php';
 
 $tokenkey = new tokenkey();
 $model = new model();
-
+/* 
 if(isset($_COOKIE['cookie_tokenkey'])){
 	$response['code'] = 24;
 	$response['status'] = $model::$api_response_code[ $response['code'] ]['HTTP Response'];
 	$response['data'] = $model::$api_response_code[ $response['code']]['Message'];
 	$model->deliver_response($response);
 }
-else{
+else{ */
 	$getTokenkey = $tokenkey->getTokenkey();
 	
 	//setCookie cho tokenkey
@@ -22,4 +22,4 @@ else{
 	$response['status'] = $model::$api_response_code[ $response['code'] ]['HTTP Response'];
 	$response['data'] = $data;
 	$model->deliver_response($response);
-}
+//}

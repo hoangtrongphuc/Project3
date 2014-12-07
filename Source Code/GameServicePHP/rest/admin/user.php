@@ -10,7 +10,7 @@ if(!empty($array['listuser'])){
 		$page_number = $array['page_number'];
 	}
 	$start = $page_number;
-	$limit = 2;
+	$limit = 8;
 	$total_record = $user_model->totalPage('tbl_user');
 	$total_page = ceil($total_record/$limit);
 	if($total_record >= $page_number){

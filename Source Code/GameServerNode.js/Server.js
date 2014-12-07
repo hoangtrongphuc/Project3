@@ -24,9 +24,9 @@ var token = [];
 roomList = message.createSampleRooms(10);
 
 io.sockets.on('connection', function (socket) {
-    console.log("+1 connection\n");
 
   socket.on('connectToServer',function(data) {
+      console.log(data.token);
     var sess = new Player(socket.id,data.token,data.username);
 	var check = sessionManager.checkUserSession(sess);
 	if(check == true) 

@@ -11,7 +11,7 @@ if(!empty($array['listtrade'])){
 		$page_number = $array['page_number'];
 	}
 	$start = $page_number;
-	$limit = 1;
+	$limit = 8;
 	$total_record = $trade_model->totalPage('tbl_trade');
 	$total_page = ceil($total_record/$limit);
 	if($total_record > $page_number){

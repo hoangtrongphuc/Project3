@@ -14,6 +14,7 @@ body{
     background-image: url("../imgs/background.jpg");
     background-size: 100% 100%;
     background-attachment: fixed;
+
 }
 
 a{
@@ -21,8 +22,57 @@ a{
     color: black;
 }
 
+.timer {
+    background: -webkit-linear-gradient(left, skyBlue 50%, #eee 50%); /* Foreground color, Background colour */
+    border-radius: 100%;
+    height: 10px; /* Height and width */
+    position: relative;
+    width: 10px; /* Height and width */
+    -webkit-animation: time 180s steps(1, start) infinite;
+}
+.mask {
+    border-radius: 100% 0 0 100% / 50% 0 0 50%;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 50%;
+    -webkit-animation: mask 180s steps(1, start) infinite;
+    -webkit-transform-origin: 100% 50%;
+}
+@-webkit-keyframes time {
+    100% { 
+        -webkit-transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes mask {
+    0% {
+        background: #eee; /* Background colour */
+        -webkit-transform: rotate(0deg);
+    }
+    50% {
+        background: #eee; /* Background colour */
+        -webkit-transform: rotate(-180deg);
+    }
+    50.01% {
+        background: skyBlue; /* Foreground colour */
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        background: skyBlue; /* Foreground colour */
+        -webkit-transform: rotate(-180deg);
+    }
+}
 a:hover{
     color: green;
+}
+textarea
+{
+	border-radius: 5px;
+	resize: none;
+    width: 98%;
+	background-color:grey;
+	color:white;
 }
 
 body, p, h1, h2, h3, h4, table, td, th, ul, ol, textarea, input {
@@ -38,6 +88,8 @@ body, p, h1, h2, h3, h4, table, td, th, ul, ol, textarea, input {
     margin: 5px;
     background-color: darkgreen;
 }
+
+
 
 input{
     border-radius: 8px;
@@ -55,7 +107,7 @@ input{
     margin-bottom: 30px;
     margin-top: 30px;
     padding: 20px;
-    min-height: 550px;
+    min-height: 500px;
     color: black;
 }
 
@@ -67,27 +119,26 @@ input{
     font-weight: bold;
 }
 #searchInput{
-    float: right;
 }
 
 #roomTableDiv{
-    width: 150px;
+    width: 100%;
     height: 450px;
     overflow: scroll;
 }
 
 #roomControlDiv{
-    width: 100%;
+    height: 70px;
+    width: 70%;
     margin: auto;
 }
 /*--------*/
 #roomDiv{
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 10px;
-    margin-top: 10px;
     width: 80%;
-    height: 550px;
+    min-height: 600px;
+    margin-bottom: 30px;
     color: black;
     padding: 20px;
 }
@@ -96,15 +147,18 @@ input{
     margin-left: auto;
     margin-right: auto;
     width: 250px;
-    height: 550px;
+    min-height: 80%;
     float: left;
     padding: 5px;
+    background-color: white;
+    box-shadow: 0px 0px 20px 3px #D3D3D3;
+    border-radius: 4px;
 }
 
 #user1Div, #user2Div, #timerDiv{
+    float: top;
     height: 30%;
     width: 100%;
-    text-align: center;
 }
 
 #chessBoardDiv{
@@ -118,17 +172,19 @@ input{
     margin-left: auto;
     margin-right: auto;
     width: 250px;
-    height: 550px;
     float: left;
     padding: 5px;
+    background-color: white;
+    box-shadow: 0px 0px 20px 3px #D3D3D3;
+    border-radius: 4px;
 }
 
 #roomInfoDiv{
     margin-left: auto;
     margin-right: auto;
-    float: left;
+    float: top;
     width: 100%;
-    height: 40%;
+    height: 25%;
 }
 
 #messagesDiv{
@@ -136,14 +192,17 @@ input{
     margin-right: auto;
     float: left;
     width: 100%;
-    height: 50%;
+    height: 100%;
     padding: 5px;
-    background-color: white;
-    border-radius: 10px;
-    color: black;
-    overflow: scroll;
-}
 
+}
+.avatar{
+	width: 50%;
+    height: 50%;
+	border-radius: 10px;
+	margin-left: auto;
+    margin-right: auto;
+}
 #typeDiv{
     margin-left: auto;
     margin-right: auto;
@@ -152,7 +211,7 @@ input{
     height: 40%;
 }
 
-#messageInput{
+#messageInput,#inputGlobal{
     float: left;
     width: 70%;
     margin: 7px;
@@ -167,14 +226,8 @@ input{
     width: 100%;
 }
 
-.timer{
-    font-size: 50px;
-    color: white;
-    font-weight: bold;
-    text-align: center;
-}
 
-#roomTableDiv {
+.roomTableDiv {
 	margin:0px;padding:0px;
 	width:100%;
 
@@ -193,93 +246,90 @@ input{
 	-moz-border-radius-topleft:0px;
 	-webkit-border-top-left-radius:0px;
 	border-top-left-radius:0px;
-}#roomTableDiv table{
-        border-spacing: 0;
+}.roomTableDiv table{
+    border-spacing: 0;
 	width:100%;
 	height:100%;
 	margin:0px;padding:0px;
-}#roomTableDiv tr:last-child td:last-child {
+}.roomTableDiv tr:last-child td:last-child {
 	-moz-border-radius-bottomright:0px;
 	-webkit-border-bottom-right-radius:0px;
 	border-bottom-right-radius:0px;
 }
-#roomTableDiv table tr:first-child td:first-child {
+.roomTableDiv table tr:first-child td:first-child {
 	-moz-border-radius-topleft:0px;
 	-webkit-border-top-left-radius:0px;
 	border-top-left-radius:0px;
 }
 
-#roomTableDiv table tr td:first-child {
-background-color:#FF3333 ;
+.roomTableDiv table tr td:first-child {
+	background-color:#FF3333 ;
 	color:white;
-width : 20px;
- border: 1px solid;
+	width : 20px;
+	border: 1px solid;
     border-style: solid;
     border-color: #400000  #484848 ;
 }
 
 
-#roomTableDiv table tr:first-child td:last-child {
+.roomTableDiv table tr:first-child td:last-child {
 	-moz-border-radius-topright:0px;
 	-webkit-border-top-right-radius:0px;
 	border-top-right-radius:0px;
 
-}#roomTableDiv tr:last-child td:first-child{
+}.roomTableDiv tr:last-child td:first-child{
 	-moz-border-radius-bottomleft:0px;
 	-webkit-border-bottom-left-radius:0px;
 	border-bottom-left-radius:0px;
 
-}#roomTableDiv tr:hover td{
+}.roomTableDiv tr:hover td{
 	color:red;
 }
-#roomTableDiv tr:nth-child(odd) 
+.roomTableDiv tr:nth-child(odd) 
 {font-size:12px; color: #ffffff; text-align:center;background-color:grey; }
-#roomTableDiv tr:nth-child(even)    {font-size:12px;color : yellow; text-align:center; background-color:#383838   ; }.roomTableDiv td{
+.roomTableDiv tr:nth-child(even)    {font-size:12px;color : yellow; text-align:center; background-color:#383838   ; }
+.roomTableDiv td{
 	vertical-align:middle;
 	border:5px solid #000000;
 	border-width:0px 1px 1px 0px;
 	text-align:center;
 	padding:1px;
-	font-size:10px;
+	font-size:12px;
 	font-family:Arial;
 	font-weight:normal;
 	
-}#roomTableDiv tr:last-child td{
+}.roomTableDiv tr:last-child td{
 	border-width:0px 1px 0px 0px;
-text-align:center;
-}#roomTableDiv tr td:last-child{
+	text-align:center;
+}.roomTableDiv tr td:last-child{
 text-align:center;
 	border-width:0px 0px 1px 0px;
-}#roomTableDiv tr:last-child td:last-child{
+}.roomTableDiv tr:last-child td:last-child{
 	border-width:0px 0px 0px 0px;
-text-align:center;
+	text-align:center;
 }
-#roomTableDiv tr:first-child td{
+.roomTableDiv tr:first-child td{
 		background:-o-linear-gradient(bottom, #ff7f00 5%, #bf5f00 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ff7f00), color-stop(1, #bf5f00) );
 	background:-moz-linear-gradient( center top, #ff7f00 5%, #bf5f00 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff7f00", endColorstr="#bf5f00");	background: -o-linear-gradient(top,#ff7f00,bf5f00);
-	width: 80px;
-	height: 40px;
+	width: 40px;
+	height: 20px;
 	background-color:#FF3300;
 	border:0px solid #000000;
 	text-align:center;
 	border-width:0px 0px 1px 1px;
-	font-size:15px;
+	font-size:12px;
 	font-family:Verdana;
 
 	color:#ffffff;
 }
 
-#roomTableDiv tr:first-child td:first-child{
+.roomTableDiv tr:first-child td:first-child{
 	border-width:0px 0px 1px 0px;
 
 }
-#roomTableDiv tr:first-child td:last-child{
+.roomTableDiv tr:first-child td:last-child{
 	border-width:0px 0px 1px 1px;
 
 }
 
-.avatar{
-    height: 40px;
-    width: 40px;
-}

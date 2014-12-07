@@ -1,6 +1,26 @@
 <script type="text/javascript">
+
 $(document).ready(function(){
-	tokenkey();
+function getCookie(cname) {
+					var name = cname + "=";
+					var ca = document.cookie.split(';');
+					for (var i = 0; i < ca.length; i++) {
+						var c = ca[i];
+						while (c.charAt(0) === ' ')
+							c = c.substring(1);
+						if (c.indexOf(name) !== -1)
+							return c.substring(name.length, c.length);
+					}
+					return "";
+					}
+			var getcookie_id = getCookie("cookie_id");
+			if(getcookie_id !== ""){
+					window.location.href = "http://localhost:8080/cotuong/banco";
+					return false;
+				}
+
+			else
+				tokenkey();
 	function tokenkey(){
 		$.ajax({
 			url	: "http://localhost:8080/rest/index.php?api=tokenkey", // Nơi nhận dữ liệu
@@ -46,7 +66,7 @@ $(document).ready(function(){
           
 
             <td><button id="submit-login" style="margin-right:30px;  margin-top:20px;" class="btn btn-lg btn-danger btn-block" type="submit">Chơi Ngay</button>
-            <a href="offline/index.html"><button class="btn btn-lg btn-default btn-block" style="margin-top:10px;" type="button"	 >Chơi OFFLINE</button></a></td>
+            <a href="offline/index.html"><button class="btn btn-lg btn-default btn-block" style="margin-top:10px;" type="button"	 >Chơi với máy</button></a></td>
           </tr>
           <tr>
             <td>

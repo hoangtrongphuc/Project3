@@ -7,10 +7,13 @@
         <script type="text/javascript" src="js/jquery-ui.min.js"></script>
         <script type="text/javascript" src="js/socket.io.js"></script>
         <script type="text/javascript" src="js/chinese_chess.js"></script>
+		<script type="text/javascript" src="js/jquery.plugin.js"></script> 
+		<script type="text/javascript" src="js/jquery.countdown.js"></script>
 		<script src="js/tabcontent.js" type="text/javascript"></script>
 		<link href="css/tabcontent.css" rel="stylesheet" type="text/css" />
         <link title="text/css" href="css/chinese_chess.css" rel="stylesheet"/>
 		<link title="text/css" href="css/menu.css" rel="stylesheet"/>
+		<link rel="stylesheet" type="text/css" href="css/jquery.countdown.css"> 
 
         <link title="text/css" href="css/style.css" rel="stylesheet"/>
         <link title="text/css" href="css/jquery-ui.css" rel="stylesheet"/>
@@ -21,9 +24,20 @@
             window.onbeforeunload = onBeforeUnload;
             window.onunload = onUnload;
             $("document").ready(function(){
-                controller.initController("chessBoardDiv");
+			
 
-	
+				var getcookie_id = getCookie("cookie_id");
+				if(getcookie_id === ""){
+					window.location = "http://localhost:8080/cotuong/index.php";
+					return false;
+				}
+                controller.initController("chessBoardDiv");
+			
+			onTopRich();
+			onTopRank();
+			onListFriend();
+			onListEvent();
+			onMyInfor();
                 $("#newRoomDialog").dialog({
                     autoOpen: false, 
                     buttons: {
@@ -68,12 +82,6 @@
                     modal: true
                 });
                 
-                $("#friendRequestDiv").dialog({
-                    autoOpen: false,
-                    title: "Yêu cầu kết bạn",
-                    modal: true
-                });
-                
                 $("#passwordDialog").dialog({
                     autoOpen: false, 
                     buttons: {
@@ -82,6 +90,10 @@
                             $("#pass").val('');
                         },
                         "Tham gia": function(){
+							if ( $("#pass").val() === "") {
+							alert("Bạn chưa nhập Pass");
+							e.preventDefault();
+							}
                             controller.joinRoom(roomID, $("#pass").val());
                             $("#passwordDialog").dialog("close");
                             $("#pass").val('');
@@ -92,12 +104,21 @@
                     width: 300,
                     modal: true
                 });
-                $("#requestsDialog").dialog({
-                    autoOpen: false,
-                    title: "Yêu cầu kết bạn",
-                    modal: true,
-                    width: 400
+				
+				 $("#helloDialog").dialog({
+                    autoOpen: false, 
+                    buttons: {
+                        "Đóng": function(){
+                            $("#helloDialog").dialog("close");
+                        }
+                    
+                    },
+                    title: "Welcome !!!",
+                    height: 500,
+                    width: 500,
+                    modal: true
                 });
+				
 				$("#addCoinDialog").dialog({
                     autoOpen: false, 
                     buttons: {
@@ -125,9 +146,12 @@
                            
                         },
                         "Gửi ý kiến": function(){
-                            controller.joinRoom(roomID, $("#pass").val());
+						var title1 = $("#titleName").val();
+						var content = $("#content").val();
+                           controller.contactUs(title1,content);
                             $("#contactDialog").dialog("close");
-                          
+                            $("#titleName").val('');
+							$("#content").val('');
                         }
                     },
                     title: "Liên hệ",
@@ -144,17 +168,42 @@
                            
                         },
                         "Lưu": function(){
-                            controller.joinRoom(roomID, $("#pass").val());
+											var Name, Email,Gender,Address,Tel;
+						if($("#user_name").val() !== "" ) Name = $("#user_name").val();
+						else Name = $("#user_name").attr("placeholder");
+						if($("#user_email").val() !== "" ) Email = $("#user_email").val();
+						else Email = $("#user_email").attr("placeholder");
+						if($("#user_gender").val() !== "" ) Gender = $("#user_gender").val();
+						else Gender = $("#user_gender").attr("placeholder");
+						if($("#user_addr").val() !== "" ) Address = $("#user_addr").val();
+						else Address = $("#user_addr").attr("placeholder");
+						if($("#user_tel").val() !== "" ) Tel = $("#user_tel").val();
+						else Tel = $("#user_tel").attr("placeholder");
+                            controller.changeInfo(Name,Email,Gender,Address,Tel);
                             $("#inforDialog").dialog("close");
-                          
+						
+
                         }
                     },
                     title: "Thông tin tài khoản",
-                    height: 600,
+                    height: 660,
                     width: 600,
                     modal: true
                 });
                 
+				 $("#friendRequestDiv").dialog({
+                    autoOpen: false,
+                    title: "Yêu cầu kết bạn",
+                    modal: true
+                });
+				
+				   $("#requestsDialog").dialog({
+                    autoOpen: false,
+                    title: "Yêu cầu kết bạn",
+                    modal: true,
+                    width: 400
+                });
+				
                 $("#messageDialog").dialog({
                     autoOpen: false,
                     buttons: {
@@ -176,6 +225,24 @@
                         controller.joinRoom(roomID, "");
                     }
             }
+
+			function hello(){
+                $('#helloDialog').dialog('open')
+            }
+			
+			function getCookie(cname) {
+					var name = cname + "=";
+					var ca = document.cookie.split(';');
+					for (var i = 0; i < ca.length; i++) {
+						var c = ca[i];
+						while (c.charAt(0) === ' ')
+							c = c.substring(1);
+						if (c.indexOf(name) !== -1)
+							return c.substring(name.length, c.length);
+					}
+					return "";
+					}
+			
             function addRoom(){
                 $('#newRoomDialog').dialog('open')
             }
@@ -188,6 +255,7 @@
             }
 			
 			function infor(){
+			     onMyInfor();
                 $('#inforDialog').dialog('open')
             }
 			
@@ -200,27 +268,12 @@
 				}
 				
             }
-			
-			function onSignOut()
+
+			function logOut()
 			{
-			  $.ajax({
-					url : "http://localhost:8080/rest/admin/index.php?api=logout",
-					type : "post",
-					dataType : "json",
-					data: "user_id="+$.cookie("cookie_id"),
-					async : false,
-					success: function(e){
-						window.location.href = "http://localhost:8080/cotuong";
-					},
-					error : function(err){}
-						});
-					var cookies = $.cookie();
-					for(var cookie in cookies) {
-						$.removeCookie(cookie);
-							}
+				controller.signOut();
 			}
 			
-			onTopRank();
 			function onTopRank()
 			{
 			  var $stt = 1;
@@ -231,29 +284,23 @@
 				data : null,
 				async : false,
 				success : function(result){
-					alert(JSON.stringify(result));
+					var table = $("#rankTable");
+					table.html("<tr> <td>Xếp hạng</td> <td>Tên người chơi</td> <td>Số trận thắng</td> </tr>");
 					var jsonData = JSON.parse(JSON.stringify(result));
 					for(var i=0; i<jsonData.data.length; i++){
 						var datas = jsonData.data[i];
 						if(datas.user_level != 1){
 							if($stt == 1){
-								$("#view2").append(
-									"<div class='row1'>"+
-										"<div class='stt' ><span class='glyphicon glyphicon-flag'>"+$stt+"</span></div>"+
-										"<div class='name'>"+datas.user_name+"</div>"+
-										"<div class='point'>"+datas.user_win+"</div>"+
-									"</div>"
-								);
+								row = "<tr>" + "<td>"+$stt+"</td>"+
+										"<td>"+datas.user_name+"</td>"+
+										"<td>"+datas.user_win+"</td></tr>";	
 							}
 							else{
-								$("#view2").append(
-										"<div class='row1'>"+
-										"<div class='stt'>"+$stt+"</div>"+
-										"<div class='name'>"+datas.user_name+"</div>"+
-										"<div class='point'>"+datas.user_win+"</div>"+
-									"</div>"
-								);
+								row = "<tr>" + "<td>"+$stt+"</td>"+
+										"<td>"+datas.user_name+"</td>"+
+										"<td>"+datas.user_win+"</td></tr>";
 							}
+						table.append(row);	
 						$stt++;
 						}
 					}
@@ -264,28 +311,9 @@
 			});
 			}
 			
-			function onGetEvent()
-			{
-			  $.ajax({
-					url : "http://localhost:8080/rest/admin/index.php?api=logout",
-					type : "post",
-					dataType : "json",
-					data: "user_id="+$.cookie("cookie_id"),
-					async : false,
-					success: function(e){
-						window.location.href = "http://localhost:8080/cotuong";
-					},
-					error : function(err){}
-						});
-					var cookies = $.cookie();
-					for(var cookie in cookies) {
-						$.removeCookie(cookie);
-							}
-			}
-			onTopRich();
 			function onTopRich()
 			{
-			  var $stt = 1;
+			    var $stt = 1;
 				$.ajax({
 				url : "http://localhost:8080/rest/index.php?api=toprick",
 				type : "post",
@@ -294,31 +322,23 @@
 				async : false,
 				success : function(result){
 					var jsonData = JSON.parse(JSON.stringify(result));
+					var table = $("#richTable");
+					table.html("<tr> <td>Xếp hạng</td> <td>Tên người chơi</td> <td>Số xu</td> </tr>");
 					for(var i=0; i<jsonData.data.length; i++){
+						var row;
 						var datas = jsonData.data[i];
 						if(datas.user_level != 1){
 							if($stt == 1){
-								$("#richList").append(
-									"<div class='row1'>"+
-										"<div class='stt' ><span class='glyphicon glyphicon-flag'>"+$stt+"</span></div>"+
-										"<div class='name'>"+datas.user_name+"</div>"+
-										"<div class='point'>"+datas.user_coin+"</div>"+
-									"</div>"
-								);
+								row = "<tr>" + "<td>"+$stt+"</td>"+
+										"<td>"+datas.user_name+"</td>"+
+										"<td>"+datas.user_coin+"</td></tr>";								
 							}
-							
 							else{
-								$("#richList").append(
-										"<div class='row1'>"+
-										"<div class='stt'>"+$stt+"</div>"+
-										"<div class='name'>"+datas.user_name+"</div>"+
-										"<div class='point'>"+datas.user_coin+"</div>"+
-									"</div>"
-								);
-																alert($("#view1").val());
-
+								row = "<tr>" + "<td>"+$stt+"</td>"+
+										"<td>"+datas.user_name+"</td>"+
+										"<td>"+datas.user_coin+"</td></tr>";
 							}
-							
+						table.append(row);	
 						$stt++;
 						}
 					}
@@ -328,40 +348,59 @@
 				}
 				});
 			}
-			
-			function onSendContact()
+
+
+						
+			function onListEvent()
 			{
-			  $.ajax({
-					url : "http://localhost:8080/rest/admin/index.php?api=logout",
-					type : "post",
-					dataType : "json",
-					data: "user_id="+$.cookie("cookie_id"),
-					async : false,
-					success: function(e){
-						window.location.href = "http://localhost:8080/cotuong";
-					},
-					error : function(err){}
-						});
-					var cookies = $.cookie();
-					for(var cookie in cookies) {
-						$.removeCookie(cookie);
-							}
+			
+			$.ajax({
+			url : "http://localhost:8080/rest/index.php?api=event&listevent=1",
+			type : "post",
+			dataType : "json",
+			data : null,
+			async : false,
+			success : function(result){
+				var jsonData = JSON.parse(JSON.stringify(result));
+				var listEvent = $("#event");
+				for(var i=0; i<jsonData.data.length; i++)
+				{
+					listEvent.append(" - <u>Sự kiện</u> "+"<b>" +jsonData.data[i].event_title + "</b> : " + jsonData.data[i].event_info + " diễn ra từ " +
+					jsonData.data[i].event_start +" đến ngày " +jsonData.data[i].event_finish); 
+				}
+			
+			},
+			error : function(err){
+				alert(JSON.stringify(err));
+			}
+			});
 			}
 			
-			function getCookie(cname) {
-				var name = cname + "=";
-				var ca = document.cookie.split(';');
-			for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) === ' ')
-                c = c.substring(1);
-            if (c.indexOf(name) !== -1)
-                return c.substring(name.length, c.length);
+			function onMyInfor()
+			{
+			var $getuser = 1;
+			var $name = getCookie('cookie_username');
+			$.ajax({
+			url : "http://localhost:8080/rest/index.php?api=user",
+			type : "post",
+			dataType : "json",
+			data : "getuser="+$getuser+"&username="+$name,
+			async : false,
+			success : function(result){
+			var k = JSON.parse(JSON.stringify(result));
+				$("#user_name").attr("placeholder",k.data.user_name);
+				$("#user_email").attr("placeholder",k.data.user_email);
+				$("#user_gender").attr("placeholder",k.data.user_gender);
+				$("#user_tel").attr("placeholder",k.data.user_tel);
+				$("#user_addr").attr("placeholder",k.data.user_address);
+				$("#user_coin").html(k.data.user_coin);
+				$("#user_rank").html(k.data.user_win);
+			},
+			error : function(err){
+				alert(JSON.stringify(err));
 			}
-			return "";
+			});
 			}
-			
-			
 			
 			
 			function onAddCoin()
@@ -381,7 +420,7 @@
 			data : "xu="+xu+"&user_id="+id+"&provider="+provider+"&code="+code+"&serial="+serial+"&date="+ngay,
 			async : false,
 			success : function(result){
-				alert(JSON.stringify(result));
+				alert(result.data);
 			},
 			error : function(err){
 				alert(JSON.stringify(err));
@@ -391,29 +430,41 @@
 			
 			function onListFriend()
 			{
-			  $.ajax({
-					url : "http://localhost:8080/rest/admin/index.php?api=logout",
-					type : "post",
-					dataType : "json",
-					data: "user_id="+$.cookie("cookie_id"),
-					async : false,
-					success: function(e){
-						window.location.href = "http://localhost:8080/cotuong";
-					},
-					error : function(err){}
-						});
-					var cookies = $.cookie();
-					for(var cookie in cookies) {
-						$.removeCookie(cookie);
-							}
+				var stt = 1;
+				var id = getCookie("cookie_id");
+				$.ajax({
+				url : "http://localhost:8080/rest/index.php?api=friend&listfriend=1",
+				type : "post",
+				dataType : "json",
+				data : "user_id=" +id,
+				async : false,
+				success : function(result){
+					var jsonData = JSON.parse(JSON.stringify(result));
+					var table = $("#friendTable");
+					table.html("<tr><td>No.</td> <td>Tên bạn bè</td> <td>Trạng thái</td>  </tr>");
+					for(var i=0; i<jsonData.data.length; i++){
+						var row;
+						var datas = jsonData.data[i];
+						row = "<tr><td>"+stt+"</td>"+
+									"<td>"+datas.user_name+"</td>";		
+						if(datas.user_status == 0) row = row + "<td><img src='imgs/off.png' width='10' height='10'/></td></tr>";
+						else row = row + "<td><img src='imgs/on.png' width='15' height='15'/></td></tr>";
+						table.append(row);	
+						stt++;
+					}
+				},
+				error : function(err){
+					alert(JSON.stringify(err));
+				}
+				});
 			}
 			
             function onBeforeUnload(){
                 if(document.location.hash==="#roomDiv"){
                     return "Nếu bạn rời đi, phòng chơi sẽ bị hủy ?";
                 }
-				else if(document.location.hash==="#roomDiv"){
-					signOut();
+				else if(document.location.hash==="#listRoomDiv"){
+					logOut();
 				}
             }
         </script>
@@ -425,52 +476,55 @@
 			<div id="mainnav"> 
 			<ul>
 				<li><a href="#" class="active" title="Trang chủ">Trang chủ</a></li>    
-				<li><a href="#" title="Giới thiệu">Giới thiệu</a></li>    
+				<li><a onclick="hello()" href="javascript:void(0);" title="Giới thiệu">Giới thiệu</a></li>    
 				<li><a onclick="addCoin()" href="javascript:void(0);" title="Nạp xu">Nạp xu</a></li>    
 				<li><a onclick="infor()" href="javascript:void(0);" title="Thông tin cá nhân">Thông tin cá nhân</a></li>    
 				<li><a onclick="contact()" href="javascript:void(0);" title="Liên hệ">Liên hệ</a></li>  
-				<li><a href="#" title="Đăng xuất">Đăng xuất</a></li>  
+				<li><a onclick="logOut()" href="javascript:void(0);" title="Đăng xuất">Đăng xuất</a></li>  
 			</ul>  
 			</div>
 
-			<font FONT SIZE="4" FACE="courier" COLOR=white >
-			<marquee  behavior="scroll"  direction="left">Your scrolling text goes here</marquee>
-			</font><br/><br/><br/>
+			<font FONT SIZE="4" FACE="verdana" COLOR=white >
+			<marquee behavior="alternate"  direction="left" id = "event"></marquee>
+			</font><br/><br/>
 			<div id="wrapper" style="width:100%;">
 			 	<div style="float:right;height:25%;width:25%">
 				<ul class="tabs" >
-				<li class="selected"><a href="#view1">Top cao thủ</a></li>
-				<li><a href="#view2">TOP triệu phú</a></li>
-				<li><a href="#view3">Bạn bè</a></li>
+				<li class="selected"><a href="#rankTableList">Top cao thủ</a></li>
+				<li><a href="#richTableList">TOP triệu phú</a></li>
+				<li><a href="#friendTableList">Bạn bè</a></li>
 				</ul>
 				<div class="tabcontents">
-				<div id="richlist">
-				<div class="row1">
-				<div class="stt">Hạng</div>
-				<div class="name">Tên người chơi</div>
-				<div class="point">Điểm</div>
+				<div id="richTableList" class="roomTableDiv">
+					<table id= "richTable"></table>
 				</div>
+				
+				<div id="rankTableList" class="roomTableDiv">
+					<table id="rankTable"></table>
 				</div>
-				<div id="view2">
-				</div>
-				<div id="view3">
+				
+				<div id="friendTableList" class="roomTableDiv">
+					<table id= "friendTable"></table>
 				</div>
 				</div> 
 				</div>	
 			 <div id="globalChat" style="float:left;height:20%;width:20%">
-                        <form onsubmit="controller.chatInRoom();">
-							<textarea style=" overflow: scroll;height:220px;width:220px"></textarea>
+						
+                        <form onsubmit="controller.chatGlobal();">
+							<div id= "messageInputGlobal" style="background-color:grey; font-size:11px; color:white; overflow: scroll;height:400px;width:220px"></div>
 							<br/>
-                            <input id="messageInput" type="text">
-                            <button class="button" id="sendButton" onclick="controller.chatGlobal();">Gửi</button>
+                            <input id="inputGlobal" type="text">
+                            <button class="button" id="sendGlobalButton" onclick="controller.chatGlobal();">Gửi</button>
                         </form>
              </div>
+			 
 			<div style= "width:54%; float:left;">
-                <div id="roomTableDiv" >
+                <div id="roomTableDiv" class="roomTableDiv" >
                     <table id="roomTable"></table>
                 </div>
-                <div id="roomControlDiv">
-                    <button class="button" id="createRoomButton" onclick="addRoom();">TẠO PHÒNG</button>
+				<br/>
+                <div id="roomControlDiv" >
+                    <button class="button" id="createRoomButton" onclick="addRoom();">TẠO PHÒNG CHƠI</button>
                     <button class="button" id="refreshRoomButton" onclick="controller.refreshRoom();">CẬP NHẬT PHÒNG CHƠI</button>
                 </div>
 			</div>
@@ -482,13 +536,16 @@
             <div id="roomDiv">
                 <div id="leftBoardDiv">
                     <div id="user1Div"></div>
-                    <div id="timerDiv" class="timer"></div>
+                    <div id="timerDiv" class="timer">
+						<div class="mask"></div>
+					</div>
                     <div id ="user2Div"></div>
                 </div>
                 <div id="chessBoardDiv"></div>
                 <div id="rightBoardDiv">
                     <div id="roomInfoDiv"></div>
-                    <div id="messagesDiv"></div>
+					<br/><br/><br/>
+                    <div id="messagesDiv" style="background-color:grey; font-size:11px; color:white; overflow: scroll;height:400px;width:240px"></div>
                     <div id="typeDiv">
                         <form onsubmit="controller.chatInRoom();">
                             <input id="messageInput" type="text">
@@ -496,7 +553,7 @@
                         </form>
                     </div>
                 </div>
-            </div>
+            </div>>
         </div>
 		
 		
@@ -509,12 +566,11 @@
                 <input type="text" id="pass">
             </form>
         </div>
-        <div id="requestsDialog">
+		
+		   <div id="requestsDialog">
             <table id="requestsTable">
-                
             </table>
         </div>
-		
 				
         <div id="newRoomDialog" class="dialog">
             <form id="newRoomForm" ">
@@ -534,7 +590,7 @@
                 <label>Tiêu đề: </label> <br/><br/>
                 <input type="text" id="titleName" name="titleName" ><br/>
                 <label>Nội dung: </label><br/> <br/> 
-                <textarea type="text" id="content" name="content" rows="7" cols="32"></textarea><br/>
+                <textarea type="text" id="content" name="content" rows="8" cols="5"></textarea><br/>
 
             </form>
         </div>
@@ -542,72 +598,61 @@
 		<div id="inforDialog" class="dialog">
 				<ul class="tabs">
 					<li><a href="#viewInfor">Thông tin cá nhân</a></li>
-					<li><a href="#viewChange">Chỉnh sửa</a></li>
 				</ul>
 				<div class="tabcontents">
 				<div id="viewInfor">
-				
 				<table id="info-table" width="500" border="0" cellspacing="20">
-          <tr>
-          <td><label class="col-sm-2 control-label" style="width:200px; margin:0; padding:0;">Tên tài khoản</label></td>
-            <td  height="50" colspan="2"><div class="col-sm-10">
-      <p class="form-control-static">nghiait0111</p>
-		</div></td>      
-          </tr>
-          <tr>
-          <td> Mật khẩu</td>
-            <td  height="50" colspan="2"><input style="width:300px;" type="password" class="form-control" placeholder="*********" name="user_pass" required></td>
-          </tr>
-          <tr>
-          <td>Email đăng kí</td>
-            <td   height="50" colspan="2"><input style="width:300px;" type="text" class="form-control" placeholder="Email đăng ký" name="user_repass" required></td>
-          </tr>
-          <tr>
-          <td>Số xu hiện có: </td>
-            <td  height="50" colspan="2"><input  style="width:200px;" type="text" class="form-control" placeholder="Số lượng tiền" name="rich" required></td>
-          </tr>
-          <tr>
-          <td>Xếp hạng: </td>
-            <td  height="50" colspan="2"><input  style="width:200px;" type="text" class="form-control" placeholder="Điểm rank" name="rich" required></td>
-          </tr>
-          <tr>
-          <td></td>
-          </tr>
-        </table>
-				
-				</div>
-				
-				<div id="viewChange">
-				
-				<table id="info-table" width="500" border="0" cellspacing="20">
-         
-          <tr>
-          <td> Tên tài khoản</td>
-            <td  height="50" colspan="2"><input style="width:300px;" type="password" class="form-control" name="user_pass" required></td>
-          </tr>
-          <tr>
-          <td>Email đăng kí</td>
-            <td   height="50" colspan="2"><input style="width:300px;" type="text" class="form-control" name="user_repass" required></td>
-          </tr>
-		  <tr>
-          <td>Giới tính</td>
-            <td   height="50" colspan="2"><input style="width:300px;" type="text" class="form-control"  name="user_repass" required></td>
-          </tr>
-		  <tr>
-          <td>Địa chỉ</td>
-            <td   height="50" colspan="2"><input style="width:300px;" type="text" class="form-control"  name="user_repass" required></td>
-          </tr>
-         
-          <tr>
-          <td></td>
-          </tr>
-        </table>
-				
+				<tr>
+					<td> Tên đầy đủ</td>
+					<td  height="50" colspan="2"><input style="width:300px;" type="text" class="form-control" id="user_name" placeholder="" required></td>
+					</tr>
+				<tr>
+					<td> Giới tính</td>
+					<td  height="50" colspan="2"><input style="width:300px;" type="text" class="form-control" id="user_gender" placeholder="" required></td>
+				</tr>
+				<tr>
+					<td>Email đăng kí</td>
+					<td   height="50" colspan="2"><input style="width:300px;" type="text" class="form-control"  id="user_email" placeholder="" required></td>
+				</tr>
+				<tr>
+					<td>Số xu hiện có: </td>
+					<td  height="50" colspan="2" id="user_coin"></td>
+				</tr>
+				<tr>
+					<td>Xếp hạng: </td>
+					<td  height="50" id="user_rank" colspan="2"></td>
+				</tr>
+				<tr>
+					<td>Số điện thoại: </td>
+					<td  height="50" colspan="2"><input  style="width:200px;" type="text" class="form-control"  id="user_tel" placeholder="" required></td>
+				</tr>
+				<tr>
+					<td>Địa chỉ: </td>
+					<td  height="50" colspan="2"><input  style="width:200px;" type="text" class="form-control"  id="user_addr" placeholder="" required></td>
+				</tr>
+				</table>
 				</div>
 				</div> 
         </div>
 		
         <div id="messageDialog"></div>
+		
+		<div id= "helloDialog">
+		 <label style="padding-left:9em; font-size:20px; color:red; font-weight:bold">GIỚI THIỆU</label> <br/><br/>
+         <div>
+		 Đây là hệ thống Game Cờ tướng Online do nhóm phát triển là đội ngũ 5 sinh viên Đại học Bách Khoa Hà Nội.<br/><br/>
+		 1 - <b  style="padding-left:1em; font-size:14px; color:green;"><i>Hoàng Trọng Phúc</b></i> <br/>
+		 2 - <b  style="padding-left:1em; font-size:14px; color:green;"><i>Nguyễn Tất Nguyên</b></i> <br/>
+		 3 - <b  style="padding-left:1em; font-size:14px; color:green;"><i>Nguyễn Khắc Nhất</b></i> <br/>
+		 4 - <b  style="padding-left:1em; font-size:14px; color:green;"><i>Hà Quang Ngà</b></i> <br/>
+		 5 - <b  style="padding-left:1em; font-size:14px; color:green;"><i>Thân Văn Nghĩa</b></i> <br/><br/><br/>
+		 Dưới sự hướng dẫn của thầy giáo  : <b  style="padding-left:1em; font-size:16px; color:orange;"><i> TS.Nguyễn Bình Minh</b></i> <br/><br/>
+		 <t/>32 quân cờ và hai đối thủ đối mặt với nhau trên một bàn cờ. Mỗi người đều phải tự tính toán để có được nước cờ thông minh nhất và chiến thắng hiểm hách nhất.<br/>
+		 Hãy đăng kí tài khoản và bắt đầu giao lưu và kết bạn với các cờ thủ trên mọi miền đất nước.<br/>
+		 <b>Nếu chưa có tài khoản, hãy đăng ký ngay hôm nay!</b>
+		 </div><br/>
+
+		</div>
 		
 		<div id="addCoinDialog" class="dialog">
             <form id="addCoinForm">
