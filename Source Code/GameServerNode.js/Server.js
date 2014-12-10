@@ -7,11 +7,8 @@ var SessionManagement = require('./SessionManagement.js');
 
 var http = require("http");
 var request = require('request');
-/* 	request('http://www.google.com', function (error, response, body) {
-  if (!error && response.statusCode == 200) {
-    console.log(body) // Print the google web page.
-  }
-}); */
+var urlService = "http://localhost:8080/rest/index.php"
+
 var server = http.createServer();
 var io = socket.listen(server);
 server.listen(8888);
@@ -22,6 +19,14 @@ var firstRound = 1;
 var roomList = [];
 var token = [];
 roomList = message.createSampleRooms(10);
+
+function updateMatch(Room room){
+  request(urlService + '?api=user' + '&updatematch='+ room.matchLimit +'&boss=' + room.player[0].username + '&username='+ room.player[1].username  + '&bosswin=' + room.bossWin +'&coin=' + room.coin , function (error, response, body) {
+  if (!error && response.statusCode == 200) {
+    console.log(body)
+  }
+}); 
+}
 
 io.sockets.on('connection', function (socket) {
 
@@ -124,6 +129,7 @@ io.sockets.on('connection', function (socket) {
 			socket.broadcast.to(roomList[i].ID).emit("winRoomGU",'');
 			socket.leave(roomList[i].ID);
 			roomList[i].status =4;
+			updateMatch(roomList[i]);
 			//roomList.splice(i,1);
 			}
 			else if(roomList[i].status == 0)
@@ -173,6 +179,7 @@ io.sockets.on('connection', function (socket) {
 			socket.emit('loseRoomGU','');
 			socket.broadcast.to(roomList[i].ID).emit("winRoomGU",'');
 			roomList[i].status =4;
+			updateMatch(roomList[i]);
 			//roomList.splice(i,1);
 		}
 
@@ -345,6 +352,7 @@ io.sockets.on('connection', function (socket) {
 									socket.emit('winRoom','');
 									socket.broadcast.to(roomList[k].ID).emit('loseRoom','');
 									roomList[k].status =4;
+									updateMatch(roomList[k]);
 									break;
 									}
 									else if(roomList[k].bossWin == roomList[k].matchLimit/2)
@@ -359,6 +367,7 @@ io.sockets.on('connection', function (socket) {
 									socket.emit('winRoom','');
 									socket.broadcast.to(roomList[k].ID).emit('loseRoom','');
 									roomList[k].status =4;
+									updateMatch(roomList[k]);
 								}
 								else 
 								{
@@ -379,6 +388,7 @@ io.sockets.on('connection', function (socket) {
 									socket.emit('winRoom','');
 									socket.broadcast.to(roomList[k].ID).emit('loseRoom','');
 									roomList[k].status =4;
+									updateMatch(roomList[k]);
 									break;
 									}
 									else if(roomList[k].bossWin == roomList[k].matchLimit/2)
@@ -393,6 +403,7 @@ io.sockets.on('connection', function (socket) {
 									socket.emit('winRoom','');
 									socket.broadcast.to(roomList[k].ID).emit('loseRoom','');
 									roomList[k].status =4;
+									updateMatch(roomList[k]);
 								}
 								else 
 								{
@@ -417,6 +428,7 @@ io.sockets.on('connection', function (socket) {
 									socket.emit('winRoom','');
 									socket.broadcast.to(roomList[k].ID).emit('loseRoom','');
 									roomList[k].status =4;
+									updateMatch(roomList[k]);
 									break;
 									}
 									else if(roomList[k].bossWin == roomList[k].matchLimit/2)
@@ -432,6 +444,7 @@ io.sockets.on('connection', function (socket) {
 									socket.emit('winRoom','');
 									socket.broadcast.to(roomList[k].ID).emit('loseRoom','');
 									roomList[k].status =4;
+									updateMatch(roomList[k]);
 								}
 								else 
 								{
@@ -452,6 +465,7 @@ io.sockets.on('connection', function (socket) {
 									socket.emit('winRoom','');
 									socket.broadcast.to(roomList[k].ID).emit('loseRoom','');
 									roomList[k].status =4;
+									updateMatch(roomList[k]);
 									break;
 									}
 									else if(roomList[k].bossWin == roomList[k].matchLimit/2)
@@ -466,6 +480,7 @@ io.sockets.on('connection', function (socket) {
 									socket.emit('winRoom','');
 									socket.broadcast.to(roomList[k].ID).emit('loseRoom','');
 									roomList[k].status =4;
+									updateMatch(roomList[k]);
 								}
 								else 
 								{
@@ -508,6 +523,7 @@ socket.on('giveUp',function(data){
 							player.leaveRoom();
 							socket.broadcast.to(roomList[i].ID).emit('winRoomGU','');
 							roomList[i].status =4;
+							updateMatch(roomList[i]);
 							}
 						else if(roomList[i].bossWin == roomList[i].matchLimit/2 ) 
 							{
@@ -532,6 +548,7 @@ socket.on('giveUp',function(data){
 							socket.leave(roomList[i].ID);
 							socket.broadcast.to(roomList[i].ID).emit('winRoomGU','');
 							roomList[i].status =4;
+							updateMatch(roomList[i]);
 							}
 					}
 				var dup_array = JSON.parse(JSON.stringify(roomList));
@@ -555,6 +572,7 @@ socket.on('giveUp',function(data){
 							player.leaveRoom();
 							io.to(roomList[i].ID).emit('winRoomGU','');
 							roomList[i].status =4;
+							updateMatch(roomList[i]);
 							var dup_array = JSON.parse(JSON.stringify(roomList));
 							for(var i in dup_array)
 							{
@@ -576,6 +594,7 @@ socket.on('giveUp',function(data){
 							socket.leave(roomList[i].ID);
 							socket.broadcast.to(roomList[i].ID).emit('winRoomGU','');
 							roomList[i].status =4;
+							updateMatch(roomList[i]);
 							var dup_array = JSON.parse(JSON.stringify(roomList));
 							for(var i in dup_array)
 							{
