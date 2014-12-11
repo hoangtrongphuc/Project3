@@ -510,11 +510,11 @@
 				</div>	
 			 <div id="globalChat" style="float:left;height:20%;width:20%">
 						
-                        <form onsubmit="controller.chatGlobal();">
+                        <form onsubmit="controller.chatGlobal(event);">
 							<div id= "messageInputGlobal" style="background-color:grey; font-size:11px; color:white; overflow: scroll;height:400px;width:220px"></div>
 							<br/>
                             <input id="inputGlobal" type="text">
-                            <button class="button" id="sendGlobalButton" onclick="controller.chatGlobal();">Gửi</button>
+                            <button class="button" id="sendGlobalButton" type="submit">Gửi</button>
                         </form>
              </div>
 			 
@@ -547,9 +547,9 @@
 					<br/><br/><br/>
                     <div id="messagesDiv" style="background-color:grey; font-size:11px; color:white; overflow: scroll;height:400px;width:240px"></div>
                     <div id="typeDiv">
-                        <form onsubmit="controller.chatInRoom();">
+                        <form onsubmit="controller.chatInRoom(event)">
                             <input id="messageInput" type="text">
-                            <button class="button" id="sendButton" onclick="controller.chatInRoom();">Gửi</button>
+                            <button class="button" id="sendButton" type="submit">Gửi</button>
                         </form>
                     </div>
                 </div>

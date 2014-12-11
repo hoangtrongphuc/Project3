@@ -997,6 +997,7 @@ var controller = (function () {
         console.log("onChatMessage");
     }
     function onChatRoomMessage(s){
+        console.log("onChatRoomMessage");
         var m = JSON.parse(JSON.stringify( s));
         $("#messagesDiv").append("<b style='color:yellow;'>"+m.username+":</b> "+m.message+"<br/>");
     }
@@ -1287,7 +1288,7 @@ var controller = (function () {
           //  updateRoomList(roomList);
         },
 		
-		chatGlobal: function(){
+		chatGlobal: function(event){
 			var s = $("#inputGlobal").val();
 			socket.emit('chatGlobal', {message:s});
 			$("#inputGlobal").val("");
@@ -1370,7 +1371,7 @@ var controller = (function () {
             gameStart = false;
             socket.emit('leaveRoom','');
         },
-        chatInRoom: function(){
+        chatInRoom: function(event){
             var s = $("#messageInput").val();
             console.log("chatInRoom: "+s);
             socket.emit('chatInRoom', {message : s});
