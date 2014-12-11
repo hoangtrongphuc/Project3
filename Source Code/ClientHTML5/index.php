@@ -35,7 +35,7 @@ function getCookie(cname) {
 
 <body>
 
-<?php require('layout/header.php'); ?>
+
 <?php
                               if (isset($_GET['page'])) {
                                     switch ($_GET['page']) {
