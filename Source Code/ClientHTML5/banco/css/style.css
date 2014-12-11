@@ -147,7 +147,7 @@ input{
     margin-left: auto;
     margin-right: auto;
     width: 250px;
-    min-height: 80%;
+    min-height: 500px;
     float: left;
     padding: 5px;
     background-color: white;
@@ -155,7 +155,7 @@ input{
     border-radius: 4px;
 }
 
-#user1Div, #user2Div, #timerDiv{
+#user1Div, #user2Div{
     float: top;
     height: 30%;
     width: 100%;
@@ -333,3 +333,57 @@ text-align:center;
 
 }
 
+#chatboxs{
+    position: fixed;
+    right: 0px;
+    bottom: 0px;
+    height: 300px;
+}
+
+.chatbox{
+    display: none;
+    height: 100%;
+    width: 200px;
+    float: right;
+    margin-right: 10px;
+}
+
+.chatbox-header{
+    font-weight: bold;
+    background-color: blue;
+    color: white;
+    width: 100%;
+    height: 8%;
+    border: solid 1px white;
+}
+
+.close-icon{
+    height: 100%;
+    width: 10%;
+    float: right;
+}
+
+.chatbox-name{
+    height: 100%;
+    width: 80%;
+    float: left;
+    vertical-align: central;
+}
+
+.chatbox-message{
+    height: 84%;
+    width: 100%;
+    overflow-y: scroll;
+    color: black;
+    background-color: white;
+    border: solid 1px white;
+}
+
+.chatbox-input{
+    width:100%;
+    height: 12%;
+    color: black;
+    background-color: white;
+    border: solid 1px #D3D3D3;
+    border-radius: 0px;
+}

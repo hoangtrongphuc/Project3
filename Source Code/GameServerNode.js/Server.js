@@ -20,8 +20,8 @@ var roomList = [];
 var token = [];
 roomList = message.createSampleRooms(10);
 
-function updateMatch(Room room){
-  request(urlService + '?api=user' + '&updatematch='+ room.matchLimit +'&boss=' + room.player[0].username + '&username='+ room.player[1].username  + '&bosswin=' + room.bossWin +'&coin=' + room.coin , function (error, response, body) {
+function updateMatch(room){
+  request(urlService + '?api=user' + '&updatematch='+ room.matchLimit +'&boss=' + room.players[0].username + '&username='+ room.players[1].username  + '&bosswin=' + room.bossWin +'&coin=' + room.coin , function (error, response, body) {
   if (!error && response.statusCode == 200) {
     console.log(body)
   }
@@ -621,10 +621,15 @@ socket.on('giveUp',function(data){
 });
 
 
-socket.on('chatFriend', function(data){
-	var player1  = sessionManager.getSessionByUsername(data.username1);
-	var player2  = sessionManager.getSessionByUsername(data.username2);
-	message.sendEventToAPlayer('chatmessage',{message : data.message, username : data.username1},io,sessionManager.sessions,player2);
+socket.on('chatFriend', function(data){ 
+	var player1 = sessionManager.getSessionByUsername(data.username1); 
+	var player2 = sessionManager.getSessionByUsername(data.username2); 
+	var patt = /[A-Za-z0-9_!.()#%^*]+/; 
+	if(patt.test(data.message)) { 
+		io.to(player2.userId).emit('chatmessage',data); 
+		io.to(player1.userId).emit('chatmessage',data); 
+	}
+
 });
 
 socket.on('chatGlobal', function(data){
