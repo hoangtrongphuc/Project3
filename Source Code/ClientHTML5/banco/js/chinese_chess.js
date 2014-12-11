@@ -874,27 +874,27 @@ var controller = (function () {
             }
         }
     }
-	
-	function clearListCookies()
-{   
-    var cookies = document.cookie.split(";");
-    for (var i = 0; i < cookies.length; i++)
-    {   
-        var spcook =  cookies[i].split("=");
-        deleteCookie(spcook[0]);
-    }
-    function deleteCookie(cookiename)
+
+    function clearListCookies()
     {
-        var d = new Date();
-        d.setDate(d.getDate() - 1);
-        var expires = ";expires="+d;
-        var name=cookiename;
-        //alert(name);
-        var value="";
-        document.cookie = name + "=" + value + expires + "; path=/acc/html";                    
+        var cookies = document.cookie.split(";");
+        for (var i = 0; i < cookies.length; i++)
+        {
+            var spcook = cookies[i].split("=");
+            deleteCookie(spcook[0]);
+        }
+        function deleteCookie(cookiename)
+        {
+            var d = new Date();
+            d.setDate(d.getDate() - 1);
+            var expires = ";expires=" + d;
+            var name = cookiename;
+            //alert(name);
+            var value = "";
+            document.cookie = name + "=" + value + expires + "; path=/acc/html";
+        }
+        window.location = baseURL; // TO REFRESH THE PAGE
     }
-    window.location = baseURL; // TO REFRESH THE PAGE
-}
     function onErr(id){
         switch(id){
             case "1" : showMessage("Không định danh được người dùng. Hãy chắc chắn bạn đã đăng nhập"); 
@@ -981,6 +981,7 @@ var controller = (function () {
 		 ownRoom = true;
         reset();
         document.location.hash="#roomDiv";
+        $("#messagesDiv").html("");
     }
     function onJoined(){
         console.log("onJoined");
@@ -988,14 +989,70 @@ var controller = (function () {
 		ownRoom = false;
         reset();
         document.location.hash="#roomDiv";
+        $("#messagesDiv").html("");
     }
     function onRoomFull(){
         showMessage("Phòng chơi đã đủ người, nhấn 'Sẵn sàng' để chơi");
     }
     //chat
-    function onChatMessage(){
+    function onChatMessage(data){
         console.log("onChatMessage");
+        var message = data.message;
+        var username1 = data.username1;
+        var username2 = data.username2;
+        var namebox = '';
+        if(username1 === username){
+            namebox = username2;
+        }else{
+            namebox = username1;
+        }
+        showChatbox(namebox);
+        var chatbox = $("#"+namebox+"chatbox");
+        chatbox.find(".chatbox-message").append("<b>"+username1+": </b>"+message+
+                "<br/>");
     }
+    function chatFriend(otherusername){
+        console.log("chatFriend "+otherusername);
+        var chatbox = $("#"+otherusername+"chatbox");
+        var text = chatbox.find("input").val();
+        var msob = {};
+        msob.username1 = username;
+        msob.username2 = otherusername;
+        msob.message = text;
+        console.log("message="+text);
+        socket.emit("chatFriend", msob);
+        console.log(JSON.stringify(msob));
+        chatbox.find("input").val("");
+    }
+    function showChatbox(username){
+        console.log("showChatbox "+username);
+        var chatbox = $("#"+username+"chatbox");
+        if(chatbox.length === 0){
+            createChatbox(username);
+        }else{
+            chatbox.css('display', "block");
+        }
+    }
+    function hideChatbox(username){
+        console.log("hideChatbox "+username);
+        $("#"+username+"chatbox").css("display", "none");
+    }
+    function createChatbox(username){
+        console.log("createChatbox "+username);
+        var newchatbox = $("#chatbox-template").clone();
+        newchatbox.attr('id',username+"chatbox");
+        newchatbox.find(".chatbox-name").html(username);
+        newchatbox.find(".close-icon").click(function(){
+           hideChatbox(username);
+        });
+        newchatbox.find("form").submit(function(event){
+           chatFriend(username);
+           event.preventDefault();
+        });
+        newchatbox.css('display', "block");
+        $("#chatboxs").append(newchatbox);
+    }
+    //chat in room
     function onChatRoomMessage(s){
         console.log("onChatRoomMessage");
         var m = JSON.parse(JSON.stringify( s));
@@ -1378,27 +1435,26 @@ var controller = (function () {
             $("#messageInput").val("");
             event.preventDefault();
         },
-        chatFriend: function(){
-        
+        friendClicked: function(username){
+            showChatbox(username);
         },
-		
         searchRoom: function(s){
             console.log("SearchRoom "+s);
         },
-		
-		acceptFriend: function(name){
-            console.log("AcceptFriend: "+name);
-            $.getJSON(restURL+"?api=friend&friends=1&username1="+name+"&username2="+myName+"&status=1", function(data){
-                console.log("code="+data.code);
+
+        acceptFriend: function (name) {
+            console.log("AcceptFriend: " + name);
+            $.getJSON(restURL + "?api=friend&friends=1&username1=" + name + "&username2=" + myName + "&status=1", function (data) {
+                console.log("code=" + data.code);
             });
-            $("#friendRequest"+name).remove();
-            console.log("name="+name+" : "+" otherName="+otherName);
-            if(otherName === name){
+            $("#friendRequest" + name).remove();
+            console.log("name=" + name + " : " + " otherName=" + otherName);
+            if (otherName === name) {
                 $("#friendButton").remove();
             }
             nRequest--;
-            console.log("nrequest="+nRequest);
-            if(nRequest===0){
+            console.log("nrequest=" + nRequest);
+            if (nRequest === 0) {
                 $("#requestsDialog").dialog("close");
             }
         },

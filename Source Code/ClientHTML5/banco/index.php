@@ -448,7 +448,9 @@
 						row = "<tr><td>"+stt+"</td>"+
 									"<td>"+datas.user_name+"</td>";		
 						if(datas.user_status == 0) row = row + "<td><img src='imgs/off.png' width='10' height='10'/></td></tr>";
-						else row = row + "<td><img src='imgs/on.png' width='15' height='15'/></td></tr>";
+						else {
+                                                    row = row + "<td onclick='controller.friendClicked(\""+datas.user_name+"\")'><img src='imgs/on.png' width='15' height='15'/></td></tr>";
+                                                }
 						table.append(row);	
 						stt++;
 					}
@@ -536,7 +538,7 @@
             <div id="roomDiv">
                 <div id="leftBoardDiv">
                     <div id="user1Div"></div>
-                    <div id="timerDiv" class="timer">
+                    <div id="timerDiv">
 						<div class="mask"></div>
 					</div>
                     <div id ="user2Div"></div>
@@ -672,6 +674,18 @@
 
             </form>
         </div>
-		
+        <!--chứa các chat box-->
+        <div id="chatboxs"></div>
+        <!--chat bõ mẫu-->
+        <div id="chatbox-template" class="chatbox">  <!--id trùng với tên user+chatbox -->
+            <div class="chatbox-header">
+                <div class="chatbox-name"></div>
+                <img class="close-icon" src="imgs/close-icon.png">
+            </div>
+            <div class="chatbox-message"></div>
+            <form>
+                <input type="text" class="chatbox-input">
+            </form>
+        </div>
     </body>
 </html>
