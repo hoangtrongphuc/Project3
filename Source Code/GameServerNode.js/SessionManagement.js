@@ -90,7 +90,7 @@ SessionManagement.prototype.getSessionByUserId = function(userId) {
 SessionManagement.prototype.getSessionByUsername = function(username) {
     for(var i in this.sessions) {
         if(this.sessions[i].username === username)
-            return i;
+            return this.sessions[i];
     }
     return null;
 }
