@@ -449,7 +449,7 @@
 									"<td>"+datas.user_name+"</td>";		
 						if(datas.user_status == 0) row = row + "<td><img src='imgs/off.png' width='10' height='10'/></td></tr>";
 						else {
-                                                    row = row + "<td onclick='controller.friendClicked(\""+datas.user_name+"\")'><img src='imgs/on.png' width='15' height='15'/></td></tr>";
+                                                    row = row + "<td ><button onclick='controller.friendClicked(\""+datas.user_name+"\")' class='button'>Chat</button></td></tr>";
                                                 }
 						table.append(row);	
 						stt++;
@@ -459,6 +459,7 @@
 					alert(JSON.stringify(err));
 				}
 				});
+                                setTimeout(onListFriend, 30000);
 			}
 			
             function onBeforeUnload(){
