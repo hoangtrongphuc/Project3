@@ -639,8 +639,7 @@ socket.on('chatFriend', function(data){
 	var player1 = sessionManager.getSessionByUsername(data.username1); 
 	var player2 = sessionManager.getSessionByUsername(data.username2); 
 	var patt = /[A-Za-z0-9_!.()#%^*]+/; 
-	if(patt.test(data.message)) { 
-	{
+	if(patt.test(data.message)) { 	
 		io.to(player2.userId).emit('chatmessage',data); 
 		io.to(player1.userId).emit('chatmessage',data); 
 	}
