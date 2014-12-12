@@ -21,7 +21,18 @@ var token = [];
 roomList = message.createSampleRooms(10);
 
 function updateMatch(room){
-  request(urlService + '?api=user' + '&updatematch='+ room.matchLimit +'&boss=' + room.players[0].username + '&username='+ room.players[1].username  + '&bosswin=' + room.bossWin +'&coin=' + room.coin , function (error, response, body) {
+	var userwin,userlose;
+	if(room.bossWin > room.matchLimit/2) 
+	{
+	userwin = room.player[0].username;
+	userlose = room.player[1].username;
+	}
+	else
+	{
+	userwin = room.player[1].username;
+	userlose = room.player[0].username;	
+	}
+  request(urlService + '?api=user' + '&updatematch='+ room.matchLimit +'&userwin=' + userwin + '&userlose=' + userlose +'&coin=' + room.coin , function (error, response, body) {
   if (!error && response.statusCode == 200) {
     console.log(body)
   }
@@ -31,7 +42,6 @@ function updateMatch(room){
 io.sockets.on('connection', function (socket) {
 
   socket.on('connectToServer',function(data) {
-      console.log(data.token);
     var sess = new Player(socket.id,data.token,data.username);
 	var check = sessionManager.checkUserSession(sess);
 	if(check == true) 
@@ -499,7 +509,11 @@ io.sockets.on('connection', function (socket) {
 
 socket.on('chatInRoom', function(data){
 	var player  = sessionManager.getSessionById(socket.id);
+	var patt = /[A-Za-z0-9_!.()#%^*]+/;
+	if(patt.test(data.message))
+	{
 	io.to(player.roomID).emit('chatroommessage',{message : data.message, username : player.username});
+	}
 });
 
 socket.on('giveUp',function(data){
@@ -626,6 +640,7 @@ socket.on('chatFriend', function(data){
 	var player2 = sessionManager.getSessionByUsername(data.username2); 
 	var patt = /[A-Za-z0-9_!.()#%^*]+/; 
 	if(patt.test(data.message)) { 
+	{
 		io.to(player2.userId).emit('chatmessage',data); 
 		io.to(player1.userId).emit('chatmessage',data); 
 	}
@@ -634,6 +649,8 @@ socket.on('chatFriend', function(data){
 
 socket.on('chatGlobal', function(data){
     var player  = sessionManager.getSessionById(socket.id);
+	var patt = /[A-Za-z0-9_!.()#%^*]+/;
+	if(patt.test(data.message))
 	io.sockets.emit('chatMessageGlobal',{message : data.message,username : player.username});
 });
 
