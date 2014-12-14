@@ -47,7 +47,7 @@
     		var $income_month = 1;
     		
         	$.ajax({
-        		url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+        		url : config.restURL+"admin/index.php?api=thongke",
         		type : "post",
         		dataType : "json",
         		data : "doanhthuthang="+$income_month,
@@ -78,7 +78,7 @@
     	function incomeYear(){
     		var $income_year = 1;
         	$.ajax({
-        		url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+        		url : config.restURL+"admin/index.php?api=thongke",
         		type : "post",
         		dataType : "json",
         		data : "doanhthunam="+$income_year,

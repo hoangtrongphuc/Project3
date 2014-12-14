@@ -94,9 +94,16 @@ class user_model extends model{
 	
 	//cập nhật lại kết quả trận đấu
 	public function updateMatch($user_name, $total_win, $total_lose, $total_coin){
-		$sql = "update $this->_user
-				set user_win='$total_win', user_lose='$total_lose', user_coin='$total_coin'
-				where user_name='$user_name'";
+		if($total_win == ""){
+			$sql = "update $this->_user
+					set user_lose='$total_lose', user_coin='$total_coin'
+					where user_name='$user_name'";
+		}
+		else if($total_lose == ""){
+			$sql = "update $this->_user
+					set user_win='$total_win', user_coin='$total_coin'
+					where user_name='$user_name'";
+		}
 		$this->query($sql);
 	}
 	

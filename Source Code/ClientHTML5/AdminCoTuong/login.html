@@ -45,6 +45,11 @@
             </form>
         </div>
         <script type="text/javascript">
+			var config = {
+					"restURL": "http://localhost:8080/rest/",
+					"baseURL": "http://localhost:8080/cotuong",
+					"version":  "0.0.1"
+			}
             $(document).ready(function() {
                 login();
                 function login(){
@@ -58,7 +63,7 @@
                         } else {
                         	pass = CryptoJS.MD5(pass);
                             $.ajax({
-                                url : "http://localhost:8080/rest/admin/index.php?api=login",
+                                url : config.restURL+"admin/index.php?api=login",
                                 type : "post",
                                 dataType : "json",
                                 data : "username=" + name + "&pass=" + pass,

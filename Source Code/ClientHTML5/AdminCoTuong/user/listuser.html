@@ -59,12 +59,6 @@
 		}
 	</style>
 	<script type="text/javascript">
-				//var config = {
-				//		"BASEURL": "http://localhost:8080/",
-				//		"version":  "0.0.1"
-				//}
-				//ussage:
-				// alert(config.BASEURL);
     			$(document).ready(function(){
     				function getUrlVars() {
     	         	    var vars = {};
@@ -84,7 +78,7 @@
             				$page = getUrlVars()['start'];
             			}
     	        		$.ajax({
-    	            		url : "http://localhost:8080/rest/admin/index.php?api=user",
+    	            		url : config.restURL+"admin/index.php?api=user",
     	            		type : "post",
     	            		dataType : "json",
     	            		data: "listuser="+$list+"&page_number="+$page,
@@ -189,7 +183,7 @@
             			var $list = 1;
             			if($name != ""){
 	            			$.ajax({
-	                			url : "http://localhost:8080/rest/admin/index.php?api=user",
+	                			url : config.restURL+"admin/index.php?api=user",
 	                			type : "post",
 	                			dataType : "json",
 	                			data : "search="+$abc+"&user_name="+$name,
@@ -275,7 +269,7 @@
 				        		var $delete_user = 1;
 				        		$(this).parent().parent().fadeOut("show");
 		            			$.ajax({
-		                			url : "http://localhost:8080/rest/admin/index.php?api=user",
+		                			url : config.restURL+"admin/index.php?api=user",
 		                			type : "post",
 		                			dataType : "json",
 		                			data : "deleteuser="+$delete_user+"&user_id="+$user_id,
@@ -304,7 +298,7 @@
 	                    		
 	                    		if(confirm("bạn có chắc chắn muốn mở tài khoản này không?")){
 		                    		$.ajax({
-		                    			url : "http://localhost:8080/rest/admin/index.php?api=user",
+		                    			url : config.restURL+"admin/index.php?api=user",
 		                    			type : "post",
 		                    			dataType : "json",
 		                    			data : "mouser="+$abc+"&user_id="+$id,
@@ -315,7 +309,7 @@
 		    	                			//window.location = "?page=listuser";
 		    	                			$self.attr('name',$id + 'hoạt động');
 		    	                			$self.html("hoạt động");
-		    	                			console.log($self);
+		    	                			//console.log($self);
 		                        		},
 		                    			error : function(err){
 		                    				var error = JSON.parse(JSON.stringify(err));
@@ -328,7 +322,7 @@
 
 	                			if(confirm("bạn có chắc chắn muốn ban tài khoản này không?")){
 		                			$.ajax({
-		                    			url : "http://localhost:8080/rest/admin/index.php?api=user",
+		                    			url : config.restURL+"admin/index.php?api=user",
 		                    			type : "post",
 		                    			dataType : "json",
 		                    			data : "banuser="+$abc+"&user_id="+$id,
@@ -339,7 +333,7 @@
 		    	                			//window.location = "?page=listuser";
 		    	                			$self.attr('name',$id+'ban');
 		    	                			$self.html("ban");
-		    	                			console.log($self);
+		    	                			//console.log($self);
 		                        		},
 		                    			error : function(err){
 		                    				var error = JSON.parse(JSON.stringify(err));
@@ -355,7 +349,7 @@
 							var $abc = 1;
 	                    	if(so_xu > 0 && !isNaN(so_xu)){
 	                    		$.ajax({
-	                    			url : "http://localhost:8080/rest/admin/index.php?api=user",
+	                    			url : config.restURL+"admin/index.php?api=user",
 	                    			type : "post",
 	                    			dataType : "json",
 	                    			data : "thuongxu="+$abc+"&user_id="+$id+"&so_xu="+so_xu,

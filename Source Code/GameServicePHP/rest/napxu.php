@@ -9,7 +9,8 @@ if(!empty($array['xu']) && !empty($array['user_id']) && !empty($array['provider'
 		$provider = strtolower($array['provider']);
 		$code = $array['code'];
 		$serial = $array['serial'];
-		$date = $array['date'];
+		$date = date_create($array['date']);
+		$date = date_format($date, 'Y-m-d H:i:s');
 		
 		$ktMaThe = $napxu_model->ktMaThe($provider, $code, $serial);
 		
@@ -53,7 +54,7 @@ if(!empty($array['xu']) && !empty($array['user_id']) && !empty($array['provider'
 else if(!empty($array['checkxu']) && !empty($array['user_id']) && !empty($array['coin'])){
 	if(preg_match($napxu_model::$regular_expression['number'], $array['user_id']) && preg_match($napxu_model::$regular_expression['number'], $array['coin'])){
 		$id = $array['user_id'];
-		$coin = $array['user_coin'];
+		$coin = $array['coin'];
 		
 		$checkxu = $napxu_model->checkXu($id, $coin);
 		if($checkxu == true){

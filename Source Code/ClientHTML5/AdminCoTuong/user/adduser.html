@@ -84,7 +84,7 @@
 
             	//kiểm tra xong
             	$.ajax({
-                	url : "http://localhost:8080/rest/admin/index.php?api=user",
+                	url : config.restURL+"admin/index.php?api=user",
                 	type : "post",
                 	dataType : "json",
                 	data : "insertuser="+$insert+"&name="+$name+"&pass="+$pass+"&fullname="+$fullname

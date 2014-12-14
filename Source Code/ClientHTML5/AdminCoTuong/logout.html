@@ -6,6 +6,11 @@
 </head>
 <script src="style/js/jquery-1.11.1.min.js" type="text/javascript"></script>
 <script type="text/javascript">
+	var config = {
+					"restURL": "http://localhost:8080/rest/",
+					"baseURL": "http://localhost:8080/cotuong",
+					"version":  "0.0.1"
+			}
 	$(document).ready(function(){
 		logout();
 		function getCookie(cname) {
@@ -23,7 +28,7 @@
 		function logout(){
 			var id = getCookie("cookie_id");
 			$.ajax({
-				url : "http://localhost:8080/rest/admin/index.php?api=logout",
+				url : config.restURL+"admin/index.php?api=logout",
 				type : "post",
 				dataType : "json",
 				data : "user_id="+id,

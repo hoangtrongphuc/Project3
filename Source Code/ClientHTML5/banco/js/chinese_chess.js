@@ -1463,7 +1463,7 @@ var controller = (function () {
 		
         rejectFriend: function(name){
             console.log("rejectFriend: "+name);
-            $.getJSON(restURL+"?api=friend&friends=1&username1="+name+"&username2="+name+"&status=2", function(){
+            $.getJSON(restURL+"?api=friend&friends=1&username1="+name+"&username2="+myName+"&status=2", function(){
                 
             });
             $("#friendRequest"+name).remove();
@@ -1475,6 +1475,16 @@ var controller = (function () {
             if(nRequest===0){
                 $("#requestsDialog").dialog("close");
             }
-        }
+        },
+		checkXu: function(id,coin, ob){
+			$.getJSON(restURL+"?api=napxu&checkxu=1&user_id="+id+"&coin="+coin, function(result){
+				if(result.code === 0){
+					 controller.addRoom(ob);
+				}
+				else{
+					alert(result.data);
+				}
+			});
+		}
     };
 }());
