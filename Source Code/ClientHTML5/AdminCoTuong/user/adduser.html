@@ -26,10 +26,10 @@
 							</tr>
 							<tr>
 								<td>&nbsp;&nbsp;Xác nhận mật khẩu:</td>
-								<td><input type="password" id="repass" size="30"/></td>
+								<td><input type="password" id="repass" size="30"/>*</td>
 							</tr>
 							<tr>
-								<td>&nbsp;&nbsp;Tên đầy đủ <span style="color: red">*</span>:</td>
+								<td>&nbsp;&nbsp;Tên đầy đủ <span style="color: red"></span>:</td>
 								<td><input type="text" id="fullname" size="30"/></td>
 							</tr>
 							<tr>
@@ -40,11 +40,11 @@
 								</td>
 							</tr>
 							<tr>
-								<td>&nbsp;&nbsp;Số điện thoại <span style="color: red">*</span>:</td>
+								<td>&nbsp;&nbsp;Số điện thoại <span style="color: red"></span>:</td>
 								<td><input type="text" id="tel" size="30""/></td>
 							</tr>
 							<tr>
-								<td>&nbsp;&nbsp;Địa chỉ <span style="color: red">*</span>:</td>
+								<td>&nbsp;&nbsp;Địa chỉ <span style="color: red"></span>:</td>
 								<td><input type="text" id="address" size="30""/></td>
 							</tr>
 							<tr>
@@ -75,12 +75,35 @@
             	var $email = $("#email").val();
 				var $insert = 1;
 				
-            	if($pass != $repass){
+            	$email = $email.trim().toLowerCase();
+				var stremail = /^[a-z]{1}[a-zA-Z0-9.]{2,}@[a-zA-Z0-9-_]{2,10}\.[a-zA-Z]{2,5}$/;
+				var strusername = /^[a-zA-Z0-9]\w+[a-zA-Z0-9]$/;
+				
+				//kiểm tra
+				if($name == "" || $pass == "" || $repass == "" || $email == ""){
+					alert("không được để các trường * trống");
+					return false;
+				}
+				else if($name.length <6 || $name.length >32){
+					alert('Tài khoản phải lớn hơn 6 và nhỏ hơn 32 kí tự');
+					return false;
+				}
+				else if($pass.length <6 || $pass.length >32 ){
+					alert('mật khẩu quá ngắn hoặc quá dài');
+					return false;
+				}
+				else if($pass != $repass){
+            		alert("mật khẩu không khớp nhau");
                 	return false;
             	}
-            	//hàm kiểm tra
-				
-
+				else if(stremail.test($email) == false){
+					alert('lỗi email không hợp lệ');
+					return false;
+				}
+				else if(strusername.test($name) == false){
+					alert('lỗi tài khoản không hợp lệ');
+					return false;
+				}
 
             	//kiểm tra xong
             	$.ajax({

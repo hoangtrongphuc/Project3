@@ -80,14 +80,13 @@ class user_model extends model{
 	
 	//changeinfo
 	//cập nhật lại pass khi người chơi đổi mật khẩu
-	public function updateInfo($username, $pass, $fullname, $gender, $phone, $address, $email){
-		if($pass == ""){
-			$sql = "update $this->_user set user_fullName='$fullname',user_gender='$gender',user_tel='$phone',
-					user_address='$address',user_email='$email' where user_name='$username'";
-		}else{
-			$sql = "update $this->_user set user_pass='$pass',user_fullName='$fullname',user_gender='$gender',user_tel='$phone',
-					user_address='$address',user_email='$email' where user_name='$username'";
-		}
+	public function upatePass($id, $pass){
+		$sql  = "update $this->_user set user_pass = '$pass' where user_id='$id'";
+		$this->query($sql);
+	}
+	public function updateInfo($username, $fullname, $gender, $phone, $address, $email){
+		$sql = "update $this->_user set user_fullName='$fullname',user_gender='$gender',user_tel='$phone',
+				user_address='$address',user_email='$email' where user_name='$username'";		
 		$this->query($sql);
 	}
 	//end-changeinfo

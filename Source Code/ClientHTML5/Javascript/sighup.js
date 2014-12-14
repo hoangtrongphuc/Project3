@@ -82,16 +82,16 @@ $(document).ready(function(e) {
 					else if(pass != repass){
 						//$('#error-user').show();
 						alert('lỗi mật khẩu không khớp');
-						return false
+						return false;
 					}
 					else if(stremail.test(email) == false){
 						//$('#error-user').show();
 						alert('lỗi email không hợp lệ');
-						return false
+						return false;
 					}
 					else if(strusername.test(name) == false){
 						alert('lỗi tài khoản không hợp lệ');
-						return false
+						return false;
 					}
 					
 					pass = CryptoJS.MD5(pass);

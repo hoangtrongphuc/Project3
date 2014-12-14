@@ -170,21 +170,19 @@
                            
                         },
                         "Lưu": function(){
-											var Name, Email,Gender,Address,Tel;
-						if($("#user_name").val() !== "" ) Name = $("#user_name").val();
-						else Name = $("#user_name").attr("placeholder");
-						if($("#user_email").val() !== "" ) Email = $("#user_email").val();
-						else Email = $("#user_email").attr("placeholder");
-						if($("#user_gender").val() !== "" ) Gender = $("#user_gender").val();
-						else Gender = $("#user_gender").attr("placeholder");
-						if($("#user_addr").val() !== "" ) Address = $("#user_addr").val();
-						else Address = $("#user_addr").attr("placeholder");
-						if($("#user_tel").val() !== "" ) Tel = $("#user_tel").val();
-						else Tel = $("#user_tel").attr("placeholder");
-                            controller.changeInfo(Name,Email,Gender,Address,Tel);
-                            $("#inforDialog").dialog("close");
-						
-
+							var Name, Email,Gender,Address,Tel;
+							if($("#user_name").val() !== "" ) Name = $("#user_name").val();
+							else Name = $("#user_name").attr("placeholder");
+							if($("#user_email").val() !== "" ) Email = $("#user_email").val();
+							else Email = $("#user_email").attr("placeholder");
+							if($("#user_gender").val() !== "" ) Gender = $("#user_gender").val();
+							else Gender = $("#user_gender").attr("placeholder");
+							if($("#user_addr").val() !== "" ) Address = $("#user_addr").val();
+							else Address = $("#user_addr").attr("placeholder");
+							if($("#user_tel").val() !== "" ) Tel = $("#user_tel").val();
+							else Tel = $("#user_tel").attr("placeholder");
+								controller.changeInfo(Name,Email,Gender,Address,Tel);
+								$("#inforDialog").dialog("close");
                         }
                     },
                     title: "Thông tin tài khoản",

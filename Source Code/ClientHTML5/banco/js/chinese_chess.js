@@ -1420,7 +1420,13 @@ var controller = (function () {
 
 		 changeInfo: function(Name,Email,Gender,Address,Tel){
              $.getJSON(restURL+"?api=changeinfo&username=" +getCookie('cookie_username')+"&fullname="+Name+"&gender="+Gender+"&phone="+Tel+"&address="+Address+"&email="+Email, function(result){
-				alert(JSON.stringify(result));
+				//alert(JSON.stringify(result));
+				if(result.code == 0){
+					alert("cập nhật thành công");
+				}
+				else{
+					alert(result.data);
+				}
 			});
         },
 		
