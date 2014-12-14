@@ -50,6 +50,7 @@
 						var roomCoin = document.forms["newRoomForm"]["roomCoin"].value;
 						var roomPass = document.forms["newRoomForm"]["roomPass"].value;
 						var check = /^\d+$/i;
+						
 						if (roomName == null || roomName =="") {
 						alert("Thiếu tên phòng chơi");
 						document.forms["newRoomForm"]["roomName"].focus();
@@ -71,7 +72,8 @@
                             ob.match = $("#roomMatch").val();
                             ob.coin = $("#roomCoin").val();
                             ob.pass = $("#roomPass").val();
-                            controller.addRoom(ob);
+							//checkXu
+                            controller.checkXu(getcookie_id, roomCoin, ob);
                             $("#newRoomDialog").dialog("close");
 							}
                         }
@@ -554,7 +556,7 @@
                 <div id="leftBoardDiv">
                     <div id="user1Div"></div>
                     <div id="timerDiv">
-						<div class="mask"></div>
+						<!-- <div class="mask"></div> -->
 					</div>
                     <div id ="user2Div"></div>
                 </div>
