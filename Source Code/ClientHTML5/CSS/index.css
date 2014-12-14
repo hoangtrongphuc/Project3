@@ -139,13 +139,18 @@ h3{
 	box-shadow: 6px -5px 27px 0px rgba(0,0,0,0.75);
 } 
 
-#signin
-{ 	
+#signin{ 	
 	 width: 400px;
 	 height: 400px;
 	 overflow:hidden;
 	 margin:0 auto;
-} 
+}
+#forgetpass{
+	margin:0 auto;
+	padding:50px;
+	width:400px;
+	height:400px;
+}
 #intro
 { 
 	 left: 642px; 
@@ -163,7 +168,7 @@ h3{
 	margin:0px 10px 5px 20px;
 	
 }
-#username1,#pass1,#repass,#email{
+#username1,#pass1,#repass,#email,#fuser,#femail{
 	margin:5px 10px;
 	width:230px;
 	height:25px;
