@@ -12,10 +12,10 @@
                                 <li>
                                     <span class="navbot_links"><a href="" title="Sự kiện">Sự kiện </a></span>
                                     <span class="navbot_links"><a href="" title="Tin tức">Tin tức </a></span>
-                                    <span class="navbot_links"><a href="https://www.facebook.com/Congdong " title="Cộng đồng" target="_blank">Cộng đồng</a> </span>
+                                    <span class="navbot_links"><a href="https://www.facebook.com/cotuongbkk56" title="Cộng đồng" target="_blank">Cộng đồng</a> </span>
                                 </li>
                                 <li>
-                                    <span class="navbot_links"><a href="/dich-vu" title="Dịch vụ">Dịch vụ</a> </span>
+                                    <span class="navbot_links"><a href="" title="Dịch vụ">Dịch vụ</a> </span>
                                     <span class="navbot_links"><a href="" title="Hỗ trợ" target="_blank">Hỗ trợ</a> </span>
                                     <span class="navbot_links"><a href="" title="Hỏi đáp">Hỏi đáp</a> </span>
                                 </li>
