@@ -9,7 +9,8 @@ if(!empty($array['xu']) && !empty($array['user_id']) && !empty($array['provider'
 		$provider = strtolower($array['provider']);
 		$code = $array['code'];
 		$serial = $array['serial'];
-		$date = $array['date'];
+		$date = date_create($array['date']);
+		$date = date_format($date, 'Y-m-d H:i:s');
 		
 		$ktMaThe = $napxu_model->ktMaThe($provider, $code, $serial);
 		
