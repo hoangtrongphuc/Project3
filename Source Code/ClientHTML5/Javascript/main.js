@@ -6,7 +6,7 @@ $(document).ready(function() {
 	setTimeout(function zxc()
 	{
 	$('#submit-login').css({
-	'transform':'scale(1.15)',
+	'transform':'scale(0.95)',
 	'font-size':'20px'
 	});
 	smaller();
@@ -17,7 +17,7 @@ $(document).ready(function() {
 		setTimeout(function zxc()
 	{
 	$('#submit-login').css({
-	'transform':'scale(1.05)',
+	'transform':'scale(0.85)',
 	'font-size':'20px'
 	});
 	bigger();
@@ -80,5 +80,22 @@ $(document).ready(function() {
     		}
         });
     }
+ 
+  $(".various").fancybox({ 
+            maxWidth    : 400,//set chiều rộng  tối đa của box tính bằng px 
+            maxHeight   : 400, //set chiều cao tối đa của box 
+            width       : '100%', 
+            height            : '100%', 
+            autoSize    : false,// tự động resize 
+            closeClick  : false, // khi click vào ngoài màn hình sẽ đóng box 
+            openEffect  : 'none', 
+            closeEffect : 'none',
+                helpers : { 
+                  media : {} 
+            } 
+  
+      }); 
+ 
+ 
     
 });
