@@ -48,7 +48,7 @@
 
                 	//kiểm tra xong
                 	$.ajax({
-                    	url : "http://localhost:8080/rest/admin/index.php?api=event",
+                    	url : config.restURL+"admin/index.php?api=event",
                     	type : "post",
                     	dataType : "json",
                     	data : "insertevent="+$insert+"&title="+$title+"&info="+$info+"&start="+$start+"&finish="+$finish,

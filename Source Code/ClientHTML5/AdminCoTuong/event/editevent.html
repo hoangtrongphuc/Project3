@@ -25,7 +25,7 @@
     		var $id = getUrlVars()["id"];
     		var $edit = 1;
     		$.ajax({
-    			url : "http://localhost:8080/rest/admin/index.php?api=event",
+    			url : config.restURL+"admin/index.php?api=event",
     			type : "post",
     			dataType : "json",
     			data: "getevent="+$edit+"&event_id="+$id,
@@ -83,7 +83,7 @@
 				var $finish = $("#finish").val();
 				var $edit = 1;
 				$.ajax({
-					url : "http://localhost:8080/rest/admin/index.php?api=event",
+					url : config.restURL+"admin/index.php?api=event",
 					type : "post",
 					dataType : "json",
 					data : "editevent="+$edit+"&event_id="+$id+"&title="+$title+"&info="+$info+"&start="+$start+"&finish="+$finish,

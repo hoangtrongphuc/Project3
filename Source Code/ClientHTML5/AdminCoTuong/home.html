@@ -42,7 +42,7 @@
     	function listUser(){
     		var $list = 1;
     		$.ajax({
-        		url : "http://localhost:8080/rest/admin/index.php?api=user",
+        		url : config.restURL+"admin/index.php?api=user",
         		type : "post",
         		dataType : "json",
         		data: "homelistuser="+$list,

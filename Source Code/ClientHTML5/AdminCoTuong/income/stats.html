@@ -49,7 +49,7 @@
 			function userOnline(){
 				var $online = 1;
 				$.ajax({
-					url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+					url : config.restURL+"admin/index.php?api=thongke",
 					type : "post",
 					dataType : "json",
 					data : "useronline="+$online,
@@ -67,7 +67,7 @@
 			function sumAllUser(){
 				var $alluser = 1;
 				$.ajax({
-					url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+					url : config.restURL+"admin/index.php?api=thongke",
 					type : "post",
 					dataType : "json",
 					data : "alluser="+$alluser,
@@ -85,7 +85,7 @@
 			function userBan(){
 				var $userban = 1;
 				$.ajax({
-					url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+					url : config.restURL+"admin/index.php?api=thongke",
 					type : "post",
 					dataType : "json",
 					data : "userban="+$userban,
@@ -103,7 +103,7 @@
 			function countFeedBack(){
 				var $countgopy = 1;
 				$.ajax({
-					url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+					url : config.restURL+"admin/index.php?api=thongke",
 					type : "post",
 					dataType : "json",
 					data : "thongkefeedback="+$countgopy,
@@ -121,7 +121,7 @@
 			function countEvent(){
 				var $countevent = 1;
 				$.ajax({
-					url : "http://localhost:8080/rest/admin/index.php?api=thongke",
+					url : config.restURL+"admin/index.php?api=thongke",
 					type : "post",
 					dataType : "json",
 					data : "thongkeevent="+$countevent,

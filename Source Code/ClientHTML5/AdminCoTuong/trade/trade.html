@@ -63,7 +63,7 @@
     				$page = getUrlVars()['start'];
     			}
         		$.ajax({
-            		url : "http://localhost:8080/rest/admin/index.php?api=trade",
+            		url : config.restURL+"admin/index.php?api=trade",
             		type : "post",
             		dataType : "json",
             		data: "listtrade="+$list+"&page_number="+$page,
@@ -136,7 +136,7 @@
        			var $list = 1
        			if($name != ""){
    	    			$.ajax({
-   	            		url : "http://localhost:8080/rest/admin/index.php?api=trade",
+   	            		url : config.restURL+"admin/index.php?api=trade",
    	            		type : "post",
    	            		dataType : "json",
    	            		data: "searchtrade="+$list+"&user_name="+$name,

@@ -56,7 +56,7 @@
     				$page = getUrlVars()['start'];
     			}
         		$.ajax({
-            		url : "http://localhost:8080/rest/admin/index.php?api=feedback",
+            		url : config.restURL+"admin/index.php?api=feedback",
             		type : "post",
             		dataType : "json",
             		data: "listfeedback="+$list+"&page_number="+$page,
@@ -125,7 +125,7 @@
             			$(this).parent().parent().fadeOut("show");
             			var $delete = 1;
         				$.ajax({
-        					url : "http://localhost:8080/rest/admin/index.php?api=feedback",
+        					url : config.restURL+"admin/index.php?api=feedback",
         					type : "post",
         					dataType : "json",
         					data : "deletefeedback="+$delete+"&feedback_id="+$id,

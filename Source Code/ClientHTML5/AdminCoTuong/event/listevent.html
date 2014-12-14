@@ -63,7 +63,7 @@
 				$page = getUrlVars()['start'];
 			}
     		$.ajax({
-        		url : "http://localhost:8080/rest/admin/index.php?api=event",
+        		url : config.restURL+"admin/index.php?api=event",
         		type : "post",
         		dataType : "json",
         		data: "listevent="+$list+"&page_number="+$page,
@@ -134,7 +134,7 @@
 			var $list = 1;
 			if($title != ""){
 				$.ajax({
-		    		url : "http://localhost:8080/rest/admin/index.php?api=event",
+		    		url : config.restURL+"admin/index.php?api=event",
 		    		type : "post",
 		    		dataType : "json",
 		    		data: "searchevent="+$list+"&event_title="+$title,
@@ -192,13 +192,13 @@
 	    			var $delete = 1;
 	    			$(this).parent().parent().fadeOut("show");
     				$.ajax({
-    					url : "http://localhost:8080/rest/admin/index.php?api=event",
+    					url : config.restURL+"admin/index.php?api=event",
     					type : "post",
     					dataType : "json",
     					data : "deleteevent="+$delete+"&event_id="+$id,
     					async : false,
     					success : function(result){
-    						alert(JSON.stringify(result));
+    						//alert(JSON.stringify(result));
     					},
     					error : function(err){
     						alert(JSON.stringify(err));
