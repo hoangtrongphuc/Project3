@@ -402,6 +402,15 @@
 			});
 			}
 			
+			Date.prototype.yyyymmddhhiiss = function() {
+			   var yyyy = this.getFullYear().toString();
+			   var mm 	= (this.getMonth()+1).toString(); // getMonth() is zero-based
+			   var dd  	= this.getDate().toString();
+			   var hh  	= this.getHours().toString();
+			   var ii	= this.getMinutes().toString();
+			   var ss	= this.getSeconds().toString();
+			   		return yyyy +"-"+ (mm[1]?mm:"0"+mm[0]) +"-"+ (dd[1]?dd:"0"+dd[0]) +" "+ hh +":"+ ii +":"+ ss; // padding
+			};
 			
 			function onAddCoin()
 			{
@@ -410,8 +419,8 @@
 			var code = $("#secretCode").val();
 			var serial = $("#serialNumber").val();
 			var xu = 1;
-			var date = new Date();
-			ngay = date.getDate();
+			var d = new Date();
+			var ngay = d.yyyymmddhhiiss();
 		
 			$.ajax({
 			url : "http://localhost:8080/rest/index.php?api=napxu",
@@ -420,7 +429,12 @@
 			data : "xu="+xu+"&user_id="+id+"&provider="+provider+"&code="+code+"&serial="+serial+"&date="+ngay,
 			async : false,
 			success : function(result){
-				alert(result.data);
+				if(result.code == 0){
+					alert('Nạp thẻ thành công');
+				}
+				else{
+					alert(result.data);
+				}
 			},
 			error : function(err){
 				alert(JSON.stringify(err));
@@ -661,9 +675,9 @@
             <form id="addCoinForm">
                 <label>Nhà cung cấp: </label> 
                 <select id = "coinProvider">
-				<option value="volvo">Viettel</option>
-				<option value="saab">Vinaphone</option>
-				<option value="mercedes">Mobiphone</option>
+				<option value="viettel">Viettel</option>
+				<option value="vinaphone">Vinaphone</option>
+				<option value="mobiphone">Mobiphone</option>
 				</select>
 				<br/>
 				<br/>
