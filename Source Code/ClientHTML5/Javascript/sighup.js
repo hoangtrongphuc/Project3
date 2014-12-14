@@ -60,7 +60,9 @@ $(document).ready(function(e) {
 			var pass = $('#pass1').val();
 			var repass = $('#repass').val();
 			var email = $('#email').val();
-				//alert("name");
+			email = email.trim().toLowerCase();
+			var stremail = /^[a-z]{1}[a-zA-Z0-9.]{2,}@[a-zA-Z0-9-_]{2,10}\.[a-zA-Z]{2,5}$/;
+			var strusername = /^[a-zA-Z0-9]\w+[a-zA-Z0-9]$/;
 		    if(name == '' || pass == '' || repass == ''){
 			   $('#error-all').html("Bạn cần nhập đầy đủ thông tin");
 					//return false;
@@ -69,39 +71,53 @@ $(document).ready(function(e) {
 					//alert('sau eror');
 					if(name.length <6 || name.length >32){
 						
-						alert('loi tai khoan');
+						alert('Tài khoản phải lớn hơn 6 và nhỏ hơn 32 kí tự');
 						return false;
 					}
 					else if(pass.length <6 || pass.length >32 ){
-						$('#error-user').show();
-						alert('mat khau quan ngan hoacj qua dai');
+						//$('#error-user').show();
+						alert('mật khẩu quá ngắn hoặc quá dài');
 						return false;
 					}
 					else if(pass != repass){
-						$('#error-user').show();
-						alert('loi mat khau khong khop');
+						//$('#error-user').show();
+						alert('lỗi mật khẩu không khớp');
 						return false
 					}
-						pass = CryptoJS.MD5(pass);
-						// muối thêm bit muối vào pass
-						pass= String(pass);
-						var newpass = pass.charAt(0)+pass;
-						var str = name+newpass+tokenkey1;
-						var signal = CryptoJS.MD5(str);
-						
-						alert(newpass);
-						$.ajax({
-							url	: "http://localhost:8080/rest/index.php?api=register", // Nơi nhận dữ liệu
-							type  : "post", // Phương thức truyền dữ liệu
-							data  : "user_name="+name+"&user_pass="+newpass+"&user_email="+email+"&signal="+signal, // Dữ liệu cần truyền sang PHP
-							async : false,
-							success : function(result){ // Nhận kết quả trả về từ PHP				
-								alert(JSON.stringify(result));
-							},
-							error : function(err){
-								alert(JSON.stringify(err));
+					else if(stremail.test(email) == false){
+						//$('#error-user').show();
+						alert('lỗi email không hợp lệ');
+						return false
+					}
+					else if(strusername.test(name) == false){
+						alert('lỗi tài khoản không hợp lệ');
+						return false
+					}
+					
+					pass = CryptoJS.MD5(pass);
+					// muối thêm bit muối vào pass
+					pass= String(pass);
+					var newpass = pass.charAt(0)+pass;
+					var str = name+newpass+tokenkey1;
+					var signal = CryptoJS.MD5(str);
+					
+					$.ajax({
+						url	: "http://localhost:8080/rest/index.php?api=register", // Nơi nhận dữ liệu
+						type  : "post", // Phương thức truyền dữ liệu
+						data  : "user_name="+name+"&user_pass="+newpass+"&user_email="+email+"&signal="+signal, // Dữ liệu cần truyền sang PHP
+						async : false,
+						success : function(result){ // Nhận kết quả trả về từ PHP				
+							if(result.code == 0){
+								alert("Đăng ký thành công");
 							}
-						});
+							else{
+								alert(result.data);
+							}
+						},
+						error : function(err){
+							alert(JSON.stringify(err));
+						}
+					});
 					
 			   }
 			});
