@@ -21,22 +21,28 @@ if(!empty($array['getuser']) && !empty($array['username'])){
 		$user_model->deliver_response($response);
 	}
 }
-else if(!empty($array['updatematch']) && !empty($array['user_name']) && !empty($array['win']) && !empty($array['lose']) && !empty($array['coin'])){
-	if(preg_match($user_model::$regular_expression['username'], $array['user_name']) && preg_match($user_model::$regular_expression['number'], $array['win']) 
-		&& preg_match($user_model::$regular_expression['number'], $array['lose']) && preg_match($user_model::$regular_expression['number'], $array['coin'])){
-		$user_name = $array['user_name'];
-		$win = $array['win'];
-		$lose = $array['lose'];
-		$coin = $array['coin'];
+else if(!empty($array['updatematch']) && !empty($array['userwin']) && !empty($array['userlose']) && !empty($array['coin'])){
+	if(preg_match($user_model::$regular_expression['username'], $array['userwin']) && preg_match($user_model::$regular_expression['username'], $array['userlose']) 
+		&& preg_match($user_model::$regular_expression['number'], $array['coin'])){
 		
-		$getuser = $user_model->getUserName($user_name);
+		$userwin = $array['userwin'];
+		$userlose = $array['userlose'];
+		$coin = $array['coin'];
 	
-		//tính toán
-		$total_win = $win + $getuser['user_win'];
-		$total_lose = $lose + $getuser['user_lose'];
-		$total_coin = $coin + $getuser['user_coin'];
+		//tính toán cho người thắng
+		$getuserwin = $user_model->getUserName($userwin);
+		
+		$total_win1 = $getuserwin['user_win'] + 1;
+		$total_coin1 = $coin + $getuserwin['user_coin'];
+		
+		//tính toán cho người thua
+		$getuserlose = $user_model->getUserName($userlose);
+		
+		$total_lose2 = $getuserlose['user_lose'] - 1;
+		$total_coin2 = $getuserlose['user_coin'] - $coin;
 		//update
-		$user_model->updateMatch($user_name, $total_win, $total_lose, $total_coin);
+		$user_model->updateMatch($userwin, $total_win1," ", $total_coin1);
+		$user_model->updateMatch($userlose," ", $total_lose2, $total_coin2);
 		
 		$response['code'] = 0;
 		$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];
