@@ -12,7 +12,7 @@ if(!empty($array['username']) && !empty($array['email'])){
 		$email = $array['email'];
 		
 		//kiểm tra 
-		$checkemail = $user_model->ktEmailChangInfo($username, $email);
+		$checkemail = $user_model->ktEmailChangeInfo($username, $email);
 		if($checkemail == true){
 			$response['code'] = 7;
 			$response['status'] = $user_model::$api_response_code[ $response['code'] ]['HTTP Response'];

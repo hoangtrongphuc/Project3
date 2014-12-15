@@ -89,7 +89,7 @@ class user_model extends model{
 				user_address='$address',user_email='$email' where user_name='$username'";		
 		$this->query($sql);
 	}
-	public function ktEmailChangInfo($username, $email){
+	public function ktEmailChangeInfo($username, $email){
 		$sql = "select * from $this->_user where user_name != '$username' and user_email = '$email'";
 		$this->query($sql);
 		
