@@ -37,8 +37,8 @@ class event_model extends adminmodel{
 		return $this->fetchAll();
 	}
 	
-	public function insert($title, $info, $start, $finish){
-		$sql = "insert into $this->_event(event_title, event_info, event_start, event_finish) values('$title', '$info', '$start', '$finish')";
+	public function insert($title, $info, $status, $start, $finish){
+		$sql = "insert into $this->_event(event_title, event_info, event_status, event_start, event_finish) values('$title', '$info', '$status', '$start', '$finish')";
 		$this->query($sql);
 	}
 	
@@ -57,5 +57,14 @@ class event_model extends adminmodel{
 		$this->query($sql);
 		
 		return $this->fetchAll();
+	}
+	public function showEvent($id){
+		$sql = "update $this->_event set event_status='1' where event_ID='$id'";
+		$this->query($sql);
+	}
+	
+	public function hideEvent($id){
+		$sql = "update $this->_event set event_status='0' where event_ID='$id'";
+		$this->query($sql);
 	}
 }

@@ -73,8 +73,8 @@ else if(!empty($array['insertevent']) && !empty($array['title']) && !empty($arra
 		$event_model->deliver_response($response);
 	}
 	else{
-	
-		$event_model->insert($title, $info, $start, $finish);
+		$status = 1;
+		$event_model->insert($title, $info, $status, $start, $finish);
 		
 		$response['code'] = 0;
 		$response['status'] = $event_model::$api_response_code[ $response['code'] ]['HTTP Response'];
@@ -143,6 +143,40 @@ else if(!empty($array['searchevent']) && !empty($array['event_title'])){
 		$response['code'] = 0;
 		$response['status'] = $event_model::$api_response_code[ $response['code'] ]['HTTP Response'];
 		$response['data'] = $data;
+		$event_model->deliver_response($response);
+	}
+	else{
+		$response['code'] = 15;
+		$response['status'] = $event_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+		$response['data'] = $event_model::$api_response_code[ $response['code'] ]['Message'];
+		$event_model->deliver_response($response);
+	}
+}
+else if(!empty($array['showevent']) && !empty($array['user_id'])){
+	if(preg_match($event_model::$regular_expression['number'], $array['user_id'])){
+		$id = $array['user_id'];
+		$event_model->showEvent($id);
+
+		$response['code'] = 0;
+		$response['status'] = $event_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+		$response['data'] = $event_model::$api_response_code[ $response['code'] ]['Message'];
+		$event_model->deliver_response($response);
+	}
+	else{
+		$response['code'] = 15;
+		$response['status'] = $event_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+		$response['data'] = $event_model::$api_response_code[ $response['code'] ]['Message'];
+		$event_model->deliver_response($response);
+	}
+}
+else if(!empty($array['hideevent']) && !empty($array['user_id'])){
+	if(preg_match($event_model::$regular_expression['number'], $array['user_id'])){
+		$id = $array['user_id'];
+		$event_model->hideEvent($id);
+
+		$response['code'] = 0;
+		$response['status'] = $event_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+		$response['data'] = $event_model::$api_response_code[ $response['code'] ]['Message'];
 		$event_model->deliver_response($response);
 	}
 	else{
