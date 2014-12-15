@@ -30,6 +30,7 @@
 							<th width="50" height="30">STT</th>
 							<th width="150">Tên sự kiện</th>
 							<th width="400">Chi tiết sự kiện</th>
+							<th width="50">Trạng thái</th>
 							<th width="150">Ngày bắt đầu</th>
 							<th width="150">Ngày kết thúc</th>
 						</tr>
@@ -110,11 +111,18 @@
 	        		var jsonData = JSON.parse(JSON.stringify(e));
 	        		for(var i=0 ; i<jsonData.data.length ; i++){
 	            		var datas = jsonData.data[i];
+						if(datas.event_status == 1){
+                			datas.event_status = "show";
+                		}
+                		else{
+                			datas.event_status = "hide";
+                		}
 	            		$(".home_list_event").append(	 
 			            		"<tr>"+
 			            			"<th>"+$list+"</th>"+
 			            			"<th>"+datas.event_title+"</th>"+
 			            			"<th>"+datas.event_info+"</th>"+
+									"<th>"+datas.event_status+"</th>"+
 			            			"<th>"+datas.event_start+"</th>"+
 			            			"<th>"+datas.event_finish+"</th>"+
 			            		"</tr>");

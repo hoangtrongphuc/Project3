@@ -17,6 +17,7 @@
 								<th width="30" height="30">STT</th>
 								<th width="120">Tiêu đề</th>
 								<th width="250">Nội dụng</th>
+								<th width="50">Trạng thái</th>
 								<th width="80">Thời gian bắt đầu</th>
 								<th width="80">Thời gian kết thúc</th>
 								<th width="30">Sửa</th>
@@ -73,11 +74,18 @@
 	            		var jsonData = JSON.parse(JSON.stringify(e));
 	            		for(var i=0 ; i<jsonData.data.length ; i++){
 	                		var datas = jsonData.data[i];
+	                		if(datas.event_status == 1){
+	                			datas.event_status = "show";
+	                		}
+	                		else{
+	                			datas.event_status = "hide";
+	                		}
 	                		$("#event_data").append(	 
 	    		            		"<tr>"+
 	    		            			"<th>"+$list+"</th>"+
 	    		            			"<th>"+datas.event_title+"</th>"+
 	    		            			"<th>"+datas.event_info+"</th>"+
+	    		            			"<th><a class='event_status' name='"+datas.event_ID+datas.event_status+"' href='javascript:void(0)'>"+datas.event_status+"</a></th>"+
 	    		            			"<th>"+datas.event_start+"</th>"+
 	    		            			"<th>"+datas.event_finish+"</th>"+
 	    		            			"<th align='center'><a class='edit' name='"+datas.event_ID+"' href='javascript:void(0)'><img src='./image/icon/edit.png' height='20'/></a></th>"+
@@ -145,11 +153,18 @@
 			        		var jsonData = JSON.parse(JSON.stringify(e));
 			        		for(var i=0 ; i<jsonData.data.length ; i++){
 			            		var datas = jsonData.data[i];
+			            		if(datas.event_status == 1){
+		                			datas.event_status = "show";
+		                		}
+		                		else{
+		                			datas.event_status = "hide";
+		                		}
 			            		$("#event_data").append(	 
 					            		"<tr>"+
 					            			"<th>"+$list+"</th>"+
 					            			"<th>"+datas.event_title+"</th>"+
 					            			"<th>"+datas.event_info+"</th>"+
+					            			"<th><a class='event_status' name='"+datas.event_ID+datas.event_status+"' href='javascript:void(0)'>"+datas.event_status+"</a></th>"+
 					            			"<th>"+datas.event_start+"</th>"+
 					            			"<th>"+datas.event_finish+"</th>"+
 					            			"<th align='center'><a class='edit' name='"+datas.event_ID+"' href='javascript:void(0)'><img src='./image/icon/edit.png' height='20'/></a></th>"+
@@ -158,6 +173,7 @@
 								$list ++;
 				            }
 			        		eventEditDelete();
+			        		eventStatus();
 		    			}
 		    			else{
         				//alert("không tìm thấy kết quả");
@@ -207,7 +223,67 @@
     			}
     		});
     	}
-    	
+    	eventStatus();
+    	function eventStatus(){
+    		$(".event_status").click(function(){
+    			$self = $(this);
+        		var $id_show_hide = $(this).attr("name");
+        		
+        		//lấy id trong xâu
+        		var $id = $id_show_hide.match(/\d+/)[0];
+        		//lấy xâu còn lại
+        		var $tmp = $id_show_hide.replace($id,"");
+        		var $abc = 1;
+        		if($tmp=="hide"){
+            		
+            		if(confirm("bạn có chắc chắn muốn hiển thị sự kiện này không?")){
+                		$.ajax({
+                			url : config.restURL+"admin/index.php?api=event",
+                			type : "post",
+                			dataType : "json",
+                			data : "showevent="+$abc+"&user_id="+$id,
+                			async : false,
+                			success : function(result){
+	                			var jsonData = JSON.parse(JSON.stringify(result));
+	                			//alert(JSON.stringify(result));
+	                			//window.location = "?page=listuser";
+	                			$self.attr('name',$id + 'show');
+	                			$self.html("show");
+	                			//console.log($self);
+                    		},
+                			error : function(err){
+                				var error = JSON.parse(JSON.stringify(err));
+                				alert(error);
+                			}
+                		});
+            		}
+        		}
+        		else{
+        			if(confirm("bạn có chắc chắn muốn ẩn sự kiện này không?")){
+            			$.ajax({
+                			url : config.restURL+"admin/index.php?api=event",
+                			type : "post",
+                			dataType : "json",
+                			data : "hideevent="+$abc+"&user_id="+$id,
+                			async : false,
+                			success : function(result){
+	                			var jsonData = JSON.parse(JSON.stringify(result));
+	                			//alert(JSON.stringify(result));
+	                			//window.location = "?page=listuser";
+	                			$self.attr('name',$id+'hide');
+	                			$self.html("hide");
+	                			//console.log($self);
+                    		},
+                			error : function(err){
+                				var error = JSON.parse(JSON.stringify(err));
+                				alert(error);
+                			}
+                		});
+        			}
+        		}
+    			
+    		});
+    	}
     });
     </script>
     </body>
