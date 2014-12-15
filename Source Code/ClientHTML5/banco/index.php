@@ -365,8 +365,10 @@
 				var listEvent = $("#event");
 				for(var i=0; i<jsonData.data.length; i++)
 				{
-					listEvent.append(" - <u>Sự kiện</u> "+"<b>" +jsonData.data[i].event_title + "</b> : " + jsonData.data[i].event_info + " diễn ra từ " +
-					jsonData.data[i].event_start +" đến ngày " +jsonData.data[i].event_finish); 
+					if(jsonData.data[i].event_status == 1){
+						listEvent.append(" - <u>Sự kiện</u> "+"<b>" +jsonData.data[i].event_title + "</b> : " + jsonData.data[i].event_info + " diễn ra từ " +
+						jsonData.data[i].event_start +" đến ngày " +jsonData.data[i].event_finish); 
+					}
 				}
 			
 			},
