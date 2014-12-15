@@ -80,6 +80,44 @@ $(document).ready(function() {
     		}
         });
     }
+	
+	forgotpass();
+	function forgotpass(){
+		$("#submit-forgetpass").click(function(){
+			var name = $("#fuser").val();
+			var email = $("#femail").val();
+			email = email.trim().toLowerCase();
+			var stremail = /^[a-z]{1}[a-zA-Z0-9.]{2,}@[a-zA-Z0-9-_]{2,10}\.[a-zA-Z]{2,5}$/;
+			var strusername = /^[a-zA-Z0-9]\w+[a-zA-Z0-9]$/;
+			
+			if(stremail.test(email) == false){
+				alert('lỗi email không hợp lệ');
+				return false;
+			}
+			else if(strusername.test(name) == false){
+				alert('lỗi tài khoản không hợp lệ');
+				return false;
+			}
+			
+			$.ajax({
+				url	: "http://localhost:8080/rest/index.php?api=forgot", // Nơi nhận dữ liệu
+				type  : "post", // Phương thức truyền dữ liệu
+				data  : "user_name="+name+"&user_email="+email, // Dữ liệu cần truyền sang PHP
+				async : false,
+				success : function(result){ // Nhận kết quả trả về từ PHP				
+					if(result.code == 0){
+						alert("Lấy lại mật khẩu thành công");
+					}
+					else{
+						alert(result.data);
+					}
+				},
+				error : function(err){
+					alert(JSON.stringify(err));
+				}
+			});
+		});
+	}
  
   $(".various").fancybox({ 
             maxWidth    : 400,//set chiều rộng  tối đa của box tính bằng px 

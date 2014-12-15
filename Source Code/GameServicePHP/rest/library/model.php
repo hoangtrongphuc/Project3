@@ -19,7 +19,7 @@ class model extends database{
 			5 => array('HTTP Response' => 200, 'Message' => 'User đã tồn tại, không được thêm mới'),
 			6 => array('HTTP Response' => 200, 'Message' => 'User đang được sử dụng'),
 			7 => array('HTTP Response' => 200, 'Message' => 'Email đã tồn tại'),
-			8 => array('HTTP Response' => 200, 'Message' => 'Email không tồn tại'),
+			8 => array('HTTP Response' => 200, 'Message' => 'Username hoặc Email không đúng'),
 			9 => array('HTTP Response' => 200, 'Message' => 'Sai mã thẻ nạp xu'),
 			10 => array('HTTP Response' => 200, 'Message' => 'Chưa là bạn bè'),
 			11 => array('HTTP Response' => 200, 'Message' => 'Lỗi hệ thống'),
