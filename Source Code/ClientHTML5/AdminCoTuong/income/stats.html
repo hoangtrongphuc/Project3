@@ -39,6 +39,11 @@
 							<td height="30">&nbsp;&nbsp;&nbsp;Số lượng sự kiện</td>
 							<td class='count_event' align="center"></td>
 						</tr>
+						<tr>
+							<td width="30" align="center">6</td>
+							<td height="30">&nbsp;&nbsp;&nbsp;Số lượng sự kiện đang hiển thị</td>
+							<td class='count_event_show' align="center"></td>
+						</tr>
 					</table>
 			</div>
 		</font>
@@ -129,6 +134,24 @@
 					success : function(result){
 						//alert(JSON.stringify(result));
 						$(".count_event").append(result.data);
+					},
+					error : function(err){
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+			countEventShow();
+			function countEventShow(){
+				var $counteventshow = 1;
+				$.ajax({
+					url : config.restURL+"admin/index.php?api=thongke",
+					type : "post",
+					dataType : "json",
+					data : "thongkeeventshow="+$counteventshow,
+					async : false,
+					success : function(result){
+						//alert(JSON.stringify(result));
+						$(".count_event_show").append(result.data);
 					},
 					error : function(err){
 						alert(JSON.stringify(err));
