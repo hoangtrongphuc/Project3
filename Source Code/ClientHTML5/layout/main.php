@@ -77,7 +77,7 @@
             <td><button id="submit-login" class="btn btn-lg btn-success btn-block" type="submit">Chơi Ngay</button></td>
           </tr>
           <tr>
-            <td style="text-align:center; margin:20px auto;"><a href="#" >Quên mật khẩu??</a></td>
+            <td style="text-align:center; margin:20px auto;"><a href="#forgetpass" class="various" >Quên mật khẩu??</a></td>
           </tr>
           <tr>
             <td><a class="various" href="#signin">
@@ -162,4 +162,32 @@ nhất và chiến thắng hiểm hách nhất.<br />
       </tr>
     </table>
   </form>
+</div>
+<div id="forgetpass" style="display:none;">
+		
+        <form class="form-forgetpass" role="form" action="javascript:void(0)" method="post">
+        <h3>Quên mật khẩu</h3>
+        <table width="150" border="0" cellspacing="20">
+          <tr>
+            <td><div class="form-group has-success has-feedback">
+                <label class="control-label" for="username">Tên tài khoản</label>
+                <input type="text" class="form-control" id="fuser" placeholder="Nhập tài khoản của bạn" name="fuser" required >
+              </div></td>
+          </tr>
+          <tr>
+            <td><div class="form-group has-success has-feedback">
+                <label class="control-label" for="femail">Email</label>
+                <input type="text" class="form-control" id="femail" placeholder="Nhập Email đăng kí" name="femail"  required>
+              </div></td>
+          </tr>
+          <tr>
+            <td></td>
+          </tr>
+          <tr>
+            <td><button id="submit-forgetpass" class="btn btn-lg btn-success btn-block" type="submit">Gửi yêu cầu</button></td>
+          </tr>
+       
+        </table>
+      </form>
+
 </div>
