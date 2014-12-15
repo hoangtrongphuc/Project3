@@ -89,6 +89,17 @@ class user_model extends model{
 				user_address='$address',user_email='$email' where user_name='$username'";		
 		$this->query($sql);
 	}
+	public function ktEmailChangInfo($username, $email){
+		$sql = "select * from $this->_user where user_name != '$username' and user_email = '$email'";
+		$this->query($sql);
+		
+		if($this->num_rows() > 0){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 	//end-changeinfo
 	
 	//cập nhật lại kết quả trận đấu
