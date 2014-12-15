@@ -89,4 +89,10 @@ class thongke_model extends adminmodel{
 	
 		return $this->num_rows();
 	}
+	public function countEventShow(){
+		$sql = "select * from $this->_event where event_status='1'";
+		$this->query($sql);
+	
+		return $this->num_rows();
+	}
 }

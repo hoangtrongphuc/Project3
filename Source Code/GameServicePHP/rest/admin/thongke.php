@@ -83,6 +83,15 @@ else if(!empty($array['thongkeevent'])){
 	$response['data'] = $data;
 	$thongke_model->deliver_response($response);
 }
+else if(!empty($array['thongkeeventshow'])){
+	$data = array();
+	$data = $thongke_model->countEventShow();
+
+	$response['code'] = 0;
+	$response['status'] = $thongke_model::$api_response_code[ $response['code'] ]['HTTP Response'];
+	$response['data'] = $data;
+	$thongke_model->deliver_response($response);
+}
 else{
 	$response['code'] = 11;
 	$response['status'] = $thongke_model::$api_response_code[ $response['code'] ]['HTTP Response'];
