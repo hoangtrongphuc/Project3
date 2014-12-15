@@ -61,8 +61,8 @@ else if(!empty($array['getevent']) && !empty($array['event_id'])){
 else if(!empty($array['insertevent']) && !empty($array['title']) && !empty($array['info']) && !empty($array['start']) && !empty($array['finish'])){
 	$title = $array['title'];
 	$info = $array['info'];
-	$start = $array['start'];
-	$finish = $array['finish'];
+	$start = date('Y-m-d H:i',strtotime($array['start']));
+	$finish = date('Y-m-d H:i',strtotime($array['finish']));
 	
 	//kiểm tra tiêu đề có tồn tại chưa
 	$checktitle = $event_model->checkTitle("",$title);
