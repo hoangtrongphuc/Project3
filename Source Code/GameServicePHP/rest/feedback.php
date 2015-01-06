@@ -7,7 +7,8 @@ if(!empty($array['user_id']) && !empty($array['feedback_title']) && !empty($arra
 		$id = $array['user_id'];
 		$title = $array['feedback_title'];
 		$info = $array['feedback_info'];
-		$date = $array['feedback_date'];
+		$date = date_create($array['feedback_date']);
+		$date = date_format($date, 'Y-m-d H:i:s');
 	
 		$feedback_model->insertFeedBack($id, $title, $info, $date);
 		
