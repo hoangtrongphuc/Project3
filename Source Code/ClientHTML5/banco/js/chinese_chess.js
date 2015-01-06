@@ -1136,6 +1136,16 @@ var controller = (function () {
         }
         drawBoard();
     }
+	//hàm lấy thời gian
+	Date.prototype.yyyymmddhhiiss = function() {
+	   var yyyy = this.getFullYear().toString();
+	   var mm 	= (this.getMonth()+1).toString(); // getMonth() is zero-based
+	   var dd  	= this.getDate().toString();
+	   var hh  	= this.getHours().toString();
+	   var ii	= this.getMinutes().toString();
+	   var ss	= this.getSeconds().toString();
+			return yyyy +"-"+ (mm[1]?mm:"0"+mm[0]) +"-"+ (dd[1]?dd:"0"+dd[0]) +" "+ hh +":"+ ii +":"+ ss; // padding
+	};
     //PUBLIC API
     return {
         onHashChange: function () {
@@ -1362,15 +1372,15 @@ var controller = (function () {
         },
 		
 		contactUs: function(title, content){
-			var currentdate = new Date();
-			var datetime = currentdate.getDate() + "/"
-                + (currentdate.getMonth()+1)  + "/" 
-                + currentdate.getFullYear() + " @ "  
-                + currentdate.getHours() + ":"  
-                + currentdate.getMinutes() + ":" 
-                + currentdate.getSeconds();
+			var d = new Date();
+			var datetime = d.yyyymmddhhiiss();
            $.getJSON(restURL+"?api=feedback&user_id=" +getCookie('cookie_id')+"&feedback_title="+title+"&feedback_info="+content+"&feedback_date="+datetime, function(data){
-			alert("Cám ơn bạn đã phản hồi!!");
+			if(data.code == 0){
+				alert("Cám ơn bạn đã phản hồi!!");
+			}
+			else{
+				alert(data.data);
+			}	
             });
         },
 		

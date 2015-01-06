@@ -150,10 +150,15 @@
                         "Gửi ý kiến": function(){
 						var title1 = $("#titleName").val();
 						var content = $("#content").val();
-                           controller.contactUs(title1,content);
-                            $("#contactDialog").dialog("close");
-                            $("#titleName").val('');
-							$("#content").val('');
+                        if(title1 != "" && content != ""){
+							controller.contactUs(title1,content);
+						}
+						else{
+							alert('bạn phải nhập đủ thông tin');
+						}
+						$("#contactDialog").dialog("close");
+						$("#titleName").val('');
+						$("#content").val('');
                         }
                     },
                     title: "Liên hệ",
