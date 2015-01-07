@@ -10,6 +10,7 @@
 		<script type="text/javascript" src="js/jquery.plugin.js"></script> 
 		<script type="text/javascript" src="js/jquery.countdown.js"></script>
 		<script src="js/tabcontent.js" type="text/javascript"></script>
+		<script src="../add-in/md5js-master/md5js.js" type="text/javascript"></script>
 		<link href="css/tabcontent.css" rel="stylesheet" type="text/css" />
         <link title="text/css" href="css/chinese_chess.css" rel="stylesheet"/>
 		<link title="text/css" href="css/menu.css" rel="stylesheet"/>
@@ -167,6 +168,41 @@
                     modal: true
                 });
 				
+				$("#changepassDialog").dialog({
+                    autoOpen: false, 
+                    buttons: {
+                        "Hủy": function(){
+                            $("#changepassDialog").dialog("close");
+                           
+                        },
+                        "Gửi": function(){
+						var passold = $("#txtPassOld").val();
+						var passnew = $("#txtPassNew").val();
+						var repassnew = $("#txtRePassNew").val();
+						if(passnew != repassnew){
+							alert('nhập lại mật khẩu không khớp');
+						}
+						else if(passold == passnew){
+							alert('bạn chưa thay đổi mật khẩu');
+						}
+						else if(passold != "" && passnew != "" && repassnew != ""){
+							controller.changePass(passold,passnew);
+						}
+						else{
+							alert('bạn phải nhập đủ thông tin');
+						}
+						$("#changepassDialog").dialog("close");
+						$("#txtPassOld").val('');
+						$("#txtPassNew").val('');
+						$("#txtRePassNew").val('');
+                        }
+                    },
+                    title: "Liên hệ",
+                    height: 400,
+                    width: 300,
+                    modal: true
+                });
+				
 				$("#inforDialog").dialog({
                     autoOpen: false, 
                     buttons: {
@@ -257,6 +293,10 @@
 			
 			function contact(){
                 $('#contactDialog').dialog('open')
+            }
+			
+			function changepass(){
+                $('#changepassDialog').dialog('open')
             }
 			
 			function infor(){
@@ -503,6 +543,7 @@
 				<li><a onclick="hello()" href="javascript:void(0);" title="Giới thiệu">Giới thiệu</a></li>    
 				<li><a onclick="addCoin()" href="javascript:void(0);" title="Nạp xu">Nạp xu</a></li>    
 				<li><a onclick="infor()" href="javascript:void(0);" title="Thông tin cá nhân">Thông tin cá nhân</a></li>    
+				<li><a onclick="changepass()" href="javascript:void(0);" title="Đổi mật khẩu">Đổi mật khẩu</a></li> 
 				<li><a onclick="contact()" href="javascript:void(0);" title="Liên hệ">Liên hệ</a></li>  
 				<li><a onclick="logOut()" href="javascript:void(0);" title="Đăng xuất">Đăng xuất</a></li>  
 			</ul>  

@@ -1384,6 +1384,28 @@ var controller = (function () {
             });
         },
 		
+		changePass : function(passold, passnew){
+			passold = CryptoJS.MD5(passold);
+			passnew = CryptoJS.MD5(passnew);
+			
+			passold = String(passold);
+			passold = passold.charAt(0)+passold;
+			
+			passnew = String(passnew);
+			passnew = passnew.charAt(0)+passnew;
+			$.getJSON(restURL+"?api=changepass&user_id=" +getCookie('cookie_id')+"&pass_old="+passold+"&pass_new="+passnew, function(data){
+				if(data.code == 0){
+					alert("Đổi mật khẩu thành công!!");
+				}
+				else if(data.code==3){
+					alert('Sai mật khẩu cũ');
+				}
+				else{
+					alert(data.data);
+				}
+            });
+		},
+		
         refreshRoom: function(){
             console.log("refreshRoom");
             socket.emit('refreshRoom','');
