@@ -38,6 +38,9 @@
 	else if(!empty($array['api']) && $array['api'] == "changeinfo"){
 		include 'changeinfo.php';
 	}
+	else if(!empty($array['api']) && $array['api'] == "changepass"){
+		include 'changepass.php';
+	}
 	else if(!empty($array['api']) && $array['api'] == "napxu"){
 		include 'napxu.php';
 	}

@@ -80,7 +80,18 @@ class user_model extends model{
 	
 	//changeinfo
 	//cập nhật lại pass khi người chơi đổi mật khẩu
-	public function upatePass($id, $pass){
+	public function ktPass($id,$pass){
+		$sql = "select * from $this->_user where user_id='$id' && user_pass='$pass'";
+		$this->query($sql);
+	
+		if($this->num_rows() > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public function updatePass($id, $pass){
 		$sql  = "update $this->_user set user_pass = '$pass' where user_id='$id'";
 		$this->query($sql);
 	}
