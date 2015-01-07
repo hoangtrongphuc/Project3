@@ -1523,6 +1523,181 @@ var controller = (function () {
 					alert(result.data);
 				}
 			});
+		},
+		topRick: function(){
+			var $stt = 1;
+			$.ajax({
+				url : restURL+"?api=toprick",
+				type : "post",
+				dataType : "json",
+				data : null,
+				async : false,
+				success : function(result){
+					var jsonData = JSON.parse(JSON.stringify(result));
+					var table = $("#richTable");
+					table.html("<tr> <td>Xếp hạng</td> <td>Tên người chơi</td> <td>Số xu</td> </tr>");
+					for(var i=0; i<jsonData.data.length; i++){
+						var row;
+						var datas = jsonData.data[i];
+						if(datas.user_level != 1){
+							if($stt == 1){
+								row = "<tr>" + "<td>"+$stt+"</td>"+
+										"<td>"+datas.user_name+"</td>"+
+										"<td>"+datas.user_coin+"</td></tr>";								
+							}
+							else{
+								row = "<tr>" + "<td>"+$stt+"</td>"+
+										"<td>"+datas.user_name+"</td>"+
+										"<td>"+datas.user_coin+"</td></tr>";
+							}
+						table.append(row);	
+						$stt++;
+						}
+					}
+				},
+				error : function(err){
+					alert(JSON.stringify(err));
+				}
+			});
+		},
+		topRank: function(){
+			var $stt = 1;
+			$.ajax({
+				url : restURL+"?api=toprank",
+				type : "post",
+				dataType : "json",
+				data : null,
+				async : false,
+				success : function(result){
+					var table = $("#rankTable");
+					table.html("<tr> <td>Xếp hạng</td> <td>Tên người chơi</td> <td>Số trận thắng</td> </tr>");
+					var jsonData = JSON.parse(JSON.stringify(result));
+					for(var i=0; i<jsonData.data.length; i++){
+						var datas = jsonData.data[i];
+						if(datas.user_level != 1){
+							if($stt == 1){
+								row = "<tr>" + "<td>"+$stt+"</td>"+
+										"<td>"+datas.user_name+"</td>"+
+										"<td>"+datas.user_win+"</td></tr>";	
+							}
+							else{
+								row = "<tr>" + "<td>"+$stt+"</td>"+
+										"<td>"+datas.user_name+"</td>"+
+										"<td>"+datas.user_win+"</td></tr>";
+							}
+						table.append(row);	
+						$stt++;
+						}
+					}
+				},
+				error : function(err){
+					alert(JSON.stringify(err));
+				}
+			});
+		},
+		listEvent: function(){
+			$.ajax({
+				url : restURL+"?api=event&listevent=1",
+				type : "post",
+				dataType : "json",
+				data : null,
+				async : false,
+				success : function(result){
+					var jsonData = JSON.parse(JSON.stringify(result));
+					var listEvent = $("#event");
+					for(var i=0; i<jsonData.data.length; i++)
+					{
+						if(jsonData.data[i].event_status == 1){
+						listEvent.append(" - <u>Sự kiện</u> "+"<b>" +jsonData.data[i].event_title + "</b> : " + jsonData.data[i].event_info + " diễn ra từ " +
+						jsonData.data[i].event_start +" đến ngày " +jsonData.data[i].event_finish); 
+						}
+					}
+				
+				},
+				error : function(err){
+					alert(JSON.stringify(err));
+				}
+			});
+		},
+		myInfor: function(){
+			var $getuser = 1;
+			var $name = getCookie('cookie_username');
+			$.ajax({
+				url : restURL+"?api=user",
+				type : "post",
+				dataType : "json",
+				data : "getuser="+$getuser+"&username="+$name,
+				async : false,
+				success : function(result){
+				var k = JSON.parse(JSON.stringify(result));
+					$("#user_name").attr("placeholder",k.data.user_name);
+					$("#user_email").attr("placeholder",k.data.user_email);
+					$("#user_gender").attr("placeholder",k.data.user_gender);
+					$("#user_tel").attr("placeholder",k.data.user_tel);
+					$("#user_addr").attr("placeholder",k.data.user_address);
+					$("#user_coin").html(k.data.user_coin);
+					$("#user_rank").html(k.data.user_win);
+				},
+				error : function(err){
+					alert(JSON.stringify(err));
+				}
+			});
+		},
+		addCoin: function(provider, code, serial){
+			var id = getCookie("cookie_id");
+			var xu = 1;
+			var d = new Date();
+			var ngay = d.yyyymmddhhiiss();
+		
+			$.ajax({
+				url : restURL+"?api=napxu",
+				type : "post",
+				dataType : "json",
+				data : "xu="+xu+"&user_id="+id+"&provider="+provider+"&code="+code+"&serial="+serial+"&date="+ngay,
+				async : false,
+				success : function(result){
+					if(result.code == 0){
+						alert('Nạp thẻ thành công');
+					}
+					else{
+						alert(result.data);
+					}
+				},
+				error : function(err){
+					alert(JSON.stringify(err));
+				}
+			});
+		},
+		listFriend: function(){
+			var stt = 1;
+			var id = getCookie("cookie_id");
+			$.ajax({
+				url : restURL+"?api=friend&listfriend=1",
+				type : "post",
+				dataType : "json",
+				data : "user_id=" +id,
+				async : false,
+				success : function(result){
+					var jsonData = JSON.parse(JSON.stringify(result));
+					var table = $("#friendTable");
+					table.html("<tr><td>No.</td> <td>Tên bạn bè</td> <td>Trạng thái</td>  </tr>");
+					for(var i=0; i<jsonData.data.length; i++){
+						var row;
+						var datas = jsonData.data[i];
+						row = "<tr><td>"+stt+"</td>"+
+									"<td>"+datas.user_name+"</td>";		
+						if(datas.user_status == 0) row = row + "<td><img src='imgs/off.png' width='10' height='10'/></td></tr>";
+						else {
+                                                    row = row + "<td ><button onclick='controller.friendClicked(\""+datas.user_name+"\")' class='button'>Chat</button></td></tr>";
+                                                }
+						table.append(row);	
+						stt++;
+					}
+				},
+				error : function(err){
+					alert(JSON.stringify(err));
+				}
+			});
 		}
     };
 }());
