@@ -30,7 +30,7 @@ var controller = (function () {
         nextButton,
         closeRoomButton,
 		friendRequestButton,
-        maxCounter = 180,//3 minute
+        maxCounter = 60,//3 minute
         counter,//count from maxCounter to zero
         counting,//bool
         timer,
