@@ -21,9 +21,9 @@ var controller = (function () {
         infoCanvas,
         animateCanvas,
         socket,
-        connectURL = "localhost:8888",
-		restURL = "http://localhost:8080/rest/index.php",
-		baseURL = "http://localhost:8080/cotuong",
+        connectURL = serverURL,
+		restURL = "http://"+host+"/rest/index.php",
+		baseURL = "http://"+host+"/cotuong",
         giveUpButton,
         leaveRoomButton,
         readyButton,
@@ -33,7 +33,7 @@ var controller = (function () {
         maxCounter = 60,//3 minute
         counter,//count from maxCounter to zero
         counting,//bool
-        timer,
+        animating = false,
         pieceCanvas = [],
         boardCanvas,
         pieceImgs=[[],[]],
@@ -614,9 +614,12 @@ var controller = (function () {
             focused = -1;
             infoCanvas.style.display = "none";
             drawBoard();
+            counting = false;
+            animating = false;
     }
     
     function moveAnimatedly(id1, id2){
+        animating = true;
         //tạo chuyển động cho quân cờ, cập nhật bàn cờ, turn
         var r1, r2, c1, c2, x1, x2, y1, y2, piece, ctx, img, x, y, dx, dy, i, timer, intervals = 20;
         function exec(){
@@ -625,6 +628,7 @@ var controller = (function () {
                 board[id2] = piece;
                 animateCanvas.style.display = "none";
                 drawBoard();
+                animating = false;
                 return;
             }
             ctx.clearRect(x-1, y-1, cellSize+2, cellSize+2);
@@ -700,7 +704,9 @@ var controller = (function () {
 		if(turn===myColor){
             startCounter();
         }
-        drawBoard();
+        if(!animating){
+            drawBoard();
+        }
     }
 	
 	function onReset()
@@ -1446,7 +1452,7 @@ var controller = (function () {
 		
 		 signOut: function(){
              $.getJSON(restURL+"?api=logout&user_id=" +getCookie('cookie_id'), function(data){
-				window.location.href = "http://localhost:8080/cotuong";
+				window.location.href = "http://"+host+"/cotuong";
             });
         },
 

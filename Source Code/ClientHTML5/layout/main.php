@@ -1,5 +1,6 @@
+
+<script type="text/javascript" src="../config.js"></script>
 <script type="text/javascript">
-	
 	$(document).ready(function(){
 	function getCookie(cname) {
 						var name = cname + "=";
@@ -15,7 +16,7 @@
 						}
 				var getcookie_id = getCookie("cookie_id");
 				if(getcookie_id !== ""){
-						window.location.href = "http://localhost:8080/cotuong/banco";
+						window.location.href = "http://"+host+"/cotuong/banco";
 						return false;
 					}
 	
@@ -23,7 +24,7 @@
 					tokenkey();
 		function tokenkey(){
 			$.ajax({
-				url	: "http://localhost:8080/rest/index.php?api=tokenkey", // Nơi nhận dữ liệu
+				url	: "http://"+host+"/rest/index.php?api=tokenkey", // Nơi nhận dữ liệu
 				type  : "post", // Phương thức truyền dữ liệu
 				dataType : "json",
 				data  : null,

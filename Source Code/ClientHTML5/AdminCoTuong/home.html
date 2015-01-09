@@ -37,6 +37,7 @@
 					</table>
 			</div>
 		</div>
+        <script src="../config.js" type="text/javascript"></script>
 		<script type="text/javascript">
     $(document).ready(function(){
     	listUser();
@@ -102,7 +103,7 @@
 		function listEvent(){
 			var $list = 1;
 			$.ajax({
-	    		url : "http://localhost:8080/rest/admin/index.php?api=event",
+	    		url : "http://"+host+"/rest/admin/index.php?api=event",
 	    		type : "post",
 	    		dataType : "json",
 	    		data: "homelistevent="+$list,

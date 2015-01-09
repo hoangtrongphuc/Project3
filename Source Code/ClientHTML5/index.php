@@ -20,7 +20,7 @@
 <script type="text/javascript">var switchTo5x=true;</script>
 <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
 <script type="text/javascript">stLight.options({publisher: "18290152-e32f-437c-8142-dffb08b57c05", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
-
+<script type="text/javascript" src="config.js"></script>
 <script>
 function getCookie(cname) {
 					var name = cname + "=";
@@ -38,7 +38,7 @@ function getCookie(cname) {
  $("document").ready(function(){
 				var getcookie_id = getCookie("cookie_id");
 			if(getcookie_id !== ""){
-					window.location.href = "http://localhost:8080/cotuong/banco";
+					window.location.href = "http://"+host+"/cotuong/banco";
 					return false;
 				}
 				});

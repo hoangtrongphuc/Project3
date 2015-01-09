@@ -9,13 +9,14 @@
 <link rel="stylesheet" type="text/css" href="../CSS/font/CODE Light.otf" />
 </head>
 <script src="../Javascript/jquery-1.11.1.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="../config.js"></script>
 <script type='text/javascript'>
 	$(document).ready(function(){
 		topRick();
 		function topRick(){
 			var $stt = 1;
 			$.ajax({
-				url : "http://localhost:8080/rest/index.php?api=toprick",
+				url : "http://"+host+"/rest/index.php?api=toprick",
 				type : "post",
 				dataType : "json",
 				data : null,
@@ -58,7 +59,7 @@
 		function topRank(){
 			var $stt = 1;
 			$.ajax({
-				url : "http://localhost:8080/rest/index.php?api=toprank",
+				url : "http://"+host+"/rest/index.php?api=toprank",
 				type : "post",
 				dataType : "json",
 				data : null,

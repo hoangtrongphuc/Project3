@@ -1,5 +1,4 @@
 // JavaScript Document
-
 $(document).ready(function() {
 	function bigger()
 	{
@@ -58,7 +57,7 @@ $(document).ready(function() {
     			
     			var $signal = CryptoJS.MD5(str);
     			$.ajax({
-    				url	: "http://localhost:8080/rest/index.php?api=login", // Nơi nhận dữ liệu
+    				url	: "http://"+host+"/rest/index.php?api=login", // Nơi nhận dữ liệu
     				type  : "post", // Phương thức truyền dữ liệu
     				dataType : "json",
     				data  : "username="+$name+"&pass="+$pass+"&signal="+$signal, // Dữ liệu cần truyền sang PHP
@@ -67,7 +66,7 @@ $(document).ready(function() {
     					//alert(JSON.stringify(result));
     					if(result.code == 0){
     						var tokenkey = result.data.tokenkey;
-							 window.location.href = "http://localhost:8080/cotuong/banco";
+							 window.location.href = "http://"+host+"/cotuong/banco";
     					}
     					else{
     						alert(result.data);
@@ -100,7 +99,7 @@ $(document).ready(function() {
 			}
 			
 			$.ajax({
-				url	: "http://localhost:8080/rest/index.php?api=forgot", // Nơi nhận dữ liệu
+				url	: "http://"+host+"/rest/index.php?api=forgot", // Nơi nhận dữ liệu
 				type  : "post", // Phương thức truyền dữ liệu
 				data  : "user_name="+name+"&user_email="+email, // Dữ liệu cần truyền sang PHP
 				async : false,

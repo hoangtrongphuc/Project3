@@ -6,6 +6,7 @@
         <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui.min.js"></script>
         <script type="text/javascript" src="js/socket.io.js"></script>
+        <script type="text/javascript" src="../config.js"></script>
         <script type="text/javascript" src="js/chinese_chess.js"></script>
 		<script type="text/javascript" src="js/jquery.plugin.js"></script> 
 		<script type="text/javascript" src="js/jquery.countdown.js"></script>
@@ -29,7 +30,7 @@
 
 				var getcookie_id = getCookie("cookie_id");
 				if(getcookie_id === ""){
-					window.location = "http://localhost:8080/cotuong/index.php";
+					window.location = "http://"+host+"/cotuong/index.php";
 					return false;
 				}
                 controller.initController("chessBoardDiv");

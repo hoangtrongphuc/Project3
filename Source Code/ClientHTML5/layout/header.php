@@ -1,4 +1,6 @@
-<?php $baseurl = 'http://localhost/cotuong'; ?>
+<?php 
+require_once '../config.php';
+$baseurl = 'http://'+$host+'/cotuong'; ?>
 <div id="header">
  
 <?php
