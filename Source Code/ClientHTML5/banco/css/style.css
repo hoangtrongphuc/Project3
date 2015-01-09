@@ -387,3 +387,14 @@ text-align:center;
     border: solid 1px #D3D3D3;
     border-radius: 0px;
 }
+
+#timerDiv{
+    height: 120px;
+    width: 100%;
+    font-family: tahoma;
+    font-size: 50px;
+    font-weight: bold;
+    color: red;
+    text-align: center;
+    padding-top: 40px;
+}

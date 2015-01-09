@@ -142,7 +142,7 @@
 							$("#secretCode").val('');
                         },
                         "Nạp xu": function(){
-							if()
+							
                             onAddCoin();
                             $("#addCoinDialog").dialog("close");
                             $("#serialNumber").val('');
@@ -455,9 +455,7 @@
             <div id="roomDiv">
                 <div id="leftBoardDiv">
                     <div id="user1Div"></div>
-                    <div id="timerDiv">
-						<!-- <div class="mask"></div> -->
-					</div>
+                    <div id="timerDiv"></div>
                     <div id ="user2Div"></div>
                 </div>
                 <div id="chessBoardDiv"></div>
