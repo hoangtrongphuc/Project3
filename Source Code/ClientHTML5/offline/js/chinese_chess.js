@@ -6,16 +6,16 @@ var chess = (function () {
     var valueByPlace=[
             [],//ignore index 0
             [//index 1 - Tướng
-                0,0,0,0,0,0,0,0,0,
-                0,0,0,0,0,0,0,0,0,
-                0,0,0,0,0,0,0,0,0,
-                0,0,0,0,0,0,0,0,0,
-                0,0,0,0,0,0,0,0,0,//sông
-                0,0,0,0,0,0,0,0,0,//sông
-                0,0,0,0,0,0,0,0,0,
-                0,0,0,1,1,1,0,0,0,
-                0,0,0,2,2,2,0,0,0,
-                0,0,0,11,15,11,0,0,0
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, //sông
+            0, 0, 0, 0, 0, 0, 0, 0, 0, //sông
+            0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 1, 1, 1, 0, 0, 0,
+            0, 0, 0, 2, 2, 2, 0, 0, 0,
+            0, 0, 0, 11, 15, 11, 0, 0, 0
             ],
             [//index 2 - sĩ
                   0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -130,6 +130,35 @@ var chess = (function () {
     function lookAt(r, c) {
         return board[r * 9 + c];
     }
+    function moveFactory(id1, id2){
+        var ob = {};
+        ob.id1 = id1;
+        ob.id2 = id2;
+        var piece, color, type;
+        piece = board[id1];
+        type = piece&7;
+        color = piece&8;
+        var target, targetType;
+        target = board[id2];
+        if(target!==0){
+            targetType = target&7;
+        }
+        var value = 0;
+        if(color!==0){
+            value = valueByPlace[type][id2] - valueByPlace[type][id1];
+            if(target!==0){
+                value = value + valueByPlace[targetType][89-id2];
+            }
+        }else{//engine
+            value = valueByPlace[type][89-id2] - valueByPlace[type][89-id1];
+            if(target!==0){
+                value = value + valueByPlace[targetType][id2];
+            }
+        }
+        ob.value = value;
+        return ob;
+    }
+    
     function validMoveGen(id, _captureMove, _otherMove){
         var piece = board[id];
         if(piece===0) return;//can be delete
@@ -142,37 +171,37 @@ var chess = (function () {
                 if(piece_color === 0){//engine
                     if(row>0){
                         if(lookAt(row-1,col)===0){
-                            _otherMove.push(id, (row-1)*9+col);
+                            _otherMove.push(moveFactory(id, (row-1)*9+col));
                         }else if((lookAt(row-1,col)&8)!==piece_color){
-                            _captureMove.push(id, (row-1)*9+col);
+                            _captureMove.push(moveFactory(id, (row-1)*9+col));
                         }
                     }
                     if(row<2){
                         if(lookAt(row+1,col)===0){
-                            _otherMove.push(id, (row+1)*9+col);
+                            _otherMove.push(moveFactory(id, (row+1)*9+col));
                         }else if((lookAt(row+1,col)&8)!==piece_color){
-                            _captureMove.push(id, (row+1)*9+col);
+                            _captureMove.push(moveFactory(id, (row+1)*9+col));
                         }
                     }
                     if(col>3){
                         if(lookAt(row,col-1)===0){
-                            _otherMove.push(id, row*9+col-1);
+                            _otherMove.push(moveFactory(id, row*9+col-1));
                         }else if((lookAt(row,col-1)&8)!==piece_color){
-                            _captureMove.push(id, row*9+col-1);
+                            _captureMove.push(moveFactory(id, row*9+col-1));
                         }
                     }
                     if(col<5){
                         if(lookAt(row,col+1)===0){
-                            _otherMove.push(id, row*9+col+1);
+                            _otherMove.push(moveFactory(id, row*9+col+1));
                         }else if((lookAt(row,col+1)&8)!==piece_color){
-                            _captureMove.push(id, row*9+col+1);
+                            _captureMove.push(moveFactory(id, row*9+col+1));
                         }
                     }
                     //hở mặt tướng
                     for(var i = row+1; i<10; i++){
                         if(lookAt(i,col)!==0){
                             if(lookAt(i,col)===9){
-                                _captureMove.push(id, i*9+col);
+                                _captureMove.push(moveFactory(id, i*9+col));
                             }
                             break;
                         }
@@ -180,37 +209,37 @@ var chess = (function () {
                 }else{//player
                     if(row>7){
                         if(lookAt(row-1,col)===0){
-                            _otherMove.push(id, (row-1)*9+col);
+                            _otherMove.push(moveFactory(id, (row-1)*9+col));
                         }else if((lookAt(row-1,col)&8)!==piece_color){
-                            _captureMove.push(id, (row-1)*9+col);
+                            _captureMove.push(moveFactory(id, (row-1)*9+col));
                         }
                     }
                     if(row<9){
                         if(lookAt(row+1,col)===0){
-                            _otherMove.push(id, (row+1)*9+col);
+                            _otherMove.push(moveFactory(id, (row+1)*9+col));
                         }else if((lookAt(row+1,col)&8)!==piece_color){
-                            _captureMove.push(id, (row+1)*9+col);
+                            _captureMove.push(moveFactory(id, (row+1)*9+col));
                         }
                     }
                     if(col>3){
                         if(lookAt(row,col-1)===0){
-                            _otherMove.push(id, row*9+col-1);
+                            _otherMove.push(moveFactory(id, row*9+col-1));
                         }else if((lookAt(row,col-1)&8)!==piece_color){
-                            _captureMove.push(id, row*9+col-1);
+                            _captureMove.push(moveFactory(id, row*9+col-1));
                         }
                     }
                     if(col<5){
                         if(lookAt(row,col+1)===0){
-                            _otherMove.push(id, row*9+col+1);
+                            _otherMove.push(moveFactory(id, row*9+col+1));
                         }else if((lookAt(row,col+1)&8)!==piece_color){
-                            _captureMove.push(id, row*9+col+1);
+                            _captureMove.push(moveFactory(id, row*9+col+1));
                         }
                     }
                     //hở mặt tướng
                     for(var i = row-1; i>=0; i--){
                         if(lookAt(i,col)!==0){
                             if(lookAt(i,col)===1){
-                                _captureMove.push(id, i*9+col);
+                                _captureMove.push(moveFactory(id, i*9+col));
                             }
                             break;
                         }
@@ -221,59 +250,59 @@ var chess = (function () {
                 if(piece_color===0){//engine
                     if(row>0 && col>3){
                         if(lookAt(row-1, col-1)===0){
-                            _otherMove.push(id, (row-1)*9+col-1);
+                            _otherMove.push(moveFactory(id, (row-1)*9+col-1));
                         }else if((lookAt(row-1, col-1)&8) !== piece_color){
-                            _captureMove.push(id, (row-1)*9+col-1);
+                            _captureMove.push(moveFactory(id, (row-1)*9+col-1));
                         }
                     }
                     if(row<2 && col<5){
                         if(lookAt(row+1, col+1)===0){
-                            _otherMove.push(id, (row+1)*9+col+1);
+                            _otherMove.push(moveFactory(id, (row+1)*9+col+1));
                         }else if((lookAt(row+1, col+1)&8) !== piece_color){
-                            _captureMove.push(id, (row+1)*9+col+1);
+                            _captureMove.push(moveFactory(id, (row+1)*9+col+1));
                         }
                     }
                     if(row>0 && col<5){
                         if(lookAt(row-1, col+1)===0){
-                            _otherMove.push(id, (row-1)*9+col+1);
+                            _otherMove.push(moveFactory(id, (row-1)*9+col+1));
                         }else if((lookAt(row-1, col+1)&8) !== piece_color){
-                            _captureMove.push(id, (row-1)*9+col+1);
+                            _captureMove.push(moveFactory(id, (row-1)*9+col+1));
                         }
                     }
                     if(row<2 && col>3){
                         if(lookAt(row+1, col-1)===0){
-                            _otherMove.push(id, (row+1)*9+col-1);
+                            _otherMove.push(moveFactory(id, (row+1)*9+col-1));
                         }else if((lookAt(row+1, col-1)&8) !== piece_color){
-                            _captureMove.push(id, (row+1)*9+col-1);
+                            _captureMove.push(moveFactory(id, (row+1)*9+col-1));
                         }
                     }
                 }else{//player
                     if(row>7 && col>3){
                         if(lookAt(row-1, col-1)===0){
-                            _otherMove.push(id, (row-1)*9+col-1);
+                            _otherMove.push(moveFactory(id, (row-1)*9+col-1));
                         }else if((lookAt(row-1, col-1)&8) !== piece_color){
-                            _captureMove.push(id, (row-1)*9+col-1);
+                            _captureMove.push(moveFactory(id, (row-1)*9+col-1));
                         }
                     }
                     if(row<9 && col<5){
                         if(lookAt(row+1, col+1)===0){
-                            _otherMove.push(id, (row+1)*9+col+1);
+                            _otherMove.push(moveFactory(id, (row+1)*9+col+1));
                         }else if((lookAt(row+1, col+1)&8) !== piece_color){
-                            _captureMove.push(id, (row+1)*9+col+1);
+                            _captureMove.push(moveFactory(id, (row+1)*9+col+1));
                         }
                     }
                     if(row>7 && col<5){
                         if(lookAt(row-1, col+1)===0){
-                            _otherMove.push(id, (row-1)*9+col+1);
+                            _otherMove.push(moveFactory(id, (row-1)*9+col+1));
                         }else if((lookAt(row-1, col+1)&8) !== piece_color){
-                            _captureMove.push(id, (row-1)*9+col+1);
+                            _captureMove.push(moveFactory(id, (row-1)*9+col+1));
                         }
                     }
                     if(row<9 && col>3){
                         if(lookAt(row+1, col-1)===0){
-                            _otherMove.push(id, (row+1)*9+col-1);
+                            _otherMove.push(moveFactory(id, (row+1)*9+col-1));
                         }else if((lookAt(row+1, col-1)&8) !== piece_color){
-                            _captureMove.push(id, (row+1)*9+col-1);
+                            _captureMove.push(moveFactory(id, (row+1)*9+col-1));
                         }
                     }
                 }
@@ -282,59 +311,59 @@ var chess = (function () {
                 if(piece_color === 0 ){//engine
                     if(row>0 && col>0 && (lookAt(row-1,col-1)===0)){
                         if(lookAt(row-2, col-2)===0){
-                            _otherMove.push(id, (row-2)*9+col-2);
+                            _otherMove.push(moveFactory(id, (row-2)*9+col-2));
                         }else if((lookAt(row-2, col-2)&8) !== piece_color){
-                            _captureMove.push(id, (row-2)*9+col-2);
+                            _captureMove.push(moveFactory(id, (row-2)*9+col-2));
                         }
                     }
                     if(row<4 && col<8 && (lookAt(row+1,col+1)===0)){
                         if(lookAt(row+2, col+2)===0){
-                            _otherMove.push(id, (row+2)*9+col+2);
+                            _otherMove.push(moveFactory(id, (row+2)*9+col+2));
                         }else if((lookAt(row+2, col+2)&8) !== piece_color){
-                            _captureMove.push(id, (row+2)*9+col+2);
+                            _captureMove.push(moveFactory(id, (row+2)*9+col+2));
                         }
                     }
                     if(row>0 && col<8 && (lookAt(row-1,col+1)===0)){
                         if(lookAt(row-2, col+2)===0){
-                            _otherMove.push(id, (row-2)*9+col+2);
+                            _otherMove.push(moveFactory(id, (row-2)*9+col+2));
                         }else if((lookAt(row-2, col+2)&8) !== piece_color){
-                            _captureMove.push(id, (row-2)*9+col+2);
+                            _captureMove.push(moveFactory(id, (row-2)*9+col+2));
                         }
                     }
                     if(row<4&& col>0 && (lookAt(row+1,col-1)===0)){
                         if(lookAt(row+2, col-2)===0){
-                            _otherMove.push(id, (row+2)*9+col-2);
+                            _otherMove.push(moveFactory(id, (row+2)*9+col-2));
                         }else if((lookAt(row+2, col-2)&8) !== piece_color){
-                            _captureMove.push(id, (row+2)*9+col-2);
+                            _captureMove.push(moveFactory(id, (row+2)*9+col-2));
                         }
                     }
                 }else{//player
                     if(row>5 && col>0 && (lookAt(row-1,col-1)===0)){
                         if(lookAt(row-2, col-2)===0){
-                            _otherMove.push(id, (row-2)*9+col-2);
+                            _otherMove.push(moveFactory(id, (row-2)*9+col-2));
                         }else if((lookAt(row-2, col-2)&8) !== piece_color){
-                            _captureMove.push(id, (row-2)*9+col-2);
+                            _captureMove.push(moveFactory(id, (row-2)*9+col-2));
                         }
                     }
                     if(row<9 && col<8 && (lookAt(row+1,col+1)===0)){
                         if(lookAt(row+2, col+2)===0){
-                            _otherMove.push(id, (row+2)*9+col+2);
+                            _otherMove.push(moveFactory(id, (row+2)*9+col+2));
                         }else if((lookAt(row+2, col+2)&8) !== piece_color){
-                            _captureMove.push(id, (row+2)*9+col+2);
+                            _captureMove.push(moveFactory(id, (row+2)*9+col+2));
                         }
                     }
                     if(row>5 && col<8 && (lookAt(row-1,col+1)===0)){
                         if(lookAt(row-2, col+2)===0){
-                            _otherMove.push(id, (row-2)*9+col+2);
+                            _otherMove.push(moveFactory(id, (row-2)*9+col+2));
                         }else if((lookAt(row-2, col+2)&8) !== piece_color){
-                            _captureMove.push(id, (row-2)*9+col+2);
+                            _captureMove.push(moveFactory(id, (row-2)*9+col+2));
                         }
                     }
                     if(row<9&& col>0 && (lookAt(row+1,col-1)===0)){
                         if(lookAt(row+2, col-2)===0){
-                            _otherMove.push(id, (row+2)*9+col-2);
+                            _otherMove.push(moveFactory(id, (row+2)*9+col-2));
                         }else if((lookAt(row+2, col-2)&8) !== piece_color){
-                            _captureMove.push(id, (row+2)*9+col-2);
+                            _captureMove.push(moveFactory(id, (row+2)*9+col-2));
                         }
                     }
                 }
@@ -342,40 +371,40 @@ var chess = (function () {
             case 4://xe
                 for(var i = col+1; i<9; i++){
                     if(lookAt(row,i)===0){
-                        _otherMove.push(id, row*9+i);
+                        _otherMove.push(moveFactory(id, row*9+i));
                     }else{ 
                         if((lookAt(row,i)&8) !== piece_color){
-                            _captureMove.push(id, row*9+i);
+                            _captureMove.push(moveFactory(id, row*9+i));
                         }
                         break;
                     }
                 }
                 for(var i = col-1; i>=0; i--){
                     if(lookAt(row,i)===0){
-                        _otherMove.push(id, row*9+i);
+                        _otherMove.push(moveFactory(id, row*9+i));
                     }else{ 
                         if((lookAt(row,i)&8) !== piece_color){
-                            _captureMove.push(id, row*9+i);
+                            _captureMove.push(moveFactory(id, row*9+i));
                         }
                         break;
                     }
                 }
                 for(var i = row+1; i<10; i++){
                     if(lookAt(i,col)===0){
-                        _otherMove.push(id, i*9+col);
+                        _otherMove.push(moveFactory(id, i*9+col));
                     }else{ 
                         if((lookAt(i,col)&8) !== piece_color){
-                            _captureMove.push(id, i*9+col);
+                            _captureMove.push(moveFactory(id, i*9+col));
                         }
                         break;
                     }
                 }
                 for(var i = row-1; i>=0; i--){
                     if(lookAt(i,col)===0){
-                        _otherMove.push(id, i*9+col);
+                        _otherMove.push(moveFactory(id, i*9+col));
                     }else{ 
                         if((lookAt(i,col)&8) !== piece_color){
-                            _captureMove.push(id, i*9+col);
+                            _captureMove.push(moveFactory(id, i*9+col));
                         }
                         break;
                     }
@@ -384,12 +413,12 @@ var chess = (function () {
             case 5://pháo
                 for(var i = col+1; i<9; i++){
                     if(lookAt(row,i)===0){
-                        _otherMove.push(id, row*9+i);
+                        _otherMove.push(moveFactory(id, row*9+i));
                     }else{
                         for(var j = i+1; j<9; j++){
                             if(lookAt(row,j)!==0){
                                 if((lookAt(row,j)&8) !== piece_color){
-                                    _captureMove.push(id, row*9+j);
+                                    _captureMove.push(moveFactory(id, row*9+j));
                                 }
                                 break;
                             }
@@ -399,12 +428,12 @@ var chess = (function () {
                 }
                 for(var i = col-1; i>=0; i--){
                     if(lookAt(row,i)===0){
-                        _otherMove.push(id, row*9+i);
+                        _otherMove.push(moveFactory(id, row*9+i));
                     }else{
                         for(var j = i-1; j>=0; j--){
                             if(lookAt(row,j)!==0){
                                 if((lookAt(row,j)&8) !== piece_color){
-                                    _captureMove.push(id, row*9+j);
+                                    _captureMove.push(moveFactory(id, row*9+j));
                                 }
                                 break;
                             }
@@ -414,12 +443,12 @@ var chess = (function () {
                 }
                 for(var i = row+1; i<10; i++){
                     if(lookAt(i,col)===0){
-                        _otherMove.push(id, i*9+col);
+                        _otherMove.push(moveFactory(id, i*9+col));
                     }else{
                         for(var j = i+1; j<10; j++){
                             if(lookAt(j,col)!==0){
                                 if((lookAt(j,col)&8) !== piece_color){
-                                    _captureMove.push(id, j*9+col);
+                                    _captureMove.push(moveFactory(id, j*9+col));
                                 }
                                 break;
                             }
@@ -429,12 +458,12 @@ var chess = (function () {
                 }
                 for(var i = row-1; i>=0; i--){
                     if(lookAt(i,col)===0){
-                        _otherMove.push(id, i*9+col);
+                        _otherMove.push(moveFactory(id, i*9+col));
                     }else{
                         for(var j = i-1; j>=0; j--){
                             if(lookAt(j,col)!==0){
                                 if((lookAt(j,col)&8) !== piece_color){
-                                    _captureMove.push(id, j*9+col);
+                                    _captureMove.push(moveFactory(id, j*9+col));
                                 }
                                 break;
                             }
@@ -447,64 +476,64 @@ var chess = (function () {
                 if (row > 1 && lookAt(row - 1, col) === 0) {//không bị cản phía trên
                     if (col > 0) {
                         if (lookAt(row - 2, col - 1) === 0) {
-                            _otherMove.push(id, (row - 2) * 9 + col - 1);
+                            _otherMove.push(moveFactory(id, (row - 2) * 9 + col - 1));
                         } else if ((lookAt(row - 2, col - 1) & 8) !== piece_color) {
-                            _captureMove.push(id, (row - 2) * 9 + col - 1);
+                            _captureMove.push(moveFactory(id, (row - 2) * 9 + col - 1));
                         }
                     }
                     if (col < 8) {
                         if (lookAt(row - 2, col + 1) === 0) {
-                            _otherMove.push(id, (row - 2) * 9 + col + 1);
+                            _otherMove.push(moveFactory(id, (row - 2) * 9 + col + 1));
                         } else if ((lookAt(row - 2, col + 1) & 8) !== piece_color) {
-                            _captureMove.push(id, (row - 2) * 9 + col + 1);
+                            _captureMove.push(moveFactory(id, (row - 2) * 9 + col + 1));
                         }
                     }
                 }
                 if (row < 8 && lookAt(row + 1, col) === 0) {//không bị cản phía dưới
                     if (col > 0) {
                         if (lookAt(row + 2, col - 1) === 0) {
-                            _otherMove.push(id, (row + 2) * 9 + col - 1);
+                            _otherMove.push(moveFactory(id, (row + 2) * 9 + col - 1));
                         } else if ((lookAt(row + 2, col - 1) & 8) !== piece_color) {
-                            _captureMove.push(id, (row + 2) * 9 + col - 1);
+                            _captureMove.push(moveFactory(id, (row + 2) * 9 + col - 1));
                         }
                     }
                     if (col < 8) {
                         if (lookAt(row + 2, col + 1) === 0) {
-                            _otherMove.push(id, (row + 2) * 9 + col + 1);
+                            _otherMove.push(moveFactory(id, (row + 2) * 9 + col + 1));
                         } else if ((lookAt(row + 2, col + 1) & 8) !== piece_color) {
-                            _captureMove.push(id, (row + 2) * 9 + col + 1);
+                            _captureMove.push(moveFactory(id, (row + 2) * 9 + col + 1));
                         }
                     }
                 }
                 if (col > 1 && lookAt(row, col-1) === 0) {//không bị cản phía trái
                     if (row > 0) {
                         if (lookAt(row - 1, col - 2) === 0) {
-                            _otherMove.push(id, (row - 1) * 9 + col - 2);
+                            _otherMove.push(moveFactory(id, (row - 1) * 9 + col - 2));
                         } else if ((lookAt(row - 1, col - 2) & 8) !== piece_color) {
-                            _captureMove.push(id, (row - 1) * 9 + col - 2);
+                            _captureMove.push(moveFactory(id, (row - 1) * 9 + col - 2));
                         }
                     }
                     if (row < 9) {
                         if (lookAt(row + 1, col - 2) === 0) {
-                            _otherMove.push(id, (row + 1) * 9 + col - 2);
+                            _otherMove.push(moveFactory(id, (row + 1) * 9 + col - 2));
                         } else if ((lookAt(row + 1, col - 2) & 8) !== piece_color) {
-                            _captureMove.push(id, (row+1) * 9 + col -2);
+                            _captureMove.push(moveFactory(id, (row+1) * 9 + col -2));
                         }
                     }
                 }
                 if (col <7 && lookAt(row, col+1) === 0) {//không bị cản phía phải
                     if (row > 0) {
                         if (lookAt(row - 1, col + 2) === 0) {
-                            _otherMove.push(id, (row - 1) * 9 + col + 2);
+                            _otherMove.push(moveFactory(id, (row - 1) * 9 + col + 2));
                         } else if ((lookAt(row - 1, col + 2) & 8) !== piece_color) {
-                            _captureMove.push(id, (row - 1) * 9 + col + 2);
+                            _captureMove.push(moveFactory(id, (row - 1) * 9 + col + 2));
                         }
                     }
                     if (row < 9) {
                         if (lookAt(row + 1, col + 2) === 0) {
-                            _otherMove.push(id, (row + 1) * 9 + col + 2);
+                            _otherMove.push(moveFactory(id, (row + 1) * 9 + col + 2));
                         } else if ((lookAt(row + 1, col + 2) & 8 )!== piece_color) {
-                            _captureMove.push(id, (row+1) * 9 + col + 2);
+                            _captureMove.push(moveFactory(id, (row+1) * 9 + col + 2));
                         }
                     }
                 }
@@ -513,48 +542,48 @@ var chess = (function () {
                 if(piece_color === 0){//engine
                     if(row<9){
                         if(lookAt(row+1, col)===0){
-                            _otherMove.push(id, (row+1)*9+col);
+                            _otherMove.push(moveFactory(id, (row+1)*9+col));
                         }else if((lookAt(row+1, col)&8) !== piece_color){
-                            _captureMove.push(id, (row+1)*9+col);
+                            _captureMove.push(moveFactory(id, (row+1)*9+col));
                         }
                     }
                     if(row>4){//đã sang sông
                         if(col<8){
                             if(lookAt(row, col+1)===0){
-                                _otherMove.push(id, row*9+col+1);
+                                _otherMove.push(moveFactory(id, row*9+col+1));
                             }else if((lookAt(row, col+1)&8) !== piece_color){
-                                _captureMove.push(id, row*9+col+1);
+                                _captureMove.push(moveFactory(id, row*9+col+1));
                             }
                         }
                         if(col>0){
                             if(lookAt(row, col-1)===0){
-                                _otherMove.push(id, row*9+col-1);
+                                _otherMove.push(moveFactory(id, row*9+col-1));
                             }else if((lookAt(row, col-1)&8) !== piece_color){
-                                _captureMove.push(id, row*9+col-1);
+                                _captureMove.push(moveFactory(id, row*9+col-1));
                             }
                         }
                     }
                 }else{//player
                     if(row>0){
                         if(lookAt(row-1, col)===0){
-                            _otherMove.push(id, (row-1)*9+col);
+                            _otherMove.push(moveFactory(id, (row-1)*9+col));
                         }else if((lookAt(row-1, col)&8) !== piece_color){
-                            _captureMove.push(id, (row-1)*9+col);
+                            _captureMove.push(moveFactory(id, (row-1)*9+col));
                         }
                     }
                     if(row<5){//đã sang sông
                         if(col<8){
                             if(lookAt(row, col+1)===0){
-                                _otherMove.push(id, row*9+col+1);
+                                _otherMove.push(moveFactory(id, row*9+col+1));
                             }else if((lookAt(row, col+1)&8) !== piece_color){
-                                _captureMove.push(id, row*9+col+1);
+                                _captureMove.push(moveFactory(id, row*9+col+1));
                             }
                         }
                         if(col>0){
                             if(lookAt(row, col-1)===0){
-                                _otherMove.push(id, row*9+col-1);
+                                _otherMove.push(moveFactory(id, row*9+col-1));
                             }else if((lookAt(row, col-1)&8) !== piece_color){
-                                _captureMove.push(id, row*9+col-1);
+                                _captureMove.push(moveFactory(id, row*9+col-1));
                             }
                         }
                     }
@@ -573,6 +602,10 @@ var chess = (function () {
             val += piece_color===0 ? valueByPlace[piece_type][89-i]:-valueByPlace[piece_type][i];
         }
         return val;
+    }
+    
+    function sortFunction(ob1, ob2){
+        return ob2.value - ob1.value;
     }
    
     function alphaBetaSearch(a, b, dep, isQS, isRoot, isCapture, _turn){
@@ -594,7 +627,9 @@ var chess = (function () {
                     }
                 }
             }
-        }
+        }        
+        captureMove.sort(sortFunction);
+        otherMove.sort(sortFunction);
         if(general === -1){
             return _turn===0 ? -Infinity : Infinity;
         }
@@ -610,18 +645,20 @@ var chess = (function () {
                 if(_turn===0){//engine
                     var length, i, bestValue = -Infinity, val;
                     length = captureMove.length;
-                    for(i=0; i<length; i+=2){
-                        prevValue = board[captureMove[i+1]];
-                        board[captureMove[i+1]] = board[captureMove[i]];
-                        board[captureMove[i]] = 0;
+                    if(length===0){
+                        return evaluate();
+                    }
+                    for(i=0; i<length; i+=1){
+                        prevValue = board[captureMove[i].id2];
+                        board[captureMove[i].id2] = board[captureMove[i].id1];
+                        board[captureMove[i].id1] = 0;
                         val = alphaBetaSearch(a, b, dep-1, true, false, true, _turn^8);
-                        board[captureMove[i]] = board[captureMove[i+1]];
-                        board[captureMove[i+1]] = prevValue;
+                        board[captureMove[i].id1] = board[captureMove[i].id2];
+                        board[captureMove[i].id2] = prevValue;
                         if(val>bestValue){
                             bestValue = val;
                             if(isRoot){
                                 bestMove[0] = captureMove[i];
-                                bestMove[1] = captureMove[i+1];
                             }
                             a = max(a, bestValue);
                             if(a>=b){
@@ -633,13 +670,16 @@ var chess = (function () {
                 }else{//player
                     var length, i, bestValue = Infinity, val;
                     length = captureMove.length;
-                    for(i=0; i<length; i+=2){
-                        prevValue = board[captureMove[i+1]];
-                        board[captureMove[i+1]] = board[captureMove[i]];
-                        board[captureMove[i]] = 0;
+                    if(length===0){
+                        return evaluate();
+                    }
+                    for(i=0; i<length; i+=1){
+                        prevValue = board[captureMove[i].id2];
+                        board[captureMove[i].id2] = board[captureMove[i].id1];
+                        board[captureMove[i].id1] = 0;
                         val = alphaBetaSearch(a, b, dep-1, true, false, true, _turn^8);
-                        board[captureMove[i]] = board[captureMove[i+1]];
-                        board[captureMove[i+1]] = prevValue;
+                        board[captureMove[i].id1] = board[captureMove[i].id2];
+                        board[captureMove[i].id2] = prevValue;
                         if(val<bestValue){
                             bestValue = val;
                             b = min(b, bestValue);
@@ -654,7 +694,14 @@ var chess = (function () {
         }else{//not isQS
             if(dep===0){
                 if(isCapture){
-                    return min(alphaBetaSearch(a, b, depth-2, true, isRoot, true, _turn), evaluate());// quiescence search
+                    if(depth===3){
+                        return min(alphaBetaSearch(a, b, 3, true, isRoot, true, _turn), evaluate());// quiescence search
+                    }
+                    if(depth===4){
+                        return min(alphaBetaSearch(a, b, 0, true, isRoot, true, _turn), evaluate());// quiescence search
+                    }else{
+                        return min(alphaBetaSearch(a, b, 1, true, isRoot, true, _turn), evaluate());// quiescence search
+                    }
                 }else{
                     return evaluate();
                 }
@@ -662,18 +709,17 @@ var chess = (function () {
                 if(_turn===0){//engine
                     var length, i, bestValue = -Infinity, val;
                     length = captureMove.length;
-                    for(i=0; i<length; i+=2){
-                        prevValue = board[captureMove[i+1]];
-                        board[captureMove[i+1]] = board[captureMove[i]];
-                        board[captureMove[i]] = 0;
+                    for(i=0; i<length; i+=1){
+                        prevValue = board[captureMove[i].id2];
+                        board[captureMove[i].id2] = board[captureMove[i].id1];
+                        board[captureMove[i].id1] = 0;
                         val = alphaBetaSearch(a, b, dep-1, false, false, true, _turn^8);
-                        board[captureMove[i]] = board[captureMove[i+1]];
-                        board[captureMove[i+1]] = prevValue;
+                        board[captureMove[i].id1] = board[captureMove[i].id2];
+                        board[captureMove[i].id2] = prevValue;
                         if(val>bestValue){
                             bestValue = val;
                             if(isRoot){
                                 bestMove[0] = captureMove[i];
-                                bestMove[1] = captureMove[i+1];
                             }
                             a = max(a, bestValue);
                             if(a>=b){
@@ -682,18 +728,17 @@ var chess = (function () {
                         }
                     }
                     length = otherMove.length;
-                    for(i=0; i<length; i+=2){
-                        prevValue = board[otherMove[i+1]];
-                        board[otherMove[i+1]] = board[otherMove[i]];
-                        board[otherMove[i]] = 0;
+                    for(i=0; i<length; i+=1){
+                        prevValue = board[otherMove[i].id2];
+                        board[otherMove[i].id2] = board[otherMove[i].id1];
+                        board[otherMove[i].id1] = 0;
                         val = alphaBetaSearch(a, b, dep-1, false, false, false, _turn^8);
-                        board[otherMove[i]] = board[otherMove[i+1]];
-                        board[otherMove[i+1]] = prevValue;
+                        board[otherMove[i].id1] = board[otherMove[i].id2];
+                        board[otherMove[i].id2] = prevValue;
                         if(val>bestValue){
                             bestValue = val;
                             if(isRoot){
                                 bestMove[0] = otherMove[i];
-                                bestMove[1] = otherMove[i+1];
                             }
                             a = max(a, bestValue);
                             if(a>=b){
@@ -705,13 +750,13 @@ var chess = (function () {
                 }else{//player
                     var length, i, bestValue = Infinity, val;
                     length = captureMove.length;
-                    for(i=0; i<length; i+=2){
-                        prevValue = board[captureMove[i+1]];
-                        board[captureMove[i+1]] = board[captureMove[i]];
-                        board[captureMove[i]] = 0;
+                    for(i=0; i<length; i+=1){
+                        prevValue = board[captureMove[i].id2];
+                        board[captureMove[i].id2] = board[captureMove[i].id1];
+                        board[captureMove[i].id1] = 0;
                         val = alphaBetaSearch(a, b, dep-1, false, false, true, _turn^8);
-                        board[captureMove[i]] = board[captureMove[i+1]];
-                        board[captureMove[i+1]] = prevValue;
+                        board[captureMove[i].id1] = board[captureMove[i].id2];
+                        board[captureMove[i].id2] = prevValue;
                         if(val<bestValue){
                             bestValue = val;
                             b = min(b, bestValue);
@@ -721,13 +766,13 @@ var chess = (function () {
                         }
                     }
                     length = otherMove.length;
-                    for(i=0; i<length; i+=2){
-                        prevValue = board[otherMove[i+1]];
-                        board[otherMove[i+1]] = board[otherMove[i]];
-                        board[otherMove[i]] = 0;
+                    for(i=0; i<length; i+=1){
+                        prevValue = board[otherMove[i].id2];
+                        board[otherMove[i].id2] = board[otherMove[i].id1];
+                        board[otherMove[i].id1] = 0;
                         val = alphaBetaSearch(a, b, dep-1, false, false, false, _turn^8);
-                        board[otherMove[i]] = board[otherMove[i+1]];
-                        board[otherMove[i+1]] = prevValue;
+                        board[otherMove[i].id1] = board[otherMove[i].id2];
+                        board[otherMove[i].id2] = prevValue;
                         if(val<bestValue){
                             bestValue = val;
                             b = min(b, bestValue);
@@ -760,8 +805,8 @@ var chess = (function () {
             pieceCtx = pieceCanvas[focused].getContext("2d");
             pieceCtx.drawImage(focusImg, -3, -3, cellSize+3, cellSize+3);
             var length = focusedValidMove.length;
-            for(i=1; i<length; i+=2){
-                pieceCtx = pieceCanvas[focusedValidMove[i]].getContext("2d");
+            for(i=0; i<length; i+=1){
+                pieceCtx = pieceCanvas[focusedValidMove[i].id2].getContext("2d");
                 pieceCtx.drawImage(validMoveImg, 0, 0, cellSize, cellSize);
             }
         }
@@ -818,8 +863,8 @@ var chess = (function () {
             return 1;//player lost
         }else{
             var length = captureMove.length;
-            for(i=1; i< length; i+=2){
-                if(captureMove[i]===opGeneral){
+            for(i=0; i< length; i+=1){
+                if(captureMove[i].id2===opGeneral){
                     showInfo(2);
                     return 2;//check
                 }
@@ -836,7 +881,7 @@ var chess = (function () {
             }
             gameOver = true;
         }else{
-            makeMove(bestMove[0], bestMove[1]);
+            makeMove(bestMove[0].id1, bestMove[0].id2);
             bestMove = [];
         }
     }
@@ -851,6 +896,9 @@ var chess = (function () {
     }
     function changeEasy(){
         if(depth===3){
+            setDepth(4);
+            easyButton.innerHTML = "MEDIUM";
+        }else if(depth===4){
             setDepth(5);
             easyButton.innerHTML = "HARD";
         }else{
@@ -954,8 +1002,8 @@ var chess = (function () {
                 var piece = board[id];
                 if(focused!==-1){
                     var i, length = focusedValidMove.length;
-                    for(i=1; i<length; i+=2){
-                        if(focusedValidMove[i]===id){
+                    for(i=0; i<length; i+=1){
+                        if(focusedValidMove[i].id2===id){
                             break;
                         }
                     }
