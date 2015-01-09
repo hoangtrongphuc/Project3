@@ -38,7 +38,7 @@ else if(!empty($array['updatematch']) && !empty($array['userwin']) && !empty($ar
 		//tính toán cho người thua
 		$getuserlose = $user_model->getUserName($userlose);
 		
-		$total_lose2 = $getuserlose['user_lose'] - 1;
+		$total_lose2 = $getuserlose['user_lose'] + 1;
 		$total_coin2 = $getuserlose['user_coin'] - $coin;
 		//update
 		$user_model->updateMatch($userwin, $total_win1," ", $total_coin1);

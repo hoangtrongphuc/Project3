@@ -16,11 +16,11 @@ if(!empty($array['user_name']) && !empty($array['user_email'])){
 			$user_pass = md5($pass);
 			$newpass1 = substr($user_pass, 0,7);
 			$newpass2 = md5($newpass1);
-			$newpass2 = $newpass1[0].$newpass1;
+			$newpass2 = $newpass2[0].$newpass2;
 			//thực hiện gửi pass mới vào email
 			$sendmail = new sendmail();
 
-			$body = 'Đây là mật khẩu của tài khoản '.$user_name.' của trang web '.urlClient.': '.$newpass2.'. 
+			$body = 'Đây là mật khẩu của tài khoản '.$user_name.' của trang web '.urlClient.': '.$newpass1.'. 
 					Hãy đổi mật khẩu ngay để đảm bảo tính bảo mật của tài khoản. Xin chân thành cảm ơn!';
 			
 			$result = $sendmail->smtpmailer($user_email, GUSER, 'Administrator', 'FORGOT PASSWORD', $body);
