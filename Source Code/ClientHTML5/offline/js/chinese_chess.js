@@ -695,12 +695,12 @@ var chess = (function () {
             if(dep===0){
                 if(isCapture){
                     if(depth===3){
-                        return min(alphaBetaSearch(a, b, 3, true, isRoot, true, _turn), evaluate());// quiescence search
+                        return min(alphaBetaSearch(a, b, 3, true, isRoot, true, _turn), evaluate());// quiescence search for depth = 3
                     }
                     if(depth===4){
-                        return min(alphaBetaSearch(a, b, 0, true, isRoot, true, _turn), evaluate());// quiescence search
+                        return min(alphaBetaSearch(a, b, 0, true, isRoot, true, _turn), evaluate()); // quiescence search depth = 4
                     }else{
-                        return min(alphaBetaSearch(a, b, 1, true, isRoot, true, _turn), evaluate());// quiescence search
+                        return min(alphaBetaSearch(a, b, 1, true, isRoot, true, _turn), evaluate());// quiescence search depth = 5
                     }
                 }else{
                     return evaluate();
